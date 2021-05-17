@@ -1,0 +1,7 @@
+{
+    "command": {
+        "kill": {
+            "success": "Committing suicide..."
+        }
+    }
+}

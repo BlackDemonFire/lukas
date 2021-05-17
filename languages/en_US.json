@@ -1,0 +1,151 @@
+{
+    "commands": {
+        "roll": {
+            "description": "roll a dice - defaults to 1d6, to select the number of dice, use a number - to change the dice type use d<number>/w<number>",
+            "errors": {
+                "tooManyArgs": "Error: too many Arguments. Only dice type and roll count are valid arguments. The odd argument is ",
+                "doubleDiceType": "Error: Argument `dice type` is defined twice",
+                "doubleRollCount": "Error: Argument `roll count` is defined twice",
+                "schroedingersArgument": "Very strange error: Schroedingers Argument `Dice type` is defined and not defined",
+                "noDiceType": "Error: After validating arguments there is still no dicetype",
+                "noSides": "Error: you intented to roll a dice with no sides",
+                "rolltypeUndefined": "Error: rolltype is not defined",
+                "tooManyDice": "The table is too small to throw that many dice on it. A maximum of 70 dice is allowed"
+            },
+            "results": {
+                "noDice": {
+                    "plaintext": "...and {msgauthor} heard how the wind brushed over the empty table, on which there was not a single dice to be seen...",
+                    "embed": "If you want a result, it would probably be useful to throw a dice."
+                },
+                "singleDice": "you rolled a {rolltype}-sided dice.",
+                "multiDice": "you rolled {rollcountmax {rolltype}-sided dice."
+            }
+        },
+        "restart": {
+            "description": "restarts the bot.",
+            "start": "restarting... please wait.",
+            "success": "successfully restarted.",
+            "error": "an error occurred while restarting."
+        },
+        "ping": {
+            "description": "Get the bot's latency",
+            "apiLatency": "API Latency is",
+            "latency": "Latency is"
+        },
+        "pat": {
+            "description": "Pat a User",
+            "singleUser": [
+                "Do you need pats {a}?"
+            ],
+            "multiUser": [
+                "{a} pats {b}",
+                "{a} pats {b}. Cute!",
+                "{a} gives {b} headpats"
+            ]
+        },
+        "newgif": {
+            "description": "Add a new gif to the database",
+            "success": "successfully added the gif.",
+            "wrongArgs": "You need to supply three arguments:\n1. The gif URL\n2. The action (e.g. `hug`)\n3. The gif type (e.g. anime)",
+            "checking": "I sent the owner a request to add the gif."
+        },
+        "new": {
+            "description": "Add an NPC",
+            "getPrefix": "Please enter the prefix for your new character.",
+            "getAvatar": "Please enter a URL for the avatar of the character, otherwise reply with `n`.",
+            "getName": "Please enter the name of the character you want to add.",
+            "success": "The character {name} was assigned to the prefix {pref}."
+        },
+        "name": {
+            "description": "Change your embed name (no specified name will result in nickname/username)",
+            "success": "Your name has been changed to `{newname}`."
+        },
+        "lang": {
+            "description": "Change the language for the guild",
+            "permissionError": "Only Administrators are allowed to change the guild language.",
+            "noSuchLanguage": "The requested Language is not available. Available languages are {languages}.",
+            "success": "Changed the language for this guild to {lang}"
+        },
+        "kiss": {
+            "description": "Kiss a User",
+            "singleUser": [
+                "I will kiss you {a} 🥺"
+            ],
+            "multiUser": [
+                "{a} kisses {b}",
+                "{a} kisses {b}s lips 🥺"
+            ]
+        },
+        "kill": {
+            "description": "stops the bot",
+            "success": "Shutting down..."
+        },
+        "info": {
+            "description": "Get System info for the bot"
+        },
+        "hug": {
+            "description": "Hug a User",
+            "singleUser": [
+                "I will hug you {a} 🥺",
+                "Do you need a hug {a}?"
+            ],
+            "multiUser": [
+                "{a} hugs {b}",
+                "{a} hugs {b}. Squeeze hard but not too hard",
+                "{a} hugs {b} tightly"
+            ]
+        },
+        "help": {
+            "description": "displays help (for a command)",
+            "commandNotFound": "command {cmd} not found.",
+            "usage": {
+                "Usage": "Usage",
+                "args": "[optional], <required>"
+            }
+        },
+        "giftype": {
+            "description": "Change your gif type",
+            "availableTypes": "Following gif types are available: {types}."
+        },
+        "eval": {
+            "description": "executes javascript code",
+            "permissionError": "You are not permitted to use the eval command"
+        },
+        "dsarm": {
+            "description": "Remove an NPC",
+            "noSuchChar": "There is no character identified by `{pref}`.",
+            "success": "Character `{pref}` was successfully deleted."
+        },
+        "dsaadd": {
+            "desctiption": "Add an NPC",
+            "args": "you need to supply three arguments:\n1. the prefix\n2. the avatar URL\n3. the name to be displayed",
+            "success": "Der Charakter `{pref}` wurde erfolgreich hinzugefügt."
+        },
+        "dsa": {
+            "description": "Say a message as an NPC",
+            "gameMaster": "Gamemaster",
+            "permissions": "I do not have all the necessary permissions. Please ensure that I have the permissions to manage Messages and Webhooks.",
+            "contentRequired": "I need a message or an attachment to send."
+        },
+        "cuddle": {
+            "description": "Cuddle a User",
+            "singleUser": [
+                "I will cuddle you {a} 🥺",
+                "Do you need somebody to cuddle you?"
+            ],
+            "multiUser": [
+                "{a} cuddles {b}",
+                "{a} cuddles {b} - adorable"
+            ]
+        },
+        "color": {
+            "description": "Change your embed color (no specified color will result in random colors)",
+            "success": "Your color was changed."
+        }
+    },
+    "general": {
+        "timeout": "You took too long.",
+        "and": "and",
+        "guildOnly": "This command can only be used on a server."
+    }
+}

@@ -1,0 +1,151 @@
+{
+    "commands": {
+        "roll": {
+            "description": "Wirf einen Würfel - standardmäßig wird 1 w6 verwendet. Um andere Würfel zu verwenden verwende [Anzahl]w[Würfeltyp]",
+            "errors": {
+                "tooManyArgs": "Fehler: zu viele Argumente. Nur Würfeltyp und Würfelzahl sind erlaubt. Dieses Argument ist zu viel: ",
+                "doubleDiceType": "Fehler: Das Argument `Würfeltyp` ist doppelt angegeben.",
+                "doubleRollCount": "Fehler: Das Argument `Anzahl` ist doppelt angegeben.",
+                "schroedingersArgument": "Sehr merkwürdiger Fehler: Schrödingers Argument - `Würfeltyp` ist definiert und nicht definiert.",
+                "noDiceType": "Fehler: Nach dem validieren der Argumente ist immer noch kein Würfeltyp festgelegt.",
+                "noSides": "Fehler: Du hast versucht, mit einem seitenlosen Würfel zu würfeln.",
+                "rolltypeUndefined": "Fehler: Der Würfeltyp ist nicht definiert.",
+                "tooManyDice": "Der Tisch ist zu klein für so viele Würfel. Es sind maximal 70 Würfel erlaubt"
+            },
+            "results": {
+                "noDice": {
+                    "plaintext": "...und {msgauthor} hörte leise wie der Wind über den leeren Tisch strich, auf dem nicht ein Würfel zu sehen war...",
+                    "embed": "Wenn du ein Ergebnis erhalten möchtest, wäre es vermutlich sinnvoll, das nächste mal auch einen Würfel zu werfen."
+                },
+                "singleDice": "es wurde mit einem {rolltype}-seitigen Würfel gewürfelt.",
+                "multiDice": "es wurde mit {rollcountmax {rolltype}-seitigen Würfeln gewürfelt."
+            }
+        },
+        "restart": {
+            "description": "Startet den Bot neu.",
+            "start": "Startet neu... Bitte warten.",
+            "success": "Der Bot wurde erfolgreich neugestartet.",
+            "error": "Beim Neustart ist ein Fehler aufgetreten."
+        },
+        "ping": {
+            "description": "Zeigt die Latenz vom Bot",
+            "apiLatency": "Die API Latenz beträgt",
+            "latency": "Die Latenz beträgt"
+        },
+        "pat": {
+            "description": "Jemanden streicheln",
+            "singleUser": [
+                "Möchtest du gestreichelt werden {a}?"
+            ],
+            "multiUser": [
+                "{a} streichelt {b}",
+                "{a} streichelt {b}. Cuuute!",
+                "{a} streichelt {b}. Süß 🥺"
+            ]
+        },
+        "newgif": {
+            "description": "Fügt ein neues Gif zur Datenbank hinzu",
+            "success": "Das Gif wurde erfolgreich hinzugefügt.",
+            "wrongArgs": "Du musst drei Argumente angeben:\n1. Den Link zum Gif\n2. Die Aktion, die ausgeführt wird (z.B. `hug`)\n3. Das Gif Genre (z.B. `Anime`)",
+            "checking": "Ich habe die Anfrage, das Gif hinzuzufügen an meinen Meister weitergeleitet."
+        },
+        "new": {
+            "description": "Füge einen NPC hinzu",
+            "getPrefix": "Bitte nenne den Kürzel für den Charakter",
+            "getAvatar": "Jetzt bitte den Link zum Avatar des Charakters, sonst bitte mit `n` antworten",
+            "getName": "zuletzt bitte noch den Namen des Charakters",
+            "success": "Der Charakter {name} wird mit dem Prefix {pref} eingespeichert!"
+        },
+        "name": {
+            "description": "Ändere den Namen, der in Embeds angezeigt wird (keine Angabe resultiert im Nickname/Username)",
+            "success": "Dein Name wurde zu `{newname}` geändert."
+        },
+        "lang": {
+            "description": "Ändere die Sprache für diesen Discord Server",
+            "permissionError": "Nur Administratoren dürfen die Serversprache ändern.",
+            "noSuchLanguage": "Die angefragte Sprache ist nicht verfügbar. Folgende Sprachen sind verfügbar: {languages}.",
+            "success": "Die Sprache wurde zu {lang} geändert."
+        },
+        "kiss": {
+            "description": "Jemanden küssen",
+            "singleUser": [
+                "Soll ich dich küssen {a} 🥺"
+            ],
+            "multiUser": [
+                "{a} küsst {b}",
+                "{a} küsst {b} 🥺"
+            ]
+        },
+        "kill": {
+            "description": "Fährt den Bot herunter",
+            "success": "Bot fährt herunter."
+        },
+        "info": {
+            "description": "Erfahre Systeminformationen vom Bot"
+        },
+        "hug": {
+            "description": "Jemanden umarmen",
+            "singleUser": [
+                "Soll ich dich umarmen {a}? 🥺",
+                "Brauchst du eine Umarmung {a}?"
+            ],
+            "multiUser": [
+                "{a} umarmt {b}",
+                "{a} gibt {b} eine feste Umarmung.",
+                "{a} gibt {b} eine feste Umarmung. _fest zudrücken!_"
+            ]
+        },
+        "help": {
+            "description": "Hilfe für Befehle",
+            "commandNotFound": "Der Befehl {cmd} wurde nicht gefunden.",
+            "usage": {
+                "Usage": "Nutzung",
+                "args": "[optional], <notwendig>"
+            }
+        },
+        "giftype": {
+            "description": "Ändere deinen Gif Typen",
+            "availableTypes": "Die folgenden Typen sind verfügbar: {types}."
+        },
+        "eval": {
+            "description": "Javascript Code ausführen",
+            "permissionError": "Du besitzt nicht die nötigen Rechte um diesen Befehl auszuführen."
+        },
+        "dsarm": {
+            "description": "Löscht DSA NPCs",
+            "noSuchChar": "Ich kenne keinen Charakter `{pref}`.",
+            "success": "Der Charakter `{pref}` wurde erfolgreich gelöscht."
+        },
+        "dsaadd": {
+            "description": "Füge einen NPC hinzu.",
+            "args": "du musst drei Argumente angeben:\n1. den Kürzel\n2. den Link für das Profilbild\n3. den Namen, den der NPC annehmen soll",
+            "success": "Der Charakter `{pref}` wurde erfolgreich hinzugefügt."
+        },
+        "dsa": {
+            "description": "Schreibe eine Nachricht als NPC",
+            "contentRequired": "Du musst entweder eine Nachricht oder einen Anhang hinzufügen",
+            "gameMaster": "Spielleiter",
+            "permissions": "Ich habe nicht die nötigen Berechtigungen. Bitte stelle sicher, dass ich die Berechtigungen habe, Nachrichten und Webhooks zu verwalten."
+        },
+        "cuddle": {
+            "description": "Jemanden kuscheln",
+            "singleUser": [
+                "Soll ich mit dir kuscheln {a}? 🥺",
+                "Brauchst du jemanden zum kuscheln {a}?"
+            ],
+            "multiUser": [
+                "{a} kuschelt mit {b}",
+                "{a} kuschelt mit {b} - cute"
+            ]
+        },
+        "color": {
+            "description": "Ändere deine Embed Farbe (Keine Angabe führt zu zufälligen Farben.)",
+            "success": "Deine Farbe wurde geändert."
+        }
+    },
+    "general": {
+        "timeout": "Du hast zu lange benötigt.",
+        "and": "und",
+        "guildOnly": "Dieser Befehl ist nicht in DMs ausführbar"
+    }
+}

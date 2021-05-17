@@ -1,0 +1,79 @@
+import { Bot } from "bot";
+import { ClientApplication, Message, Team, User } from "discord.js";
+
+abstract class Command {
+    protected prefix: string;
+    abstract help: command["help"];
+    private client: Bot;
+    constructor(client: Bot) {
+        this.prefix = client.config.prefix;
+        this.client = client;
+    }
+    abstract run(client: Bot, message: Message, args: string[], language: language)
+    isAprilFools() {
+        const date = new Date()
+        let myDate = date.toLocaleDateString()
+        let datesplit: string[] = myDate.split("/")
+        let mon = datesplit.shift()
+        let dom = datesplit.shift()
+        return (dom == "1" && mon == "4")
+    }
+    isOwner(message: Message): boolean {
+        var apk: ClientApplication = this.client.application;
+        if (apk.owner instanceof Team) {
+            return apk.owner.members.has(message.author.id);
+        } else if (apk.owner instanceof User) {
+            return apk.owner.id==message.author.id;
+        } 
+        return false;
+    }
+}
+
+abstract class GifCommand extends Command {
+    constructor(client: Bot) {
+        super(client);
+    }
+    async parseUser(client: Bot, message: Message, args: string[], language: language) {
+        var userB: string = "";
+        var mentioned: string[] = [];
+        if (args && args.length > 0) {
+            for (const arg of args) {
+                var name: string;
+                let ping = arg.match(/<@!?(\d+)>/);
+                if (ping) {
+                    let user = await client.users.fetch(ping[1]);
+                    if (user) name = client.db.getname(user);
+                    if (!name || (name == "")) name = message.guild ? message.guild.members.resolve(user).displayName : user.username;
+                    if (user == message.author) userB = "";
+                    mentioned.push(name);
+                } else {
+                    if (!arg || arg == "") return;
+                    mentioned.push(arg);
+                }
+            }
+            if (userB == "") {
+                switch (mentioned.length) {
+                    case 1:
+                        userB = mentioned[0];
+                        break;
+                    case 2:
+                        userB = mentioned.join(` ${language.general.and} `);
+                        break;
+                    default:
+                        var last = mentioned.pop();
+                        userB = mentioned.join(", ");
+                        userB += ` ${language.general.and} `;
+                        userB += last;
+                        break;
+                }
+            }
+        } else userB = "";
+        return userB;
+    }
+}
+
+
+export {
+    Command,
+    GifCommand
+}

@@ -1,0 +1,30 @@
+{
+    "commands": {
+        "roll": {
+            "description": "roll a dice - defaults to 1d6, to select the number of dice, use a number - to change the dice type use d<number>/w<number>",
+            "errors": {
+                "tooManyArgs": "Error: too many Arguments. Only dice type and roll count are valid arguments. The odd argument is ",
+                "doubleDiceType": "Error: Argument `dice type` is defined twice",
+                "doubleRollCount": "Error: Argument `roll count` is defined twice",
+                "schroedingersArgument": "Very strange error: Schroedingers Argument `Dice type` is defined and not defined",
+                "noDiceType": "Error: After validating arguments there is still no dicetype",
+                "noSides": "Error: you intented to roll a dice with no sides",
+                "rolltypeUndefined": "Error: rolltype is not defined",
+                "tooManyDice": "The table is too small to throw that many dice on it. A maximum of 70 dice is allowed"
+            },
+            "results": {
+                "noDice": {
+                    "plaintext": "...und {msgauthor} hörte leise wie der Wind über den leeren Tisch strich, auf dem nicht ein Würfel zu sehen war...",
+                    "embed": "Wenn du ein Ergebnis erhalten möchtest, wäre es vermutlich sinnvoll, das nächste mal auch einen Würfel zu werfen."
+                },
+                "singleDice": "es wurde mit einem {rolltype}-seitigen Würfel gewürfelt.",
+                "multiDice": "es wurde mit {rollcountmax {rolltype}-seitigen Würfeln gewürfelt."
+            }
+        },
+        "restart": {
+            "start": "Der Kristall scheint sich zu erneuern ...",
+            "success": "Eine neue astrale Struktur wohnt dem Artefakt nun inne",
+            "error": "Der Kristall ist zerbrochen ..."
+        }
+    }
+}
