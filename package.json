@@ -15,7 +15,6 @@
   "scripts": {
     "build": "tsc",
     "start": "node out/index.js",
-    "run": "npm run build & npm run start",
     "watch:ts": "tsc --watch"
   }
 }
