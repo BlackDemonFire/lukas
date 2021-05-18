@@ -9,27 +9,13 @@ export class DB {
     protected statements: Map<string, Statement> = new Map();
     constructor() {
         this.db = new sqlite("data/users.sqlite");
-        const exists: Function = this.db.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name = ?;").get;
-        const dsacharstable = exists("dsachars");
-        const settingstable = exists("settings");
-        const usertable = exists("userdb");
-        const giftable = exists("gifdb");
-        if (!dsacharstable['count(*)']) {
-            this.db.prepare("CREATE TABLE 'dsachars' (prefix text PRIMARY KEY, avatar text, displayname text);").run();
-        }
-        if (!settingstable['count(*)']) {
-            this.db.prepare("CREATE TABLE 'settings' (guild text PRIMARY KEY, language text);").run();
-        }
-        if (!usertable['count(*)']) {
-            this.db.prepare("CREATE TABLE 'userdb' (id text PRIMARY KEY, giftype text, color text, name text);").run();
-        }
-        if (!giftable['count(*)']) {
-            this.db.prepare("CREATE TABLE 'gifdb' (url text PRIMARY KEY, giftype text, actiontype text);").run()
-        }
-        if (!giftable['count(*)'] && !usertable['count(*)'] && !settingstable['count(*)'] && !dsacharstable['count(*)']) {
-            this.db.pragma('synchronous = 1')
-            this.wal = this.db.pragma('journal_mode = wal')
-        }
+        this.db.prepare("CREATE TABLE IF NOT EXISTS 'dsachars' (prefix text PRIMARY KEY, avatar text, displayname text);").run();
+        this.db.prepare("CREATE TABLE IF NOT EXISTS 'settings' (guild text PRIMARY KEY, language text);").run();
+        this.db.prepare("CREATE TABLE IF NOT EXISTS 'userdb' (id text PRIMARY KEY, giftype text, color text, name text);").run();
+        this.db.prepare("CREATE TABLE IF NOT EXISTS 'gifdb' (url text PRIMARY KEY, giftype text, actiontype text);").run()
+        this.db.pragma('synchronous = 1')
+        this.wal = this.db.pragma('journal_mode = wal')
+        
         this.statements.set("newuser", this.db.prepare("INSERT OR IGNORE INTO userdb VALUES (@id, @giftype, @color, @name);"));
         this.statements.set("setname", this.db.prepare("UPDATE userdb SET name = @name WHERE id = @id"));
         this.statements.set("setcolor", this.db.prepare("UPDATE userdb SET color = @color WHERE id = @id"));
@@ -41,7 +27,7 @@ export class DB {
         this.statements.set("newgif", this.db.prepare("INSERT OR IGNORE INTO gifdb VALUES (@url, @giftype, @actiontype);"));
         this.statements.set("newDSAChar", this.db.prepare("INSERT OR IGNORE INTO dsachars VALUES (@prefix, @avatar, @displayname)"));
         this.statements.set("getDSAChar", this.db.prepare("SELECT * FROM dsachars WHERE prefix = @prefix;"));
-        this.statements.set("deleteDSAChar", this.db.prepare("DELETE * FROM dsachars WHERE prefix = @prefix;"));
+        this.statements.set("deleteDSAChar", this.db.prepare("DELETE FROM dsachars WHERE prefix = @prefix;"));
         this.statements.set("setLang", this.db.prepare("UPDATE settings SET language = @language WHERE guild = @guild"));
         this.statements.set("getLang", this.db.prepare("SELECT language FROM settings WHERE guild = @guild;"));
         this.statements.set("initSettings", this.db.prepare("INSERT OR IGNORE INTO settings VALUES (@guild, @language);"));

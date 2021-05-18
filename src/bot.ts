@@ -8,7 +8,6 @@ export class Bot extends Client {
     constructor(opts?: ClientOptions) {
         super(opts);
     }
-    application: ClientApplication
     commands: Collection<string, Command> = new Collection();
     commandusage: Map<Snowflake, Array<number>> = new Map();
     config: config = require("../config.json");

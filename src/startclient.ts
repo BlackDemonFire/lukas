@@ -1,8 +1,9 @@
+import { Intents } from "discord.js";
 import { readdir } from "fs";
 import { Bot } from "./bot";
 
 export function start() {
-    const client: Bot = new Bot();
+    const client: Bot = new Bot({ intents: Intents.NON_PRIVILEGED });
     readdir("./out/events", (err, files) => {
         if (err) return console.error(err);
         files.forEach((file: string) => {
@@ -12,7 +13,7 @@ export function start() {
             client.on(eventName, event.event.bind(null, client));
         });
     });
-    
+
     readdir("./out/commands", (err, files) => {
         if (err) return console.error(err);
         files.forEach((file: string) => {
