@@ -2,7 +2,6 @@ type nil = undefined | null | void
 type config = {
     prefix: string
     token: string
-    ignoredGuilds: string[]
     randomAPIKey: string | nil
     logging: {
         logSilly: boolean
