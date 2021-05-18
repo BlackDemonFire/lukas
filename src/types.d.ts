@@ -51,6 +51,7 @@ type language = {
         newgif: {
             description: string
             wrongArgs: string
+            checking: string
             success: string
         }
         new: {
