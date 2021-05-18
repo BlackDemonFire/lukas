@@ -30,7 +30,7 @@ export class DB {
         this.statements.set("deleteDSAChar", this.db.prepare("DELETE FROM dsachars WHERE prefix = @prefix;"));
         this.statements.set("setLang", this.db.prepare("UPDATE settings SET language = @language WHERE guild = @guild"));
         this.statements.set("getLang", this.db.prepare("SELECT language FROM settings WHERE guild = @guild;"));
-        this.statements.set("initSettings", this.db.prepare("INSERT OR IGNORE INTO settings VALUES (@guild, @language);"));
+        this.statements.set("initLang", this.db.prepare("INSERT OR IGNORE INTO settings VALUES (@guild, @language);"));
     }
     newuser(user: User) {
         this.statements.get("newuser").run({ id: user.id, giftype: "anime", color: "RANDOM", name: "" });
