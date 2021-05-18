@@ -1,5 +1,5 @@
 {
-    "commands": {
+    "command": {
         "roll": {
             "description": "roll a dice - defaults to 1d6, to select the number of dice, use a number - to change the dice type use d<number>/w<number>",
             "errors": {
