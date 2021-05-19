@@ -95,11 +95,11 @@
                 "{a} hugs {b} tightly"
             ]
         },
-        "fuck": {
+        "hold": {
             "description": "Hold someones hand",
             "singleUser": [
-                "I'll hold your hand {a} 😏", 
-                "🍆 {a}"
+                "I'll hold your hand {a} 🥺", 
+                "Do you want me to hold your hand, {a}?"
             ],
             "multiUser": [
                 "{a} holds {b}'s hand. Hot!"

@@ -87,7 +87,7 @@ type language = {
             singleUser: string[]
             multiUser: string[]
         }
-        fuck: {
+        hold: {
             description: string
             singleUser: string[]
             multiUser: string[]

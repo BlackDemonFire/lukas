@@ -96,14 +96,14 @@
                 "{a} gibt {b} eine feste Umarmung. _fest zudrücken!_"
             ]
         },
-        "fuck": {
-            "description": "Fuck someone",
+        "hold": {
+            "description": "Mit jemandem Händchen halten",
             "singleUser": [
-                "I'll hold your hand {a} 😏", 
-                "🍆 {a}"
+                "Ich werde deine Hand halten, {a} 🥺", 
+                "Soll ich deine Hand halten, {a}?"
             ],
             "multiUser": [
-                "{a} holds {b}'s hand. Hot!"
+                "{a} hält mit {b} Händchen 😊"
             ]
         },
         "help": {

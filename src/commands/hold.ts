@@ -19,13 +19,13 @@ export default class hug extends GifCommand {
         if (userA == "") userA = message.guild ? message.member.displayName : message.author.username;
         var userB: string = await super.parseUser(client, message, args, language);
         if (userB == "") {
-            var responseString: string = (await client.random.choice(language.command.fuck.singleUser)).replace(/{a}/g, userA);
+            var responseString: string = (await client.random.choice(language.command.hold.singleUser)).replace(/{a}/g, userA);
         } else {
-            responseString = (await client.random.choice(language.command.fuck.multiUser)).replace(/{a}/g, userA).replace(/{b}/g, userB);
+            responseString = (await client.random.choice(language.command.hold.multiUser)).replace(/{a}/g, userA).replace(/{b}/g, userB);
         }
         var embed = new MessageEmbed()
             .setImage(gif)
-            .setAuthor("fuck")
+            .setAuthor("hold")
             .setDescription(responseString)
             .setColor(color);
         message.channel.send(embed);
