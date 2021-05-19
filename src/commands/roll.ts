@@ -116,18 +116,19 @@ export default class Roll extends Command {
 
 		if (rollcountmax == "0") {
 			const plaintext = language.command.roll.results.noDice.plaintext.replace("{msgauthor}", msgauthor);
-			""
 			const embed = new MessageEmbed()
 				.setColor(0x36393E)
 				.setDescription('<:info_1:498285998346731530> ' + language.command.roll.results.noDice.embed)
 				.setFooter("@" + msgauthor);
 			return message.channel.send("*" + plaintext + "*", embed);
 		}
-
+		//@ts-ignore
+		if (isNaN(rollcountmax)) return message.channel.send("<:warn_3:498277726604754946> " + language.command.roll.errors.rollcountNotNumeric)
 		//roll the dice and display the result
 		var rollresult: string = "";
 		let useEmotes: boolean;
-		let result: number[] = await client.random.ints(1, rolltype, parseInt(rollcountmax));
+		var rollcount: number = parseInt(rollcountmax, 10);
+		let result: number[] = await client.random.ints(1, rolltype, rollcount);
 		result.forEach((num: number) => {
 			if (rolltype < 10) {
 				useEmotes = true;

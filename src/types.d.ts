@@ -22,6 +22,7 @@ type language = {
                 noSides: string
                 rolltypeUndefined: string
                 tooManyDice: string
+                rollcountNotNumeric: string
             }
             results: {
                 noDice: {
