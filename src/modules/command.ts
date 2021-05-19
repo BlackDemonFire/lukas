@@ -23,8 +23,8 @@ abstract class Command {
         if (apk.owner instanceof Team) {
             return apk.owner.members.has(message.author.id);
         } else if (apk.owner instanceof User) {
-            return apk.owner.id==message.author.id;
-        } 
+            return apk.owner.id == message.author.id;
+        }
         return false;
     }
 }
@@ -36,6 +36,7 @@ abstract class GifCommand extends Command {
     async parseUser(client: Bot, message: Message, args: string[], language: language) {
         var userB: string = "";
         var mentioned: string[] = [];
+        var self: boolean = false
         if (args && args.length > 0) {
             for (const arg of args) {
                 var name: string;
@@ -44,14 +45,17 @@ abstract class GifCommand extends Command {
                     let user = await client.users.fetch(ping[1]);
                     if (user) name = client.db.getname(user);
                     if (!name || (name == "")) name = message.guild ? message.guild.members.resolve(user).displayName : user.username;
-                    if (user == message.author) userB = "";
+                    if (user == message.author) {
+                        userB = "";
+                        self = true;
+                    }
                     mentioned.push(name);
                 } else {
                     if (!arg || arg == "") return;
                     mentioned.push(arg);
                 }
             }
-            if (userB == "") {
+            if (userB == "" && !self) {
                 switch (mentioned.length) {
                     case 1:
                         userB = mentioned[0];

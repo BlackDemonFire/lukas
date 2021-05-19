@@ -87,6 +87,11 @@ type language = {
             singleUser: string[]
             multiUser: string[]
         }
+        fuck: {
+            description: string
+            singleUser: string[]
+            multiUser: string[]
+        }
         help: {
             description: string
             commandNotFound: string

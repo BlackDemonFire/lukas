@@ -95,6 +95,16 @@
                 "{a} gibt {b} eine feste Umarmung. _fest zudrücken!_"
             ]
         },
+        "fuck": {
+            "description": "Fuck someone",
+            "singleUser": [
+                "I'll hold your hand {a} 😏", 
+                "🍆 {a}"
+            ],
+            "multiUser": [
+                "{a} holds {b}'s hand. Hot!"
+            ]
+        },
         "help": {
             "description": "Hilfe für Befehle",
             "commandNotFound": "Der Befehl {cmd} wurde nicht gefunden.",

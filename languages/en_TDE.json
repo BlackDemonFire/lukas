@@ -95,6 +95,16 @@
                 "{a} hugs {b} tightly"
             ]
         },
+        "fuck": {
+            "description": "Hold someones hand",
+            "singleUser": [
+                "I'll hold your hand {a} 😏", 
+                "🍆 {a}"
+            ],
+            "multiUser": [
+                "{a} holds {b}'s hand. Hot!"
+            ]
+        },
         "help": {
             "description": "displays help (for a command)",
             "commandNotFound": "command {cmd} not found.",
