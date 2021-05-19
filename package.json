@@ -16,6 +16,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node out/index.js",
-    "watch:ts": "tsc --watch"
+    "watch:ts": "tsc --watch",
+    "update": "echo 'pulling update from git' && git pull && echo 'updating dependencies' && npm install --frozen-lockfile && echo 'rebuilding bot' && rm -rf out && npm run build"
   }
 }
