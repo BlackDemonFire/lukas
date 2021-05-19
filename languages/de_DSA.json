@@ -18,7 +18,7 @@
                     "embed": "Wenn du ein Ergebnis erhalten möchtest, wäre es vermutlich sinnvoll, das nächste mal auch einen Würfel zu werfen."
                 },
                 "singleDice": "es wurde mit einem {rolltype}-seitigen Würfel gewürfelt.",
-                "multiDice": "es wurde mit {rollcountmax {rolltype}-seitigen Würfeln gewürfelt."
+                "multiDice": "es wurde mit {rollcountmax} {rolltype}-seitigen Würfeln gewürfelt."
             }
         },
         "restart": {
