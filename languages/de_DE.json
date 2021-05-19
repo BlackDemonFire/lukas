@@ -11,7 +11,8 @@
                 "noSides": "Fehler: Du hast versucht, mit einem seitenlosen Würfel zu würfeln.",
                 "rolltypeUndefined": "Fehler: Der Würfeltyp ist nicht definiert.",
                 "tooManyDice": "Der Tisch ist zu klein für so viele Würfel. Es sind maximal 70 Würfel erlaubt",
-                "rollcountNotNumeric": "Es wäre sinnvoll, eine Zahl und keine Buchstabensammlung an Würfeln anzugeben."
+                "rollcountNotNumeric": "Es wäre sinnvoll, eine Zahl und keine Buchstabensammlung an Würfeln anzugeben.",
+                "rolltypeNotNumeric": "Es wäre sinnvoll, eine Zahl und keine Buchstabensammlung an Würfelseiten anzugeben."
             },
             "results": {
                 "noDice": {

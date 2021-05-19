@@ -23,6 +23,7 @@ type language = {
                 rolltypeUndefined: string
                 tooManyDice: string
                 rollcountNotNumeric: string
+                rolltypeNotNumeric: string
             }
             results: {
                 noDice: {

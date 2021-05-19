@@ -11,7 +11,8 @@
                 "noSides": "Error: you intented to roll a dice with no sides",
                 "rolltypeUndefined": "Error: rolltype is not defined",
                 "tooManyDice": "The table is too small to throw that many dice on it. A maximum of 70 dice is allowed",
-                "rollcountNotNumeric": "You need to supply a number of dice, not random characters."
+                "rollcountNotNumeric": "You need to supply a number of dice, not random characters.",
+                "rolltypeNotNumeric": "You need to supply a number of sides for the dice, not random characters"
             },
             "results": {
                 "noDice": {

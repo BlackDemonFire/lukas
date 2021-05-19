@@ -108,7 +108,10 @@ export default class Roll extends Command {
 		if (rolltype == 0 && dicetype == "d0") return message.channel.send("<:warn_3:498277726604754946> " + language.command.roll.errors.noSides);
 
 		if (rolltype == 0) {
-			rolltype = parseInt(dicetype.substr(1));
+			dicetype = dicetype.substr(1);
+			//@ts-ignore
+			if (isNaN(dicetype)) return message.channel.send("<:warn_3:498277726604754946> " + language.command.roll.errors.rolltypeNotNumeric);
+			rolltype = parseInt(dicetype);
 			var gotStringReadyToConvert = true;
 		}
 
@@ -169,7 +172,7 @@ export default class Roll extends Command {
 				rollcountcur++;
 				rollresult += (num);
 
-				if (parseInt(rollcountmax) != rollcountcur) {
+				if (rollcount != rollcountcur) {
 					rollresult += " | ";
 				}
 			} //else
