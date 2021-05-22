@@ -131,6 +131,10 @@ type language = {
             singleUser: string[]
             multiUser: string[]
         }
+        cry: {
+            description: string
+            singleUser: string[]
+        }
         color: {
             description: string
             success: string

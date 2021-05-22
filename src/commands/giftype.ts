@@ -2,7 +2,7 @@ import { Bot } from "bot";
 import { Message } from "discord.js";
 import { Command } from "../modules/command";
 
-export default class giftype extends Command {
+export default class Giftype extends Command {
     constructor(client: Bot) {
         super(client)
     }

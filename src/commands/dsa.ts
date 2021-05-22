@@ -1,7 +1,7 @@
 import { Bot } from "bot";
 import { DMChannel, Message, TextChannel, Webhook } from "discord.js";
 import { Command } from "../modules/command";
-export default class dsa extends Command {
+export default class Dsa extends Command {
     constructor(client: Bot) {
         super(client);
     }

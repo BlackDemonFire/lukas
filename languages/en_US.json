@@ -150,6 +150,13 @@
                 "{a} cuddles {b} - adorable"
             ]
         },
+        "cry": {
+            "description": "Cry",
+            "singleUser": [
+                "{a} is crying...",
+                "Do you need a hug, {a}?"
+            ]
+        },
         "color": {
             "description": "Change your embed color (no specified color will result in random colors)",
             "success": "Your color was changed."

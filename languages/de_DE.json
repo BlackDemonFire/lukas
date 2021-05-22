@@ -150,6 +150,13 @@
                 "{a} kuschelt mit {b} - cute"
             ]
         },
+        "cry": {
+            "description": "Weinen",
+            "singleUser": [
+                "{a} weint...",
+                "Brauchst du eine Umarmung {a}?"
+            ]
+        },
         "color": {
             "description": "Ändere deine Embed Farbe (Keine Angabe führt zu zufälligen Farben.)",
             "success": "Deine Farbe wurde geändert."

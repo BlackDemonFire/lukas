@@ -2,7 +2,7 @@ import { Bot } from "bot";
 import { Message, MessageEmbed } from "discord.js";
 import { GifCommand } from "../modules/command";
 
-export default class hug extends GifCommand {
+export default class Hold extends GifCommand {
     constructor(client: Bot) {
         super(client);
     }

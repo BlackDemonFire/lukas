@@ -1,7 +1,7 @@
 import { Bot } from "bot"
 import { Message } from "discord.js"
 import { Command } from "../modules/command"
-export default class dsarm extends Command {
+export default class Dsarm extends Command {
     constructor(client: Bot) {
         super(client)
     }

@@ -5,7 +5,7 @@ import { freemem, hostname, totalmem, uptime as sUptime } from "os";
 import { uptime as pUptime } from "process";
 import { cpu } from "systeminformation";
 
-export default class info extends Command {
+export default class Info extends Command {
     constructor(client: Bot) {
         super(client);
     }

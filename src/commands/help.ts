@@ -2,7 +2,7 @@ import { Bot } from "bot";
 import { Message, MessageEmbed } from "discord.js";
 import { Command } from "../modules/command";
 
-export default class help extends Command {
+export default class Help extends Command {
     constructor(client: Bot) {
         super(client);
     }

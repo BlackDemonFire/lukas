@@ -2,14 +2,14 @@ import { Bot } from "bot";
 import { Message, MessageEmbed } from "discord.js";
 import { GifCommand } from "../modules/command";
 
-export default class hug extends GifCommand {
+export default class Cuddle extends GifCommand {
     constructor(client: Bot) {
         super(client);
     }
     help = {
         show: true,
         name: "cuddle",
-        usage: `${this.prefix}hug [user]`,
+        usage: `${this.prefix}cuddle [user]`,
         category: "gifs"
     }
     async run(client: Bot, message: Message, args: string[], language: language) {
