@@ -51,8 +51,9 @@ abstract class GifCommand extends Command {
                     }
                     mentioned.push(name);
                 } else {
-                    if (!arg || arg == "") return;
-                    mentioned.push(arg);
+                    if (!arg || arg == "") { } else {
+                        mentioned.push(arg);
+                    }
                 }
             }
             if (userB == "" && !self) {
