@@ -18,11 +18,7 @@ export default class Cry extends GifCommand {
         var color: string = client.db.getcolor(message.author);
         if (userA == "") userA = message.guild ? message.member.displayName : message.author.username;
         var userB: string = await super.parseUser(client, message, args, language);
-        if (userB == "") {
-            var responseString: string = (await client.random.choice(language.command.cry.singleUser)).replace(/{a}/g, userA);
-        } else {
-            return;
-        }
+        var responseString: string = (await client.random.choice(language.command.cry.singleUser)).replace(/{a}/g, userA);
         var embed = new MessageEmbed()
             .setImage(gif)
             .setAuthor("cry")
