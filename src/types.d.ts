@@ -109,7 +109,7 @@ type language = {
             description: string
             availableTypes: string
         }
-        gifaction: {
+        gifactions: {
             description: string
             response: string
         }

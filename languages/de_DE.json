@@ -126,7 +126,7 @@
             "description": "Ändere deinen Gif Typen",
             "availableTypes": "Die folgenden Typen sind verfügbar: {types}."
         },
-        "gifaction": {
+        "gifactions": {
             "description": "Zeigt verfügbare Gif Aktionen",
             "response": "Die folgenden Handlungen sind verfügbar: {actions}."
         },
