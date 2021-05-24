@@ -78,6 +78,7 @@ abstract class GifCommand extends Command {
                 }
             }
         } else userB = "";
+        if (userB.length > 1792) userB = userB.substring(0, 1792) + "...";
         return userB;
     }
 }
