@@ -40,6 +40,10 @@ type language = {
             success: string
             error: string
         }
+        purr: {
+            description: string
+            singleUser: string[]
+        }
         ping: {
             description: string
             apiLatency: string
@@ -105,6 +109,10 @@ type language = {
             description: string
             availableTypes: string
         }
+        gifaction: {
+            description: string
+            response: string
+        }
         eval: {
             description: string
             permissionError: string
@@ -138,6 +146,10 @@ type language = {
         color: {
             description: string
             success: string
+        }
+        blush: {
+            description: string
+            singleUser: string[]
         }
     }
     general: {

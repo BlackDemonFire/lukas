@@ -29,6 +29,13 @@
             "success": "This artifact has a new astral structure now.",
             "error": "The crystal broke down."
         },
+        "purr": {
+            "description": "Purr",
+            "singleUser": [
+                "{a} is purring~ Nya Nya~",
+                "{a} is purring"
+            ]
+        },
         "ping": {
             "description": "Get the bot's latency",
             "apiLatency": "API Latency is",
@@ -118,6 +125,10 @@
             "description": "Change your gif type",
             "availableTypes": "Following gif types are available: {types}."
         },
+        "gifaction": {
+            "description": "Get available gif actions",
+            "response": "Following gif actions are available: {actions}."
+        },
         "eval": {
             "description": "executes javascript code",
             "permissionError": "You are not permitted to use the eval command"
@@ -159,6 +170,14 @@
         "color": {
             "description": "Change your embed color (no specified color will result in random colors)",
             "success": "Your color was changed."
+        },
+        "blush": {
+            "description": "Blush",
+            "singleUser": [
+                "{a} is blushing",
+                "{a}'s face is red.",
+                "{a} is blushing~ So cute >w<"
+            ]
         }
     },
     "general": {

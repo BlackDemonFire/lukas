@@ -15,4 +15,7 @@ export class Bot extends Client {
     languages: Map<string, language> = new Map();
     logger = new Logger(this.config["logging"]);
     random: Random | FakeRandom = this.config.randomAPIKey ? new Random(this.config.randomAPIKey) : new FakeRandom();
+    get giftypes(): string[] {
+        return this.db.getgifactions();
+    }
 }

@@ -31,12 +31,49 @@ export class DB {
         this.statements.set("setLang", this.db.prepare("UPDATE settings SET language = @language WHERE guild = @guild"));
         this.statements.set("getLang", this.db.prepare("SELECT language FROM settings WHERE guild = @guild;"));
         this.statements.set("initLang", this.db.prepare("INSERT OR IGNORE INTO settings VALUES (@guild, @language);"));
+        this.statements.set("getgifactions", this.db.prepare("SELECT DISTINCT actiontype FROM gifdb;"));
+    }
+    deleteDSAChar(prefix: string) {
+        this.statements.get("deleteDSAChar").run({prefix});
+    }
+    getcolor(user: User) {
+        var data = this.statements.get("getcolor").get({ id: user.id });
+        return data ? data.color : "RANDOM";
+    }
+    getDSAChar(prefix: string): dsachar | nil {
+        return this.statements.get("getDSAChar").get({ prefix });
+    }
+    getgif(action: string, type: string) {
+        var data = this.statements.get("getgif").get({ giftype: type, actiontype: action });
+        return data ? data.url : "";
+    }
+    getgifactions() {
+        var data = this.statements.get("getgifactions").all();
+        return data ? data.map((row) => row.actiontype) : [];
+    }
+    getgiftype(user: User) {
+        var data = this.statements.get("getgiftype").get({ id: user.id });
+        return data ? data.giftype : "anime";
+    }
+    getLang(guild: Guild): string {
+        var data = this.statements.get("getLang").get({ guild: guild.id });
+        return data ? data.language : "";
+    }
+    getname(user: User) {
+        var data = this.statements.get("getname").get({ id: user.id });
+        return data ? data.name : "";
+    }
+    initLang(guild: Guild, lang: string) {
+        this.statements.get("initLang").run({ guild: guild.id, language: lang });
+    }
+    newDSAChar(prefix: string, displayname: string, avatar: string) {
+        this.statements.get("newDSAChar").run({ prefix, avatar, displayname });
+    }
+    newgif(url: string, action: string, type: string) {
+        this.statements.get("newgif").run({ url: url, giftype: type, actiontype: action });
     }
     newuser(user: User) {
         this.statements.get("newuser").run({ id: user.id, giftype: "anime", color: "RANDOM", name: "" });
-    }
-    setname(user: User, name: string) {
-        this.statements.get("setname").run({ id: user.id, name: name });
     }
     setcolor(user: User, color: string) {
         this.statements.get("setcolor").run({ id: user.id, color: color });
@@ -44,42 +81,10 @@ export class DB {
     setgiftype(user: User, giftype: string) {
         this.statements.get("setgiftype").run({ id: user.id, giftype: giftype });
     }
-    getname(user: User) {
-        var data = this.statements.get("getname").get({ id: user.id });
-        return data ? data.name : "";
-    }
-    getcolor(user: User) {
-        var data = this.statements.get("getcolor").get({ id: user.id });
-        return data ? data.color : "RANDOM";
-    }
-    getgiftype(user: User) {
-        var data = this.statements.get("getgiftype").get({ id: user.id });
-        return data ? data.giftype : "anime";
-    }
-    getgif(action: string, type: string) {
-        var data = this.statements.get("getgif").get({ giftype: type, actiontype: action });
-        return data ? data.url : "";
-    }
-    newgif(url: string, action: string, type: string) {
-        this.statements.get("newgif").run({ url: url, giftype: type, actiontype: action });
-    }
-    newDSAChar(prefix: string, displayname: string, avatar: string) {
-        this.statements.get("newDSAChar").run({ prefix, avatar, displayname });
-    }
-    getDSAChar(prefix: string): dsachar | nil {
-        return this.statements.get("getDSAChar").get({ prefix });
-    }
-    deleteDSAChar(prefix: string) {
-        this.statements.get("deleteDSAChar").run({prefix});
-    }
     setLang(guild: Guild, lang: string) {
         this.statements.get("setLang").run({ guild: guild.id, language: lang });
     }
-    getLang(guild: Guild): string {
-        var data = this.statements.get("getLang").get({ guild: guild.id });
-        return data ? data.language : "";
-    }
-    initLang(guild: Guild, lang: string) {
-        this.statements.get("initLang").run({ guild: guild.id, language: lang });
+    setname(user: User, name: string) {
+        this.statements.get("setname").run({ id: user.id, name: name });
     }
 }

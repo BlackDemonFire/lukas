@@ -131,6 +131,13 @@ export default class Roll extends Command {
 		var rollresult: string = "";
 		let useEmotes: boolean;
 		var rollcount: number = parseInt(rollcountmax, 10);
+		if (rollcount < 1) rollcount = 1;
+		if (rollcount % 1 !== 0) rollcount = Math.round(rollcount);
+		//is the response too long?
+
+		if (rollcount > 70) {
+			return message.channel.send("<:warn_3:498277726604754946> " + language.command.roll.errors.tooManyDice)
+		}
 		let result: number[] = await client.random.ints(1, rolltype, rollcount);
 		result.forEach((num: number) => {
 			if (rolltype < 10) {
@@ -177,11 +184,6 @@ export default class Roll extends Command {
 				}
 			} //else
 		}) //forEach(num)
-		//is the response too long?
-
-		if (parseInt(rollcountmax) > 70) {
-			return message.channel.send("<:warn_3:498277726604754946> " + language.command.roll.errors.tooManyDice)
-		}
 
 		//response
 

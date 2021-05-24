@@ -44,7 +44,12 @@ abstract class GifCommand extends Command {
                 if (ping) {
                     let user = await client.users.fetch(ping[1]);
                     if (user) name = client.db.getname(user);
-                    if (!name || (name == "")) name = message.guild ? message.guild.members.resolve(user).displayName : user.username;
+                    if (!user) {
+                        name = arg;
+                    } else if (!name || (name == "")) {
+                        var member = message.guild ? message.guild.members.resolve(user) : null;
+                        name = member ? member.displayName : user.username;
+                    }
                     if (user == message.author) {
                         userB = "";
                         self = true;

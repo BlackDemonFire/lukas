@@ -8,6 +8,7 @@ export default class Lang extends Command {
     }
     run(client: Bot, message: Message, args: string[], language: language) {
         let lang: string;
+        var languages: string;
         if (!message.guild) return message.channel.send(language.general.guildOnly);
         if (!(message.member.permissions.has("ADMINISTRATOR") || this.isOwner(message))) return message.channel.send(language.command.lang.permissionError);
         if (!args || args == []) {
@@ -17,7 +18,6 @@ export default class Lang extends Command {
         }
         if (!client.languages.has(lang)) {
             var langs = Array.from(client.languages.keys());
-            var languages: string;
             switch (langs.length) {
                 case 1:
                     languages = langs[0]

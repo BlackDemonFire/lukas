@@ -2,26 +2,26 @@ import { Bot } from "bot";
 import { Message, MessageEmbed } from "discord.js";
 import { GifCommand } from "../modules/command";
 
-export default class Cry extends GifCommand {
+export default class Blush extends GifCommand {
     constructor(client: Bot) {
         super(client);
     }
     help = {
         show: true,
-        name: "cry",
-        usage: `${this.prefix}cry`,
+        name: "blush",
+        usage: `${this.prefix}blush`,
         category: "gifs"
     }
     async run(client: Bot, message: Message, args: string[], language: language) {
-        var gif: string = client.db.getgif("cry", client.db.getgiftype(message.author));
+        var gif: string = client.db.getgif("blush", client.db.getgiftype(message.author));
         var userA: string = client.db.getname(message.author);
         var color: string = client.db.getcolor(message.author);
         if (userA == "") userA = message.guild ? message.member.displayName : message.author.username;
         var userB: string = await super.parseUser(client, message, args, language);
-        var responseString: string = (await client.random.choice(language.command.cry.singleUser)).replace(/{a}/g, userA);
+        var responseString: string = (await client.random.choice(language.command.blush.singleUser)).replace(/{a}/g, userA);
         var embed = new MessageEmbed()
             .setImage(gif)
-            .setAuthor("cry")
+            .setAuthor("blush")
             .setDescription(responseString)
             .setColor(color);
         message.channel.send(embed);

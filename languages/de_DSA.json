@@ -33,6 +33,13 @@
             "apiLatency": "Die API Latenz beträgt",
             "latency": "Die Latenz beträgt"
         },
+        "purr": {
+            "description": "Purr",
+            "singleUser": [
+                "{a} schnurrt~ Nya Nya~",
+                "{a} schnurrt"
+            ]
+        },
         "pat": {
             "description": "Jemanden streicheln",
             "singleUser": [
@@ -118,6 +125,10 @@
             "description": "Ändere deinen Gif Typen",
             "availableTypes": "Die folgenden Typen sind verfügbar: {types}."
         },
+        "gifaction": {
+            "description": "Zeigt verfügbare Gif Aktionen",
+            "response": "Die folgenden Handlungen sind verfügbar: {actions}."
+        },
         "eval": {
             "description": "Javascript Code ausführen",
             "permissionError": "Du besitzt nicht die nötigen Rechte um diesen Befehl auszuführen."
@@ -159,6 +170,14 @@
         "color": {
             "description": "Ändere deine Embed Farbe (Keine Angabe führt zu zufälligen Farben.)",
             "success": "Deine Farbe wurde geändert."
+        },
+        "blush": {
+            "description": "Blush",
+            "singleUser": [
+                "{a} wird rot",
+                "{a}s Gesicht ist rot.",
+                "{a} wird rot. So cute >w<"
+            ]
         }
     },
     "general": {
