@@ -42,7 +42,11 @@ abstract class GifCommand extends Command {
                 var name: string;
                 let ping = arg.match(/<@!?(\d+)>/);
                 if (ping) {
-                    let user = await client.users.fetch(ping[1]);
+                    let user: User | nil;
+                    user = await client.users.fetch(ping[1]).catch((e) => {
+                        client.logger.error(e)
+                        user = null
+                    });
                     if (user) name = client.db.getname(user);
                     if (!user) {
                         name = arg;
