@@ -6,6 +6,7 @@ type config = {
     logging: {
         logSilly: boolean
         logEval: boolean
+        logError: boolean
     }
     defaultLanguage: string
 }
