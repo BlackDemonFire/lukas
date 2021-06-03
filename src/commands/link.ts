@@ -9,8 +9,8 @@ export default class Link extends Command {
     async run(client: Bot, message: Message, args: string[], language: language) {
         const embed: MessageEmbed = new MessageEmbed()
             .setTitle("Links")
-            .addField("Invite", client.generateInvite({ additionalScopes: ["applications.commands"], permissions: Permissions.ALL }))
-            .addField("Github", "https://github.com/BlackDemonFire/lukas.git")
+            .setDescription(`[Invite](${client.generateInvite({ additionalScopes: ["applications.commands"], permissions: Permissions.ALL })}\n`
+                + "[GitHub](https://github.com/BlackDemonFire/lukas.git)")
             .setColor(0xaa7777);
         message.channel.send(embed);
     }
