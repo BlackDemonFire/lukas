@@ -1,32 +1,36 @@
-import { Bot } from "bot";
 import { Message } from "discord.js";
+import { Bot } from "../bot.js";
+import type { language as lang } from "../types";
 
-function cmd(client: Bot, message: Message) {
-    let args = message.content.slice(client.config["prefix"].length).trim().split(" ")
-    const cmd = args.shift().toLowerCase();
-    const command = client.commands.get(cmd);
+async function cmd(client: Bot, message: Message) {
+    const prefix: string = process.env.PREFIX || "^";
+    const args = message.content.slice(prefix.length).trim().split(" ");
+    let commandname = args.shift();
+    if (commandname) commandname = commandname.toLowerCase();
+    if (!commandname) commandname = "";
+    const command = client.commands.get(commandname);
     if (!command) return;
-    if (!client.commandusage.has(message.author.id)) client.commandusage.set(message.author.id, [])
-    if (cmd == "ping") {
-        var commandusage = client.commandusage.get(message.author.id)
-        commandusage.push(message.createdTimestamp)
-        client.commandusage.set(message.author.id, commandusage)
+    if (!client.commandusage.has(message.author.id)) client.commandusage.set(message.author.id, []);
+    if (commandname == "ping") {
+        const commandusage = client.commandusage.get(message.author.id)!;
+        commandusage.push(message.createdTimestamp);
+        client.commandusage.set(message.author.id, commandusage);
     } else {
-        client.commandusage.set(message.author.id, [])
+        client.commandusage.set(message.author.id, []);
     }
-    var language: language
+    let language: lang;
     if (message.guild) {
-        language = client.languages.get(client.db.getLang(message.guild));
+        language = client.languages.get(await client.db.getLang(message.guild))!;
     } else {
-        language = client.languages.get(client.config.defaultLanguage);
+        language = client.languages.get(process.env.DEFAULTLANG!)!;
     }
-    command.run(client, message, args, language)
+    command.run(client, message, args, language);
 }
 
 
-export function event(client: Bot, message: Message) {
+export async function event(client: Bot, message: Message) {
     if (message.author.bot) return;
-    if (message.guild) client.db.initLang(message.guild, client.config.defaultLanguage);
+    if (message.guild) client.db.initLang(message.guild, process.env.DEFAULTLANG!);
     client.db.newuser(message.author);
-    if (message.content.startsWith(client.config.prefix)) return cmd(client, message);
+    if (message.content.startsWith(process.env.PREFIX!)) return await cmd(client, message);
 }

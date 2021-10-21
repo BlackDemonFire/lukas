@@ -1,25 +1,28 @@
-import { Bot } from "bot";
 import { ClientApplication, Message, Team, User } from "discord.js";
+import type { command, language as lang, nil } from "src/types";
+import { Bot } from "../bot.js";
+import logger from "./logger.js";
 
 abstract class Command {
     protected prefix: string;
     abstract help: command["help"];
     private client: Bot;
     constructor(client: Bot) {
-        this.prefix = client.config.prefix;
+        this.prefix = process.env.PREFIX || "^";
         this.client = client;
     }
-    abstract run(client: Bot, message: Message, args: string[], language: language)
+    // eslint-disable-next-line no-unused-vars
+    abstract run(client: Bot, message: Message, args: string[], language: lang): void | Promise<void>
     isAprilFools() {
-        const date = new Date()
-        let myDate = date.toLocaleDateString()
-        let datesplit: string[] = myDate.split("/")
-        let mon = datesplit.shift()
-        let dom = datesplit.shift()
-        return (dom == "1" && mon == "4")
+        const date = new Date();
+        const myDate = date.toLocaleDateString();
+        const datesplit: string[] = myDate.split("/");
+        const mon = datesplit.shift();
+        const dom = datesplit.shift();
+        return (dom == "1" && mon == "4");
     }
     isOwner(message: Message): boolean {
-        var apk: ClientApplication = this.client.application;
+        const apk: ClientApplication = this.client.application!;
         if (apk.owner instanceof Team) {
             return apk.owner.members.has(message.author.id);
         } else if (apk.owner instanceof User) {
@@ -33,25 +36,25 @@ abstract class GifCommand extends Command {
     constructor(client: Bot) {
         super(client);
     }
-    async parseUser(client: Bot, message: Message, args: string[], language: language) {
-        var userB: string = "";
-        var mentioned: string[] = [];
-        var self: boolean = false
+    async parseUser(client: Bot, message: Message, args: string[], language: lang) {
+        let userB: string = "";
+        const mentioned: string[] = [];
+        let self: boolean = false;
         if (args && args.length > 0) {
             for (const arg of args) {
-                var name: string;
-                let ping = arg.match(/<@!?(\d+)>/);
+                let name: string = "";
+                const ping = arg.match(/<@!?(\d+)>/);
                 if (ping) {
                     let user: User | nil;
                     user = await client.users.fetch(ping[1]).catch((e) => {
-                        client.logger.error(e)
-                        user = null
+                        logger.error(e);
+                        user = null;
                     });
-                    if (user) name = client.db.getname(user);
+                    if (user) name = await client.db.getname(user);
                     if (!user) {
                         name = arg;
                     } else if (!name || (name == "")) {
-                        var member = message.guild ? message.guild.members.resolve(user) : null;
+                        const member = message.guild ? message.guild.members.resolve(user) : null;
                         name = member ? member.displayName : user.username;
                     }
                     if (user == message.author) {
@@ -59,10 +62,8 @@ abstract class GifCommand extends Command {
                         self = true;
                     }
                     mentioned.push(name);
-                } else {
-                    if (!arg || arg == "") { } else {
-                        mentioned.push(arg);
-                    }
+                } else if (arg && arg !== "") {
+                    mentioned.push(arg);
                 }
             }
             if (userB == "" && !self) {
@@ -74,14 +75,16 @@ abstract class GifCommand extends Command {
                         userB = mentioned.join(` ${language.general.and} `);
                         break;
                     default:
-                        var last = mentioned.pop();
-                        userB = mentioned.join(", ");
-                        userB += ` ${language.general.and} `;
-                        userB += last;
+                        {
+                            const last = mentioned.pop();
+                            userB = mentioned.join(", ");
+                            userB += ` ${language.general.and} `;
+                            userB += last;
+                        }
                         break;
                 }
             }
-        } else userB = "";
+        } else {userB = "";}
         if (userB.length > 1792) userB = userB.substring(0, 1792) + "...";
         return userB;
     }
@@ -90,5 +93,5 @@ abstract class GifCommand extends Command {
 
 export {
     Command,
-    GifCommand
-}
+    GifCommand,
+};

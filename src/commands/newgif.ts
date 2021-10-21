@@ -1,18 +1,40 @@
-import { Bot } from "bot";
-import { Collector, DMChannel, Message, MessageReaction, ReactionCollector, Snowflake, Team, User } from "discord.js";
-import { Command } from "../modules/command";
+import { GuildChannel, Message, MessageReaction, ReactionCollector, Snowflake, Team, User } from "discord.js";
+import type { language as lang } from "src/types";
+import { Bot } from "../bot.js";
+import { Command } from "../modules/command.js";
+
+function onCollect(reaction: MessageReaction, client: Bot, message: Message, url: string, action: string, type: string, collectors: Record<string, ReactionCollector>, requestmessages: Record<string, Message>) {
+    if (!(client.application!.owner instanceof Team)) return;
+    switch (reaction.emoji.name) {
+        case "✅":
+            client.db.newgif(url, action, type);
+            for (const [memberid] of client.application!.owner.members) {
+                collectors[memberid].stop();
+                requestmessages[memberid].edit(`Gif check request from ${message.author.tag} in <#${message.channel.id}> (${message.channel instanceof GuildChannel ? message.channel.name : "DM"})\ngif: ${url}\naction: ${action}\ntype: ${type}\n\naccepted!`);
+            }
+            break;
+        case "❌":
+            for (const [memberid] of client.application!.owner.members) {
+                collectors[memberid].stop();
+                requestmessages[memberid].edit(`Gif check request from ${message.author.tag} in <#${message.channel.id}> (${message.channel instanceof GuildChannel ? message.channel.name : "DM"})\ngif: ${url}\naction: ${action}\ntype: ${type}\n\nrejected!`);
+            }
+            break;
+        default:
+            break;
+    }
+}
 
 export default class Newgif extends Command {
     constructor(client: Bot) {
         super(client);
     }
-    async run(client: Bot, message: Message, args: string[], language: language) {
-        var response: string;
+    async run(client: Bot, message: Message, args: string[], language: lang) {
+        let response: string;
         if (!args || args.length !== 3) {
             response = language.command.newgif.wrongArgs;
         } else {
-            let url: string = args[0];
-            let action: string = args[1].toLowerCase();
+            const url: string = args[0];
+            const action: string = args[1].toLowerCase();
             let type: string = args[2].toLowerCase();
             if (!type || type == "") type = "anime";
             if (this.isOwner(message)) {
@@ -20,41 +42,23 @@ export default class Newgif extends Command {
                 response = language.command.newgif.success;
             } else {
                 response = language.command.newgif.checking;
-                if (client.application.owner instanceof Team) {
-                    var requestmessages: Record<Snowflake, Message> = {};
-                    var collectors: Record<Snowflake, ReactionCollector> = {};
-                    function onCollect(reaction: MessageReaction, user: User) {
-                        if (!(client.application.owner instanceof Team)) return;
-                        switch (reaction.emoji.name) {
-                            case "✅":
-                                client.db.newgif(url, action, type);
-                                for (const [memberid, _member] of client.application.owner.members) {
-                                    collectors[memberid].stop();
-                                    requestmessages[memberid].edit(`Gif check request from ${message.author.tag} in <#${message.channel.id}> (${message.channel instanceof DMChannel ? "DM" : message.channel.name})\ngif: ${url}\naction: ${action}\ntype: ${type}\n\naccepted!`);
-                                }
-                                break;
-                            case "❌":
-                                for (const [memberid, _member] of client.application.owner.members) {
-                                    collectors[memberid].stop();
-                                    requestmessages[memberid].edit(`Gif check request from ${message.author.tag} in <#${message.channel.id}> (${message.channel instanceof DMChannel ? "DM" : message.channel.name})\ngif: ${url}\naction: ${action}\ntype: ${type}\n\nrejected!`);
-                                }
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                    for (const [memberid, member] of client.application.owner.members) {
-                        requestmessages[memberid] = await member.user.send(`Gif check request from ${message.author.tag} in <#${message.channel.id}> (${message.channel instanceof DMChannel ? "DM" : message.channel.name})\ngif: ${url}\naction: ${action}\ntype: ${type}`);
+                if (client.application!.owner instanceof Team) {
+                    const requestmessages: Record<Snowflake, Message> = {};
+                    const collectors: Record<Snowflake, ReactionCollector> = {};
+                    for (const [memberid, member] of client.application!.owner.members) {
+                        requestmessages[memberid] = await member.user.send(`Gif check request from ${message.author.tag} in <#${message.channel.id}> (${message.channel instanceof GuildChannel ? message.channel.name : "DM"})\ngif: ${url}\naction: ${action}\ntype: ${type}`);
                         await requestmessages[memberid].react("✅");
                         await requestmessages[memberid].react("❌");
-                        collectors[memberid] = await requestmessages[memberid].createReactionCollector((reaction: MessageReaction, user: User) => user == member.user).on("collect", onCollect);
+                        collectors[memberid] = requestmessages[memberid]
+                            .createReactionCollector({ filter: (_reaction: MessageReaction, user: User) => user == member.user })
+                            .on("collect", ((reaction) => onCollect(reaction, client, message, url, action, type, collectors, requestmessages)));
                     }
-                } else if (client.application.owner instanceof User) {
-                    var request = await client.application.owner.send(`Gif check request from ${message.author.tag} in <#${message.channel.id}> (${message.channel instanceof DMChannel ? "DM" : message.channel.name})\ngif: ${url}\naction: ${action}\ntype: ${type}`);
+                } else if (client.application!.owner instanceof User) {
+                    const request = await client.application!.owner.send(`Gif check request from ${message.author.tag} in <#${message.channel.id}> (${message.channel instanceof GuildChannel ? message.channel.name : "DM"})\ngif: ${url}\naction: ${action}\ntype: ${type}`);
                     await request.react("✅");
                     await request.react("❌");
-                    var coll = request.createReactionCollector((reaction: MessageReaction, user: User) => user == client.application.owner);
-                    coll.on("collect", (reaction: MessageReaction, user: User) => {
+                    const coll = request.createReactionCollector({ filter: (_reaction: MessageReaction, user: User) => user == client.application!.owner });
+                    coll.on("collect", (reaction: MessageReaction) => {
                         switch (reaction.emoji.name) {
                             case "✅":
                                 client.db.newgif(url, action, type);
@@ -68,7 +72,7 @@ export default class Newgif extends Command {
                             default:
                                 break;
                         }
-                    })
+                    });
                 }
             }
         }
@@ -78,6 +82,6 @@ export default class Newgif extends Command {
         show: true,
         name: "newgif",
         usage: `${this.prefix}newgif <url> <command> [type (defaults to anime)]`,
-        category: "gifs"
+        category: "gifs",
     }
 }

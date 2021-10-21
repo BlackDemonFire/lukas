@@ -1,26 +1,29 @@
-import { Bot } from "bot";
 import { Message } from "discord.js";
-import { Command } from "../modules/command";
+import type { language as lang } from "src/types";
+import { Bot } from "../bot.js";
+import { Command } from "../modules/command.js";
 
 export default class Giftype extends Command {
     constructor(client: Bot) {
-        super(client)
+        super(client);
     }
-    run(client: Bot, message: Message, args: string[], language: language) {
-        let giftype: string = args[0].toLowerCase();
-        var types = ["anime"];
+    async run(client: Bot, message: Message, args: string[], language: lang) {
+        const giftype: string = args[0].toLowerCase();
+        const types = ["anime"];
         if (!(types.includes(giftype))) {
-            var typesstring
+            let typesstring = "";
             switch (types.length) {
                 case 1:
-                    typesstring = types[0]
+                    typesstring = types[0];
                     break;
-                    case 2:
-                        typesstring = types.join(` ${language.general.and} `)
+                case 2:
+                    typesstring = types.join(` ${language.general.and} `);
+                    break;
                 default:
                     break;
             }
-            return message.channel.send(language.command.giftype.availableTypes.replace("{types}", typesstring));
+            message.channel.send(language.command.giftype.availableTypes.replace("{types}", typesstring));
+            return;
         }
         client.db.setgiftype(message.author, giftype);
     }
@@ -28,6 +31,6 @@ export default class Giftype extends Command {
         show: true,
         name: "giftype",
         usage: `${this.prefix}giftype <type>`,
-        category: "gifs"
+        category: "gifs",
     }
 }

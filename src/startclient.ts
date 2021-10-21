@@ -1,39 +1,49 @@
-import { Intents } from "discord.js";
-import { readdir } from "fs";
-import { Bot } from "./bot";
+import { readdir, readFileSync } from "fs";
+import { Bot } from "./bot.js";
+import logger from "./modules/logger.js";
+import type { language } from "./types";
 
 export function start() {
-    const client: Bot = new Bot({ intents: Intents.NON_PRIVILEGED });
-    readdir("./out/events", (err, files) => {
-        if (err) return console.error(err);
-        files.forEach((file: string) => {
+    const client: Bot = new Bot();
+    readdir("./dist/events", (err, files) => {
+        if (err) {
+            logger.error(err);
+            return;
+        }
+        files.forEach(async (file: string) => {
             if (!file.endsWith(".js")) return;
-            const event = require(`./events/${file.split(".")[0]}`);
-            let eventName = file.split(".")[0];
+            const event = await import(`./events/${file}`);
+            const eventName = file.split(".")[0];
             client.on(eventName, event.event.bind(null, client));
         });
     });
 
-    readdir("./out/commands", (err, files) => {
-        if (err) return console.error(err);
-        files.forEach((file: string) => {
+    readdir("./dist/commands", (err, files) => {
+        if (err) {
+            logger.error(err);
+            return;
+        }
+        files.forEach(async (file: string) => {
             if (!file.endsWith(".js")) return;
-            let cmd = require(`./commands/${file.split(".")[0]}`);
-            let commandName = file.split(".")[0];
-            console.log(`Attempting to load command ${commandName}`);
+            const cmd = await import(`./commands/${file}`);
+            const commandName = file.split(".")[0];
+            logger.info(`Attempting to load command ${commandName}`);
             client.commands.set(commandName, new cmd.default(client));
         });
     });
 
     readdir("./languages", (err, files) => {
-        if (err) return console.error(err);
+        if (err) {
+            logger.error(err);
+            return;
+        }
         files.forEach((file: string) => {
             if (!file.endsWith(".json")) return;
-            let lang: language = require(`../languages/${file}`);
-            let langName = file.split(".")[0];
-            console.log(`Registering Language ${langName}`);
+            const lang: language = JSON.parse(readFileSync(`./languages/${file}`, "utf-8"));
+            const langName = file.split(".")[0];
+            logger.info(`Registering Language ${langName}`);
             client.languages.set(langName, lang);
-        })
-    })
+        });
+    });
     return client;
 }

@@ -1,21 +1,22 @@
-import { Client, ClientApplication, ClientOptions, Collection, Snowflake } from "discord.js";
-import { DB } from "./db";
-import { Logger } from './modules/logger';
-import { FakeRandom, Random } from "./modules/random";
-import { Command } from "./modules/command";
+import { Client, Collection, Intents, Snowflake } from "discord.js";
+import { DB } from "./db.js";
+import { Command } from "./modules/command.js";
+import { FakeRandom, Random } from "./modules/random.js";
+import type { language } from "./types";
 
 export class Bot extends Client {
-    constructor(opts?: ClientOptions) {
-        super(opts);
+    constructor() {
+        super({
+            intents: [
+                Intents.FLAGS.GUILDS,
+                Intents.FLAGS.GUILD_MEMBERS,
+                Intents.FLAGS.GUILD_MESSAGES,
+            ],
+        });
     }
     commands: Collection<string, Command> = new Collection();
     commandusage: Map<Snowflake, Array<number>> = new Map();
-    config: config = require("../config.json");
     db: DB = new DB();
     languages: Map<string, language> = new Map();
-    logger = new Logger(this.config["logging"]);
-    random: Random | FakeRandom = this.config.randomAPIKey ? new Random(this.config.randomAPIKey) : new FakeRandom();
-    get giftypes(): string[] {
-        return this.db.getgifactions();
-    }
+    random: Random | FakeRandom = process.env.RANDOMKEY ? new Random(process.env.RANDOMKEY) : new FakeRandom();
 }

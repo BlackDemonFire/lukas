@@ -1,40 +1,45 @@
-import { Bot } from "bot"
-import { Message } from "discord.js"
-import { Command } from "../modules/command"
-import { inspect } from "util"
+import { Message, Util } from "discord.js";
+import type { language as lang } from "src/types";
+import { inspect } from "util";
+import { Bot } from "../bot.js";
+import { Command } from "../modules/command.js";
+import logger from "../modules/logger.js";
 
 export default class Eval extends Command {
     constructor(client: Bot) {
-        super(client)
+        super(client);
     }
     help = {
         show: false,
         name: "eval",
         usage: `${this.prefix}eval <code>`,
-        category: "Owner only"
+        category: "Owner only",
     }
-    run(client: Bot, message: Message, args: string[], language: language) {
-        if (!super.isOwner(message)) return message.channel.send(language.command.eval.permissionError);
-        client.logger.eval(message.author.tag, args.join(" "));
+    run(_client: Bot, message: Message, args: string[], language: lang) {
+        if (!super.isOwner(message)) {
+            message.channel.send(language.command.eval.permissionError);
+            return;
+        }
+        logger.info(message.author.tag, args.join(" "));
         try {
             const evaled = eval(args.join(" "));
-            client.logger.evalOut(message.author.tag, args.join(" "), evaled);
-            if (evaled) message.channel.send("```js\n{evaled}```".replace("{evaled}", evaled), {
-                split: {
+            logger.info(message.author.tag, args.join(" "), evaled);
+            if (evaled) {
+                const splitMessage = Util.splitMessage("```js\n{evaled}```".replace("{evaled}", inspect(evaled)), {
                     append: "```",
                     prepend: "```js\n",
-                    char: "\n"
-                }
-            });
+                    char: "\n",
+                });
+                splitMessage.forEach((m) => message.channel.send(m));
+            }
         } catch (err) {
-            client.logger.evalError(message.author.tag, args.join(" "), err)
-            message.channel.send("```js\n{error}```".replace("{error}", inspect(err)), {
-                split: {
-                    append: "```",
-                    prepend: "```js\n",
-                    char: "\n"
-                }
+            logger.error(`at commands/eval by ${message.author.tag}, using lines ${args.join(" ")}, resulting in ${err}`);
+            const splitMessage = Util.splitMessage("```js\n{error}```".replace("{error}", inspect(err)), {
+                append: "```",
+                prepend: "```js\n",
+                char: "\n",
             });
+            splitMessage.forEach((m) => message.channel.send(m));
         }
     }
 }

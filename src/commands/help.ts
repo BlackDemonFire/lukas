@@ -1,6 +1,7 @@
-import { Bot } from "bot";
 import { Message, MessageEmbed } from "discord.js";
-import { Command } from "../modules/command";
+import type { language as lang } from "src/types";
+import { Bot } from "../bot.js";
+import { Command } from "../modules/command.js";
 
 export default class Help extends Command {
     constructor(client: Bot) {
@@ -10,16 +11,19 @@ export default class Help extends Command {
         show: true,
         name: "help",
         usage: `${this.prefix}help [command]`,
-        category: "Utility"
+        category: "Utility",
     }
-    run(client: Bot, message: Message, args: string[], language: language) {
+    run(client: Bot, message: Message, args: string[], language: lang) {
         const embed = new MessageEmbed();
         if (args && args[0]) {
-            var cmd = args[0];
-            if (cmd.startsWith(client.config.prefix)) cmd = cmd.slice(client.config.prefix.length).toLowerCase();
-            var command = client.commands.get(cmd);
+            const prefix = process.env.PREFIX || "^";
+            const cmd = args[0].replace(prefix, "").toLowerCase();
+            const command = client.commands.get(cmd);
             if (command) {
-                embed.setDescription(language[cmd].description)
+                const langcmds = language.command;
+
+                const desc: string = langcmds[cmd as keyof lang["command"]].description;
+                embed.setDescription(desc)
                     .setFooter(command.help.category)
                     .setTitle(command.help.name)
                     .setAuthor("Help")
@@ -29,20 +33,21 @@ export default class Help extends Command {
                 embed.setDescription(language.command.help.commandNotFound.replace("{cmd}", args[0]));
             }
         } else {
-            var categories = [];
-            client.commands.map((cmd, _name) => {
+            const categories: {[key: string]: string[]} = {};
+            client.commands.map((cmd) => {
                 if (!cmd.help.show) return;
-                if (!categories[cmd.help.category]) {
-                    categories[cmd.help.category] = [cmd.help.name];
+                const category: string = cmd.help.category;
+                if (!categories[category]) {
+                    categories[category] = [cmd.help.name];
                 } else {
                     categories[cmd.help.category].push(cmd.help.name);
                 }
-            })
+            });
             for (const category in categories) {
                 embed.addField(category, categories[category].join(", "));
             }
             embed.setTitle("Help");
         }
-        message.channel.send(embed);
+        message.channel.send({ embeds: [embed] });
     }
 }

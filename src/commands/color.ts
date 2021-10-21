@@ -1,12 +1,13 @@
-import { Bot } from "bot";
 import { Message } from "discord.js";
-import { Command } from "../modules/command";
+import { Bot } from "../bot.js";
+import { Command } from "../modules/command.js";
+import type { language as lang } from "../types";
 
-export default class color extends Command {
+export default class Color extends Command {
     constructor(client: Bot) {
-        super(client)
+        super(client);
     }
-    run(client: Bot, message: Message, args: string[], language: language) {
+    run(client: Bot, message: Message, args: string[], language: lang) {
         let color: string;
         if (args && args.length > 0) {
             color = args[0];
@@ -20,6 +21,6 @@ export default class color extends Command {
         show: true,
         name: "color",
         usage: `${this.prefix}color [color]`,
-        category: "gifs"
+        category: "gifs",
     }
 }

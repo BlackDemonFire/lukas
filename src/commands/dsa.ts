@@ -1,6 +1,8 @@
-import { Bot } from "bot";
-import { DMChannel, Message, TextChannel, Webhook } from "discord.js";
-import { Command } from "../modules/command";
+import { BaseGuildTextChannel, Message, TextChannel, Webhook } from "discord.js";
+import type { language as lang } from "src/types";
+import { Bot } from "../bot.js";
+import { Command } from "../modules/command.js";
+
 export default class Dsa extends Command {
     constructor(client: Bot) {
         super(client);
@@ -9,43 +11,43 @@ export default class Dsa extends Command {
         show: true,
         name: "dsa",
         usage: `${this.prefix}dsa [character] <message>`,
-        category: "dsa"
+        category: "dsa",
     }
-    run(client: Bot, message: Message, args: string[], language: language) {
-        if (message.channel instanceof DMChannel) return message.channel.send(language.general.guildOnly);
-        if (!message.channel.permissionsFor(message.guild.me).has(["MANAGE_MESSAGES", "MANAGE_WEBHOOKS"])) return message.channel.send(language.command.dsa.permissions);
-        if (args && args[0]) {
-            if (!args[0].startsWith("$")) {
-                var sl = true;
-            } else {
-                var sl = false;
-            }
-        } else {
-            if (message.attachments.size > 1) {
-                var sl = true;
-            } else {
-                message.delete();
-                message.author.send(language.command.dsa.contentRequired);
-            }
+    async run(client: Bot, message: Message, args: string[], language: lang) {
+        if (!(message.channel instanceof BaseGuildTextChannel)) {
+            message.channel.send(language.general.guildOnly);
+            return;
         }
-        var clean = args[0].slice().toLowerCase();
-        console.log(clean);
-        var count = 0;
-        var npc: string = "";
-        var displayName: string;
-        var displayImg: string;
+        if (!message.guild?.me?.permissionsIn(message.channel).has(["MANAGE_MESSAGES", "MANAGE_WEBHOOKS"])) {
+            message.channel.send(language.command.dsa.permissions);
+            return;
+        }
+        let sl: boolean = true;
+        if (args && args[0]) {
+            sl = !args[0].startsWith("$");
+        } else if (message.attachments.size > 1) {
+            sl = true;
+        } else {
+            message.delete();
+            message.author.send(language.command.dsa.contentRequired);
+        }
+        const clean = args[0].slice().toLowerCase();
+        let count = 0;
+        let npc: string = "";
+        let displayName: string;
+        let displayImg: string | undefined = undefined;
         while (args[0].indexOf("$") == 0) {
             npc = npc + args.shift();
             count = count + 1;
         }
-        var char = client.db.getDSAChar(clean);
+        const char = await client.db.getDSAChar(clean);
         if (char) {
             displayName = char.displayname;
             displayImg = char.avatar;
         } else {
-            var i = 0
+            let i = 0;
             while (i < count) {
-                var npc = npc.replace("$", " ");
+                npc = npc.replace("$", " ");
                 i = i + 1;
             }
             displayName = npc.substr(1);
@@ -54,18 +56,20 @@ export default class Dsa extends Command {
             displayName = language.command.dsa.gameMaster;
             displayImg = "https://cdn.discordapp.com/icons/790938544293019649/d0843b10f5e7dabd10ebbea93acfca28.webp";
         }
-        if (message.channel instanceof TextChannel) message.channel.createWebhook(displayName, { avatar: displayImg }).then(async (npc: Webhook) => {
-            if (message.attachments.size == 0) {
-                await npc.send(args.join(" "));
-                npc.delete();
-                message.delete();
-            } else {
-                let attarr = [];
-                message.attachments.forEach(a => { attarr.push(a.url) });
-                await npc.send(args.join(" "), { files: attarr });
-                npc.delete();
-                message.delete();
-            }
-        })
+        if (message.channel instanceof TextChannel) {
+            message.channel.createWebhook(displayName, { avatar: displayImg }).then(async (webhook: Webhook) => {
+                if (message.attachments.size == 0) {
+                    await webhook.send(args.join(" "));
+                    webhook.delete();
+                    message.delete();
+                } else {
+                    const attarr: string[] = [];
+                    message.attachments.forEach(a => { attarr.push(a.url); });
+                    await webhook.send({ content: args.join(" "), files: attarr });
+                    webhook.delete();
+                    message.delete();
+                }
+            });
+        }
     }
 }

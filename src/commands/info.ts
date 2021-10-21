@@ -1,16 +1,16 @@
-import { Bot } from "bot";
 import { Message, MessageEmbed } from "discord.js";
-import { Command } from "../modules/command";
 import { freemem, hostname, totalmem, uptime as sUptime } from "os";
 import { uptime as pUptime } from "process";
 import { cpu } from "systeminformation";
+import { Bot } from "../bot.js";
+import { Command } from "../modules/command.js";
 
 export default class Info extends Command {
     constructor(client: Bot) {
         super(client);
     }
-    async run(client: Bot, message: Message, args: string[], language: language) {
-        let cpuData = await cpu();
+    async run(_client: Bot, message: Message) {
+        const cpuData = await cpu();
         const embed: MessageEmbed = new MessageEmbed()
             .setTitle("Info")
             .addField("Host", hostname())
@@ -19,13 +19,13 @@ export default class Info extends Command {
             .addField("Bot Uptime", new Date(1000 * pUptime()).toISOString().substr(11, 8))
             .addField("System Uptime", new Date(1000 * sUptime()).toISOString().substr(11, 8))
             .setColor(0xaa7777);
-        message.channel.send(embed);
+        message.channel.send({ embeds: [embed] });
     }
     help = {
         show: true,
         name: "info",
         usage: `${this.prefix}info`,
-        category: "Utility"
+        category: "Utility",
     }
 
 }

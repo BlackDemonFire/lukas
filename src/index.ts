@@ -1,6 +1,6 @@
-import { Bot } from './bot';
-import { start } from './startclient';
+import { Bot } from "./bot";
+import { start } from "./startclient.js";
 
-const client: Bot = start()
+const client: Bot = start();
 
-client.login(client.config.token);
+client.login(process.env.TOKEN);

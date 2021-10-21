@@ -1,16 +1,6 @@
-type nil = undefined | null | void
-type config = {
-    prefix: string
-    token: string
-    randomAPIKey: string | nil
-    logging: {
-        logSilly: boolean
-        logEval: boolean
-        logError: boolean
-    }
-    defaultLanguage: string
-}
-type language = {
+export type nil = undefined | null | void
+
+export type language = {
     command: {
         roll: {
             description: string
@@ -44,6 +34,12 @@ type language = {
         purr: {
             description: string
             singleUser: string[]
+        }
+        purge: {
+            description: string
+            error: {
+                notNumeric: string
+            }
         }
         ping: {
             description: string
@@ -157,9 +153,15 @@ type language = {
         timeout: string
         and: string
         guildOnly: string
+        userPermissionError: string
+        botPermissionError: string
+    }
+    permissions: {
+        ADMINISTRATOR: string
+        MANAGE_MESSAGES: string
     }
 }
-type command = {
+export type command = {
     run: Function
     help: {
         show: boolean
@@ -168,7 +170,7 @@ type command = {
         category: string
     }
 }
-type dsachar = {
+export type dsachar = {
     prefix: string
     avatar: string
     displayname: string

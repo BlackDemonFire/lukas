@@ -1,22 +1,26 @@
 {
   "dependencies": {
-    "better-sqlite3": "^7.1.2",
-    "chalk": "^4.1.0",
+    "@typescript-eslint/parser": "^5.1.0",
     "discord-api-types": "^0.18.1",
-    "discord.js": "github:discordjs/discord.js",
-    "random-org": "^2.1.1",
+    "discord.js": "^13.2.0",
+    "dotenv": "^10.0.0",
+    "eslint": "^7.32.0",
+    "pg": "^8.7.1",
+    "random-org": "^2.2.0",
     "systeminformation": "^5.6.7",
     "typescript": "^4.2.3",
+    "winston": "^3.3.3",
     "wmic": "^0.5.0"
   },
   "devDependencies": {
-    "@types/better-sqlite3": "^5.4.1",
-    "@types/node": "^14.14.35"
+    "@types/node": "^14.17.27",
+    "@types/pg": "^8.6.1"
   },
   "scripts": {
     "build": "tsc",
-    "start": "node out/index.js",
+    "start": "node -r dotenv/config dist/index.js",
     "watch:ts": "tsc --watch",
     "update": "echo 'pulling update from git' && git pull && echo 'updating dependencies' && npm install --frozen-lockfile && echo 'rebuilding bot' && rm -rf out && npm run build"
-  }
+  },
+  "type": "module"
 }

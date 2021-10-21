@@ -1,7 +1,8 @@
-import { Bot } from "bot";
+import type { ColorResolvable } from "discord.js";
 import { Message, MessageEmbed } from "discord.js";
-import { GifCommand } from "../modules/command";
-
+import type { language as lang } from "src/types";
+import { Bot } from "../bot.js";
+import { GifCommand } from "../modules/command.js";
 export default class Cry extends GifCommand {
     constructor(client: Bot) {
         super(client);
@@ -10,20 +11,19 @@ export default class Cry extends GifCommand {
         show: true,
         name: "cry",
         usage: `${this.prefix}cry`,
-        category: "gifs"
+        category: "gifs",
     }
-    async run(client: Bot, message: Message, args: string[], language: language) {
-        var gif: string = client.db.getgif("cry", client.db.getgiftype(message.author));
-        var userA: string = client.db.getname(message.author);
-        var color: string = client.db.getcolor(message.author);
-        if (userA == "") userA = message.guild ? message.member.displayName : message.author.username;
-        var userB: string = await super.parseUser(client, message, args, language);
-        var responseString: string = (await client.random.choice(language.command.cry.singleUser)).replace(/{a}/g, userA);
-        var embed = new MessageEmbed()
+    async run(client: Bot, message: Message, _args: string[], language: lang) {
+        const gif: string = await client.db.getgif("cry", await client.db.getgiftype(message.author));
+        let userA: string = await client.db.getname(message.author);
+        const color: ColorResolvable = await client.db.getcolor(message.author);
+        if (userA == "") userA = message.guild ? message.member!.displayName : message.author.username;
+        const responseString: string = (await client.random.choice(language.command.cry.singleUser)).replace(/{a}/g, userA);
+        const embed = new MessageEmbed()
             .setImage(gif)
             .setAuthor("cry")
             .setDescription(responseString)
             .setColor(color);
-        message.channel.send(embed);
+        message.channel.send({ embeds: [embed] });
     }
 }

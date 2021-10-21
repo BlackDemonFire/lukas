@@ -1,90 +1,130 @@
+import type { Guild, User } from "discord.js";
+import pg, { QueryResult } from "pg";
+import logger from "./modules/logger.js";
+import type { dsachar, nil } from "./types";
 
-import { Database, Statement } from "better-sqlite3";
-import sqlite = require("better-sqlite3");
-import { Guild, User } from "discord.js";
+const { Pool } = pg;
 
 export class DB {
-    private wal;
-    protected db: Database;
-    protected statements: Map<string, Statement> = new Map();
+    protected db;
     constructor() {
-        this.db = new sqlite("data/users.sqlite");
-        this.db.prepare("CREATE TABLE IF NOT EXISTS 'dsachars' (prefix text PRIMARY KEY, avatar text, displayname text);").run();
-        this.db.prepare("CREATE TABLE IF NOT EXISTS 'settings' (guild text PRIMARY KEY, language text);").run();
-        this.db.prepare("CREATE TABLE IF NOT EXISTS 'userdb' (id text PRIMARY KEY, giftype text, color text, name text);").run();
-        this.db.prepare("CREATE TABLE IF NOT EXISTS 'gifdb' (url text PRIMARY KEY, giftype text, actiontype text);").run()
-        this.db.pragma('synchronous = 1')
-        this.wal = this.db.pragma('journal_mode = wal')
-        
-        this.statements.set("newuser", this.db.prepare("INSERT OR IGNORE INTO userdb VALUES (@id, @giftype, @color, @name);"));
-        this.statements.set("setname", this.db.prepare("UPDATE userdb SET name = @name WHERE id = @id"));
-        this.statements.set("setcolor", this.db.prepare("UPDATE userdb SET color = @color WHERE id = @id"));
-        this.statements.set("setgiftype", this.db.prepare("UPDATE userdb SET giftype = @giftype WHERE id = @id"));
-        this.statements.set("getname", this.db.prepare("SELECT name FROM userdb WHERE id = @id"));
-        this.statements.set("getcolor", this.db.prepare("SELECT color FROM userdb WHERE id = @id"));
-        this.statements.set("getgiftype", this.db.prepare("SELECT giftype FROM userdb WHERE id = @id"));
-        this.statements.set("getgif", this.db.prepare("SELECT url FROM gifdb WHERE giftype = @giftype AND actiontype = @actiontype ORDER BY random() LIMIT 1;"));
-        this.statements.set("newgif", this.db.prepare("INSERT OR IGNORE INTO gifdb VALUES (@url, @giftype, @actiontype);"));
-        this.statements.set("newDSAChar", this.db.prepare("INSERT OR IGNORE INTO dsachars VALUES (@prefix, @avatar, @displayname)"));
-        this.statements.set("getDSAChar", this.db.prepare("SELECT * FROM dsachars WHERE prefix = @prefix;"));
-        this.statements.set("deleteDSAChar", this.db.prepare("DELETE FROM dsachars WHERE prefix = @prefix;"));
-        this.statements.set("setLang", this.db.prepare("UPDATE settings SET language = @language WHERE guild = @guild"));
-        this.statements.set("getLang", this.db.prepare("SELECT language FROM settings WHERE guild = @guild;"));
-        this.statements.set("initLang", this.db.prepare("INSERT OR IGNORE INTO settings VALUES (@guild, @language);"));
-        this.statements.set("getgifactions", this.db.prepare("SELECT DISTINCT actiontype FROM gifdb;"));
+        this.db = new Pool({
+            application_name: "lukas",
+            database: process.env.DB_NAME || "lukas",
+            host: process.env.DB_HOST || "localhost",
+            keepAlive: true,
+            log: ((...messages) => logger.debug(messages)),
+            port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 5432 || 5432,
+            password: process.env.DB_PASS,
+            user: process.env.DB_USER || "lukas",
+        });
+        this.ensureTables();
+    }
+    private async ensureTables() {
+        const client = await this.db.connect();
+        try {
+            const tables = (await client.query("SELECT * FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' AND schemaname != 'information_schema';")).rows;
+            logger.debug("Existing databases: " + tables.map(t => t.tablename).join(", "));
+            let todoTables = [
+                ["dsachars", "CREATE TABLE dsachars (prefix TEXT PRIMARY KEY, avatar TEXTm displayname TEXT);"],
+                ["settings", `CREATE TABLE settings
+                (guild TEXT PRIMARY KEY, language TEXT);`],
+                ["userdb", `CREATE TABLE userdb
+                (id TEXT PRIMARY KEY,
+                giftype TEXT,
+                color TEXT,
+                name TEXT);`],
+                ["gifdb", `CREATE TABLE gifdb
+                (url TEXT PRIMARY KEY,
+                giftype TEXT,
+                actiontype TEXT);`],
+            ];
+            if (tables && tables.length > 0) {
+                /** @type {string[]}*/
+                const tablenames = tables.map(t => t.tablename);
+                todoTables = todoTables.filter((val) => tablenames.indexOf(val[0]) == -1);
+            }
+            for (const stmt of todoTables) {
+                logger.debug(`creating table ${stmt[0]}`);
+                client.query(stmt[1]);
+            }
+        } catch (e) {
+            logger.error(e);
+            throw e;
+        } finally {
+            client.release();
+        }
+    }
+
+    private async query(sql: string, data: any[]): Promise<QueryResult | nil> {
+        const client = await this.db.connect();
+        try {
+            const res = await client.query(sql, data).catch(e => { throw e; });
+            if (res) return res;
+        } catch (e) {
+            logger.error(e);
+        } finally {
+            client.release();
+        }
     }
     deleteDSAChar(prefix: string) {
-        this.statements.get("deleteDSAChar").run({prefix});
+        this.query("DELETE FROM dsachars WHERE prefix = $1;", [prefix]);
     }
-    getcolor(user: User) {
-        var data = this.statements.get("getcolor").get({ id: user.id });
-        return data ? data.color : "RANDOM";
+    async getcolor(user: User) {
+        const data = await this.query("SELECT color FROM userdb WHERE id = $1;", [user.id]);
+        if (!data) return "RANDOM";
+        return data.rows ? data.rows[0].color : "RANDOM";
     }
-    getDSAChar(prefix: string): dsachar | nil {
-        return this.statements.get("getDSAChar").get({ prefix });
+    async getDSAChar(prefix: string): Promise<dsachar | nil> {
+        const data = await this.query("SELECT * FROM dsachars WHERE prefix = $1;", [prefix]);
+        if (!data) return;
     }
-    getgif(action: string, type: string) {
-        var data = this.statements.get("getgif").get({ giftype: type, actiontype: action });
-        return data ? data.url : "";
+    async getgif(actiontype: string, giftype: string): Promise<string> {
+        const data = await this.query("SELECT url FROM gifdb WHERE giftype = $1 AND actiontype = $2 ORDER BY random() LIMIT 1;", [giftype, actiontype]);
+        if (!data) return "";
+        return data.rows ? data.rows[0].url : "";
     }
-    getgifactions() {
-        var data = this.statements.get("getgifactions").all();
-        return data ? data.map((row) => row.actiontype) : [];
+    async getgifactions(): Promise<string[]> {
+        const data = await this.query("SELECT DISTINCT actiontype FROM gifdb;", []);
+        return data ? data.rows.map((row) => row.actiontype) : [];
     }
-    getgiftype(user: User) {
-        var data = this.statements.get("getgiftype").get({ id: user.id });
-        return data ? data.giftype : "anime";
+    async getgiftype(user: User): Promise<string> {
+        const data = await this.query("SELECT giftype FROM userdb WHERE id = $1;", [user.id]);
+        if (!data) return "anime";
+        return data.rows ? data.rows[0].giftype : "anime";
     }
-    getLang(guild: Guild): string {
-        var data = this.statements.get("getLang").get({ guild: guild.id });
-        return data ? data.language : "";
+    async getLang(guild: Guild): Promise<string> {
+        const data = await this.query("SELECT language FROM settings WHERE guild = $1;", [guild.id]);
+        if (!data) return "";
+        return data.rows ? data.rows[0].language : "";
     }
-    getname(user: User) {
-        var data = this.statements.get("getname").get({ id: user.id });
-        return data ? data.name : "";
+    async getname(user: User): Promise<string> {
+        const data = await this.query("SELECT name FROM userdb WHERE id = $1;", [user.id]);
+        if (!data) return "";
+        return data.rows ? data.rows[0].name : "";
     }
     initLang(guild: Guild, lang: string) {
-        this.statements.get("initLang").run({ guild: guild.id, language: lang });
+        this.query("INSERT OR IGNORE INTO settings VALUES ($1, $2);", [guild.id, lang]);
     }
     newDSAChar(prefix: string, displayname: string, avatar: string) {
-        this.statements.get("newDSAChar").run({ prefix, avatar, displayname });
+        this.query("INSERT OR IGNORE INTO dsachars VALUES ($1, $2, $3);", [prefix, avatar, displayname]);
     }
-    newgif(url: string, action: string, type: string) {
-        this.statements.get("newgif").run({ url: url, giftype: type, actiontype: action });
+    newgif(url: string, actiontype: string, giftype: string) {
+        this.query("INSERT OR IGNORE INTO gifdb VALUES ($1, $2, $3);", [url, giftype, actiontype]);
     }
     newuser(user: User) {
-        this.statements.get("newuser").run({ id: user.id, giftype: "anime", color: "RANDOM", name: "" });
+        this.query("INSERT OR IGNORE INTO userdb VALUES ($1, $2, $3, $4);", [user.id, "anime", "RANDOM", ""]);
     }
     setcolor(user: User, color: string) {
-        this.statements.get("setcolor").run({ id: user.id, color: color });
+        this.query("UPDATE userdb SET color = $2 WHERE id = $1;", [user.id, color]);
     }
     setgiftype(user: User, giftype: string) {
-        this.statements.get("setgiftype").run({ id: user.id, giftype: giftype });
+        this.query("UPDATE userdb SET giftype = $2 WHERE id = $1;", [user.id, giftype]);
     }
     setLang(guild: Guild, lang: string) {
-        this.statements.get("setLang").run({ guild: guild.id, language: lang });
+        this.query("UPDATE settings SET language = $2 WHERE guild = $1;", [guild.id, lang]);
     }
     setname(user: User, name: string) {
-        this.statements.get("setname").run({ id: user.id, name: name });
+        this.query("UPDATE userdb SET name = $2 WHERE id = $1;", [user.id, name]);
     }
 }

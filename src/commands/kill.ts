@@ -1,6 +1,8 @@
-import { Bot } from "bot";
 import { Message, MessageEmbed } from "discord.js";
-import { Command } from "../modules/command";
+import type { language as lang } from "src/types";
+import { Bot } from "../bot.js";
+import { Command } from "../modules/command.js";
+import logger from "../modules/logger.js";
 
 export default class Kill extends Command {
     constructor(client: Bot) {
@@ -10,19 +12,22 @@ export default class Kill extends Command {
         show: false,
         name: "kill",
         usage: `${this.prefix}kill`,
-        category: "Owner only"
+        category: "Owner only",
     }
-    async run(client: Bot, message: Message, args: string[], language: language) {
-        if (!super.isOwner(message)) return message.channel.send(language.command.kill.permissionError);
+    async run(client: Bot, message: Message, _args: string[], language: lang) {
+        if (!super.isOwner(message)) {
+            message.channel.send(language.command.kill.permissionError);
+            return;
+        }
         if (message !== null) {
             const plaintext = language.command.kill.success;
             const embed = new MessageEmbed()
                 .setImage("https://i.imgflip.com/19f1vf.jpg")
                 .setColor(0x36393E)
                 .setFooter("@" + message.author.username);
-            await message.channel.send(plaintext, embed);
+            await message.channel.send({ content: plaintext, embeds: [embed] });
         }
-        console.log("stopping bot...");
+        logger.info("stopping bot...");
         client.destroy();
         process.exit();
     }

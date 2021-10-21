@@ -1,29 +1,31 @@
-import { Bot } from "bot";
 import { Message } from "discord.js";
-import { Command } from "../modules/command";
+import type { language as lang } from "src/types";
+import { Bot } from "../bot.js";
+import { Command } from "../modules/command.js";
 
 export default class Gifaction extends Command {
     constructor(client: Bot) {
         super(client);
     }
-    run(client: Bot, message: Message, args: string[], language: language) {
-        var actions = client.db.getgifactions();
-        var actionsstring: string
+    async run(client: Bot, message: Message, _args: string[], language: lang) {
+        const actions = await client.db.getgifactions();
+        let actionsstring: string = "";
         switch (actions.length) {
             case 1:
                 actionsstring = actions[0];
                 break;
             case 2:
-                actionsstring = actions.join(` ${language.general.and} `)
+                actionsstring = actions.join(` ${language.general.and} `);
+                break;
             default:
                 break;
         }
-        message.channel.send(language.command.gifactions.response.replace("{actions}", actionsstring))
+        message.channel.send(language.command.gifactions.response.replace("{actions}", actionsstring));
     }
     help = {
         show: true,
         name: "gifaction",
         usage: `${this.prefix}gifaction`,
-        category: "gifs"
+        category: "gifs",
     }
 }
