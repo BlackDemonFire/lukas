@@ -26,7 +26,7 @@ export class DB {
             const tables = (await client.query("SELECT * FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' AND schemaname != 'information_schema';")).rows;
             logger.debug("Existing databases: " + tables.map(t => t.tablename).join(", "));
             let todoTables = [
-                ["dsachars", "CREATE TABLE dsachars (prefix TEXT PRIMARY KEY, avatar TEXTm displayname TEXT);"],
+                ["dsachars", "CREATE TABLE dsachars (prefix TEXT PRIMARY KEY, avatar TEXT, displayname TEXT);"],
                 ["settings", `CREATE TABLE settings
                 (guild TEXT PRIMARY KEY, language TEXT);`],
                 ["userdb", `CREATE TABLE userdb
