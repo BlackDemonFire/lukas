@@ -169,7 +169,8 @@
         },
         "color": {
             "description": "Change your embed color (no specified color will result in random colors)",
-            "success": "Your color was changed."
+            "success": "Your color was changed.",
+            "invalid_color": "I don't know such a color."
         },
         "blush": {
             "description": "Blush",

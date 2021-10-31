@@ -31,7 +31,5 @@ logger.add(
         format: format.json(),
     }),
 );
-// .add();
-
 
 export default logger;

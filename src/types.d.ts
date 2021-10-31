@@ -143,6 +143,7 @@ export type language = {
         color: {
             description: string
             success: string
+            invalid_color: string
         }
         blush: {
             description: string
