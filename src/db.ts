@@ -104,16 +104,16 @@ export class DB {
         return data.rows ? data.rows[0].name : "";
     }
     initLang(guild: Guild, lang: string) {
-        this.query("INSERT OR IGNORE INTO settings VALUES ($1, $2);", [guild.id, lang]);
+        this.query("INSERT INTO settings VALUES ($1, $2) ON CONFLICT DO NOTHING;", [guild.id, lang]);
     }
     newDSAChar(prefix: string, displayname: string, avatar: string) {
-        this.query("INSERT OR IGNORE INTO dsachars VALUES ($1, $2, $3);", [prefix, avatar, displayname]);
+        this.query("INSERT INTO dsachars VALUES ($1, $2, $3) ON CONFLICT DO NOTHING;", [prefix, avatar, displayname]);
     }
     newgif(url: string, actiontype: string, giftype: string) {
-        this.query("INSERT OR IGNORE INTO gifdb VALUES ($1, $2, $3);", [url, giftype, actiontype]);
+        this.query("INSERT INTO gifdb VALUES ($1, $2, $3) ON CONFLICT DO NOTHING;", [url, giftype, actiontype]);
     }
     newuser(user: User) {
-        this.query("INSERT OR IGNORE INTO userdb VALUES ($1, $2, $3, $4);", [user.id, "anime", "RANDOM", ""]);
+        this.query("INSERT INTO userdb VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING;", [user.id, "anime", "RANDOM", ""]);
     }
     setcolor(user: User, color: string) {
         this.query("UPDATE userdb SET color = $2 WHERE id = $1;", [user.id, color]);
