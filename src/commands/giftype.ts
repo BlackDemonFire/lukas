@@ -22,7 +22,7 @@ export default class Giftype extends Command {
                 default:
                     break;
             }
-            message.channel.send(language.command.giftype.availableTypes.replace("{types}", typesstring));
+            message.channel.send({ content: language.command.giftype.availableTypes.replace("{types}", typesstring) });
             return;
         }
         client.db.setgiftype(message.author, giftype);

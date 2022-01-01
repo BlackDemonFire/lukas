@@ -55,7 +55,7 @@ export default class Roll extends Command {
         // validify arguments
 
         if (args[2]) {
-            message.channel.send("<:warn_3:498277726604754946> " + language.command.roll.errors.tooManyArgs + rollargerror);
+            message.channel.send({ content: `<:warn_3:498277726604754946> ${language.command.roll.errors.tooManyArgs}${rollargerror}` });
             return;
         }
 
@@ -64,11 +64,11 @@ export default class Roll extends Command {
 
         if (args[0] && args[1]) {
             if (checkregex.test(rollarga) && checkregex.test(rollargb)) {
-                message.channel.send("<:warn_3:498277726604754946> " + language.command.roll.errors.doubleDiceType);
+                message.channel.send({ content: `<:warn_3:498277726604754946> ${language.command.roll.errors.doubleDiceType}` });
                 return;
             }
             if (!checkregex.test(rollarga) && !checkregex.test(rollargb)) {
-                message.channel.send("<:warn_3:498277726604754946> " + language.command.roll.errors.doubleRollCount);
+                message.channel.send({ content: `<:warn_3:498277726604754946> ${language.command.roll.errors.doubleRollCount}` });
                 return;
             }
             // process two arguments
@@ -79,7 +79,7 @@ export default class Roll extends Command {
                 dicetype = rollargb;
                 rollcountmax = rollarga;
             } else {
-                message.channel.send("<:warn_3:498277726604754946> " + language.command.roll.errors.schroedingersArgument);
+                message.channel.send({ content: `<:warn_3:498277726604754946> ${language.command.roll.errors.schroedingersArgument}` });
                 return;
             }
         }
@@ -115,22 +115,22 @@ export default class Roll extends Command {
         // convert String dicetype to Const rolltype
 
         if (rolltype == 0 && dicetype == "wx") {
-            message.channel.send("<:warn_3:498277726604754946> " + language.command.roll.errors.noDiceType);
+            message.channel.send({ content: `<:warn_3:498277726604754946> ${language.command.roll.errors.noDiceType}` });
             return;
         }
         if (rolltype == 0 && dicetype == "w0") {
-            message.channel.send("<:warn_3:498277726604754946> " + language.command.roll.errors.noSides);
+            message.channel.send({ content: `<:warn_3:498277726604754946> ${language.command.roll.errors.noSides}` });
             return;
         }
         if (rolltype == 0 && dicetype == "d0") {
-            message.channel.send("<:warn_3:498277726604754946> " + language.command.roll.errors.noSides);
+            message.channel.send({ content: `<:warn_3:498277726604754946> ${language.command.roll.errors.noSides}` });
             return;
         }
         if (rolltype == 0) {
             dicetype = dicetype.substr(1);
             // @ts-ignore
             if (isNaN(dicetype)) {
-                message.channel.send("<:warn_3:498277726604754946> " + language.command.roll.errors.rolltypeNotNumeric);
+                message.channel.send({ content:`<:warn_3:498277726604754946> ${language.command.roll.errors.rolltypeNotNumeric}` });
                 return;
             }
             rolltype = parseInt(dicetype);
@@ -138,21 +138,27 @@ export default class Roll extends Command {
         }
 
         if (rolltype == 0) {
-            message.channel.send("<:warn_3:498277726604754946> " + language.command.roll.errors.rolltypeUndefined + " \n" + "gotDefault = " + gotDefault + "\n" + "gotStringReadyToConvert = " + gotStringReadyToConvert + "\n" + "detectedOnlyOneArg = " + detectedOnlyOneArg + "\n" + "detectedDiceType = " + detectedDiceType);
+            message.channel.send({
+                content: `<:warn_3:498277726604754946> ${language.command.roll.errors.rolltypeUndefined} \
+                gotDefault = ${gotDefault}\
+                gotStringReadyToConvert = ${gotStringReadyToConvert}\
+                detectedOnlyOneArg = ${detectedOnlyOneArg}\
+                detectedDiceType = ${detectedDiceType}`,
+            });
             return;
         }
         if (rollcountmax == "0") {
             const plaintext = language.command.roll.results.noDice.plaintext.replace("{msgauthor}", msgauthor);
             const embed = new MessageEmbed()
                 .setColor(0x36393E)
-                .setDescription("<:info_1:498285998346731530> " + language.command.roll.results.noDice.embed)
-                .setFooter("@" + msgauthor);
+                .setDescription(`<:info_1:498285998346731530> ${language.command.roll.results.noDice.embed}`)
+                .setFooter({ text: `@${msgauthor}` });
             message.channel.send({ content: `*${plaintext}*`, embeds: [embed] });
             return;
         }
         // @ts-ignore
         if (isNaN(rollcountmax)) {
-            message.channel.send("<:warn_3:498277726604754946> " + language.command.roll.errors.rollcountNotNumeric);
+            message.channel.send({ content: `<:warn_3:498277726604754946> ${language.command.roll.errors.rollcountNotNumeric}` });
             return;
         }
         // roll the dice and display the result
@@ -164,7 +170,7 @@ export default class Roll extends Command {
         // is the response too long?
 
         if (rollcount > 70) {
-            message.channel.send("<:warn_3:498277726604754946> " + language.command.roll.errors.tooManyDice);
+            message.channel.send({ content: `<:warn_3:498277726604754946> ${language.command.roll.errors.tooManyDice}` });
             return;
         }
         const result: number[] = await client.random.ints(1, rolltype, rollcount);
@@ -222,24 +228,26 @@ export default class Roll extends Command {
             const plaintext = language.command.roll.results.singleDice.replace("{rolltype}", rolltype.toString());
             const embed = new MessageEmbed()
                 .setColor(0x36393E)
-                .setFooter("@" + msgauthor);
+                .setFooter({ text: `@${msgauthor}` });
             if (useEmotes) {
                 embed.setDescription(rollresult);
             } else {
-                embed.setAuthor(rollresult);
+                embed.setAuthor({ name: rollresult });
             }
 
             message.channel.send({ content: plaintext, embeds: [embed] });
             return;
         } else {
-            const plaintext = language.command.roll.results.multiDice.replace("{rolltype}", rolltype.toString()).replace("{rollcountmax}", rollcountmax.toString());
+            const plaintext = language.command.roll.results.multiDice
+                .replace("{rolltype}", rolltype.toString())
+                .replace("{rollcountmax}", rollcountmax.toString());
             const embed = new MessageEmbed()
                 .setColor(0x36393E)
-                .setFooter("@" + msgauthor);
+                .setFooter({ text: `@${msgauthor}` });
             if (useEmotes) {
                 embed.setDescription(rollresult);
             } else {
-                embed.setAuthor(rollresult);
+                embed.setAuthor({ name: rollresult });
             }
 
             message.channel.send({ content: plaintext, embeds: [embed] });

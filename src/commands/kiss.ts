@@ -28,7 +28,7 @@ export default class Kiss extends GifCommand {
         }
         const embed = new MessageEmbed()
             .setImage(gif)
-            .setAuthor("kiss")
+            .setAuthor({ name: "kiss" })
             .setDescription(responseString)
             .setColor(color);
         message.channel.send({ embeds: [embed] });

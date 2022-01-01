@@ -21,7 +21,7 @@ export default class Cry extends GifCommand {
         const responseString: string = (await client.random.choice(language.command.cry.singleUser)).replace(/{a}/g, userA);
         const embed = new MessageEmbed()
             .setImage(gif)
-            .setAuthor("cry")
+            .setAuthor({ name: "cry" })
             .setDescription(responseString)
             .setColor(color);
         message.channel.send({ embeds: [embed] });

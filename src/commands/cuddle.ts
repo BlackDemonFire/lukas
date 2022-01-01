@@ -28,7 +28,7 @@ export default class Cuddle extends GifCommand {
         }
         const embed = new MessageEmbed()
             .setImage(gif)
-            .setAuthor("cuddle")
+            .setAuthor({ name: "cuddle" })
             .setDescription(responseString)
             .setColor(color);
         message.channel.send({ embeds: [embed] });

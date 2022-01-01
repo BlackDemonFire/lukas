@@ -26,7 +26,7 @@ export default class Help extends Command {
                 embed.setDescription(desc)
                     .setFooter(command.help.category)
                     .setTitle(command.help.name)
-                    .setAuthor("Help")
+                    .setAuthor({ name: "Help" })
                     .addField(language.command.help.usage.Usage, command.help.usage)
                     .addField(language.command.help.usage.Usage, language.command.help.usage.args);
             } else {

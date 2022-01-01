@@ -16,7 +16,7 @@ export default class Kill extends Command {
     }
     async run(client: Bot, message: Message, _args: string[], language: lang) {
         if (!super.isOwner(message)) {
-            message.channel.send(language.command.kill.permissionError);
+            message.channel.send({ content: language.command.kill.permissionError });
             return;
         }
         if (message !== null) {
@@ -24,7 +24,7 @@ export default class Kill extends Command {
             const embed = new MessageEmbed()
                 .setImage("https://i.imgflip.com/19f1vf.jpg")
                 .setColor(0x36393E)
-                .setFooter("@" + message.author.username);
+                .setFooter({ text: `@${message.author.username}`, iconURL: message.author.defaultAvatarURL });
             await message.channel.send({ content: plaintext, embeds: [embed] });
         }
         logger.info("stopping bot...");

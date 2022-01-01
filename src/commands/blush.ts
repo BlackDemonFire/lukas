@@ -23,7 +23,7 @@ export default class Blush extends GifCommand {
         const responseString: string = (await client.random.choice(language.command.blush.singleUser)).replace(/{a}/g, userA);
         const embed = new MessageEmbed()
             .setImage(gif)
-            .setAuthor("blush")
+            .setAuthor({ name: "blush" })
             .setDescription(responseString)
             .setColor(color);
         message.channel.send({ embeds: [embed] });

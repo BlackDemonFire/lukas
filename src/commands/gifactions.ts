@@ -20,7 +20,7 @@ export default class Gifaction extends Command {
             default:
                 break;
         }
-        message.channel.send(language.command.gifactions.response.replace("{actions}", actionsstring));
+        message.channel.send({ content: language.command.gifactions.response.replace("{actions}", actionsstring) });
     }
     help = {
         show: true,

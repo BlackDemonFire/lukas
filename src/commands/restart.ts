@@ -20,20 +20,20 @@ export default class Restart extends Command {
         // code
         let msg = null;
         if (message !== null) {
-            msg = await message.channel.send("<a:load_1:498280749271744512> " + language.command.restart.start);
+            msg = await message.channel.send(`<a:load_1:498280749271744512> ${language.command.restart.start}`);
         } else {
             msg = null;
         }
         logger.info("restarting bot...");
         try {
-            restart(client, msg, "<:check_4:498523284804075541> " + language.command.restart.success);
+            restart(client, msg, `<:check_4:498523284804075541> ${language.command.restart.success}`);
         } catch (error) {
             logger.error(error);
             const resErr = inspect(error);
             const embed = new MessageEmbed()
-                .setFooter("@" + message.author.username)
+                .setFooter({ text: `@${message.author.username}`, iconURL: message.author.defaultAvatarURL })
                 .setColor(0xffcc4d)
-                .setAuthor("Restart")
+                .setAuthor({ name: "Restart" })
                 .setDescription(resErr);
             if (msg) msg.edit({ content: `⚠ ${language.command.restart.error}`, embeds: [embed] });
         }

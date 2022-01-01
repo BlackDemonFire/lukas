@@ -28,7 +28,7 @@ export function restart(oldclient: Bot, restartmsg: Message | null, newtext: str
             const channel = newclient.channels.resolve(restartmsg.channel.id);
             if (channel instanceof TextChannel || channel instanceof DMChannel) {
                 const editMsg = await channel.messages.fetch(restartmsg.id);
-                editMsg.edit(newtext);
+                editMsg.edit({ content: newtext });
             }
         }
 

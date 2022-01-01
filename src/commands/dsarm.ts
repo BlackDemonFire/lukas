@@ -16,14 +16,14 @@ export default class Dsarm extends Command {
     async run(client: Bot, message: Message, args: string[], language: lang) {
         const pref: string | undefined = args.shift()?.slice().toLowerCase();
         if (!pref) {
-            message.reply(language.command.dsarm.args);
+            message.reply({ content: language.command.dsarm.args });
             return;
         }
         if (!await client.db.getDSAChar(pref)) {
-            message.channel.send(language.command.dsarm.noSuchChar.replace("{pref}", pref));
+            message.channel.send({ content: language.command.dsarm.noSuchChar.replace("{pref}", pref) });
             return;
         }
         client.db.deleteDSAChar(pref);
-        message.channel.send(language.command.dsarm.success.replace("{pref}", pref));
+        message.channel.send({ content: language.command.dsarm.success.replace("{pref}", pref) });
     }
 }

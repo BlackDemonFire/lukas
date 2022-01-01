@@ -21,7 +21,7 @@ export default class Purge extends Command {
         }
         if (!(message.channel instanceof GuildChannel)) return;
         if (!(message.guild!.me!.permissionsIn(message.channel).has("MANAGE_MESSAGES"))) {
-            message.channel.send(language.general.botPermissionError.replace("{}", language.permissions.MANAGE_MESSAGES));
+            message.channel.send({ content: language.general.botPermissionError.replace("{}", language.permissions.MANAGE_MESSAGES) });
             return;
         }
         if (!(message.channel instanceof TextChannel)) return;
@@ -29,11 +29,11 @@ export default class Purge extends Command {
         try {
             amount = parseInt(args[0]);
         } catch (e) {
-            message.channel.send(language.command.purge.error.notNumeric);
+            message.channel.send({ content: language.command.purge.error.notNumeric });
             logger.error(e);
         }
         if (!amount) {
-            message.channel.send(language.command.purge.error.notNumeric);
+            message.channel.send({ content:language.command.purge.error.notNumeric });
             return;
         }
         message.channel.bulkDelete(amount);
@@ -45,6 +45,6 @@ export default class Purge extends Command {
         return false;
     }
     runSlash() {
-        "TODO!";
+        // TODO
     }
 }

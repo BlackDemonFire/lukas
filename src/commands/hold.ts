@@ -28,7 +28,7 @@ export default class Hold extends GifCommand {
         }
         const embed = new MessageEmbed()
             .setImage(gif)
-            .setAuthor("hold")
+            .setAuthor({ name: "hold" })
             .setDescription(responseString)
             .setColor(color);
         message.channel.send({ embeds: [embed] });

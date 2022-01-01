@@ -28,7 +28,7 @@ export default class Hug extends GifCommand {
         }
         const embed = new MessageEmbed()
             .setImage(gif)
-            .setAuthor("hug")
+            .setAuthor({ name: "hug" })
             .setDescription(responseString)
             .setColor(color);
         message.channel.send({ embeds: [embed] });

@@ -15,7 +15,7 @@ export default class Lang extends Command {
             return;
         }
         if (!(message.member!.permissions.has("ADMINISTRATOR") || this.isOwner(message))) {
-            message.channel.send(language.command.lang.permissionError);
+            message.channel.send({ content: language.command.lang.permissionError });
             return;
         }
         if (!args || args == []) {
@@ -35,11 +35,11 @@ export default class Lang extends Command {
                 default:
                     break;
             }
-            message.channel.send(language.command.lang.noSuchLanguage.replace("{languages}", languages));
+            message.channel.send({ content: language.command.lang.noSuchLanguage.replace("{languages}", languages) });
             return;
         }
         client.db.setLang(message.guild, newLang);
-        message.channel.send(language.command.lang.success.replace("{lang}", newLang));
+        message.channel.send({ content: language.command.lang.success.replace("{lang}", newLang) });
     }
     help = {
         show: true,

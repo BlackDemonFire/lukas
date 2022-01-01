@@ -3,7 +3,7 @@ import { Bot } from "../bot.js";
 import logger from "../modules/logger.js";
 
 export async function event(client: Bot) {
-    logger.info("I'm Ready on " + client.guilds.cache.size + " Servers serving " + client.channels.cache.size + " Channels");
+    logger.info(`I'm Ready on ${client.guilds.cache.size} Servers serving ${client.channels.cache.size} Channels`);
     client.application = await client.application!.fetch();
     const owner = client.application.owner;
     let ownerstring = "someone unknown";

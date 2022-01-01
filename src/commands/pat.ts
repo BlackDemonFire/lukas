@@ -28,7 +28,7 @@ export default class Pat extends GifCommand {
         }
         const embed = new MessageEmbed()
             .setImage(gif)
-            .setAuthor("pat")
+            .setAuthor({ name: "pat" })
             .setDescription(responseString)
             .setColor(color);
         message.channel.send({ embeds: [embed] });

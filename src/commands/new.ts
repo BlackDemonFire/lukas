@@ -18,12 +18,12 @@ export default class New extends Command {
         let collector: MessageCollector;
         let av: string;
         let pref: string;
-        message.channel.send(language.command.new.getPrefix);
+        message.channel.send({ content: language.command.new.getPrefix });
         if (message.channel instanceof DMChannel || message.channel instanceof TextChannel) {
             collector = new MessageCollector(message.channel, { filter: (m: Message) => m.author.id === message.author.id, time: 50000 });
             collector.on("end", (msgs: Collection<Snowflake, Message>) => {
                 if (msgs.size == 0) {
-                    message.channel.send(language.general.timeout);
+                    message.channel.send({ content: language.general.timeout });
                     return;
                 }
             });
@@ -36,8 +36,8 @@ export default class New extends Command {
                 switch (i) {
                     case 1:
                         pref = msg.content.toLowerCase().split(" ")[0];
-                        msg.channel.send(language.command.new.getAvatar);
-                        if (!pref.startsWith("$")) pref = "$" + pref;
+                        msg.channel.send({ content: language.command.new.getAvatar });
+                        if (!pref.startsWith("$")) pref = `$${pref}`;
                         break;
                     case 2:
                         if (msg.content === "n") {
@@ -45,13 +45,13 @@ export default class New extends Command {
                         } else {
                             av = msg.content;
                         }
-                        msg.channel.send(language.command.new.getName);
+                        msg.channel.send({ content: language.command.new.getName });
                         break;
                     case 3:
                         {
                             const name = msg.content;
                             collector.stop();
-                            msg.channel.send(language.command.new.success.replace("{name}", name).replace("{pref}", pref));
+                            msg.channel.send({ content: language.command.new.success.replace("{name}", name).replace("{pref}", pref) });
                             client.db.newDSAChar(pref, name, av);
                         }
                         break;

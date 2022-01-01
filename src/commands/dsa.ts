@@ -59,7 +59,7 @@ export default class Dsa extends Command {
         if (message.channel instanceof TextChannel) {
             message.channel.createWebhook(displayName, { avatar: displayImg }).then(async (webhook: Webhook) => {
                 if (message.attachments.size == 0) {
-                    await webhook.send(args.join(" "));
+                    await webhook.send({ content: args.join(" ") });
                     webhook.delete();
                     message.delete();
                 } else {

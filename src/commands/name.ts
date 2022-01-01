@@ -15,7 +15,7 @@ export default class Name extends Command {
             newname = args.join(" ");
         }
         client.db.setname(message.author, newname);
-        message.channel.send(language.command.name.success.replace("{newname}", newname));
+        message.channel.send({ content: language.command.name.success.replace("{newname}", newname) });
     }
     help = {
         show: true,

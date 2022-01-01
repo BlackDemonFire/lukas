@@ -35,16 +35,16 @@ export default class Ping extends Command {
         if (super.isAprilFools()) {
             embed.setColor(0x7289DA)
                 .setDescription(message.author.toString())
-                .setAuthor("Ping: @" + (message.member ? message.member.displayName : message.author.username))
-                .setFooter(`@${message.member ? message.member.displayName : message.author.username}`);
+                .setAuthor({ name:`Ping: @${message.member ? message.member.displayName : message.author.username}` })
+                .setFooter({ text: `@${message.member ? message.member.displayName : message.author.username}`, iconURL: message.author.defaultAvatarURL });
             message.channel.send({ content: message.author.toString(), embeds: [embed] });
         } else {
-            const msg: Message | nil = await message.channel.send(client.emojis.resolve("498280749271744512") + " Ping?").catch((e) => {logger.error(e);});
+            const msg: Message | nil = await message.channel.send({ content: `${client.emojis.resolve("498280749271744512")} Ping?` }).catch((e) => {logger.error(e);});
             if (!msg) return;
             embed.setColor(0x7289DA)
-                .setDescription(language.command.ping.apiLatency + " " + Math.round(client.ws.ping) + "ms.")
-                .setAuthor(language.command.ping.latency + " " + (msg.createdTimestamp - message.createdTimestamp) + "ms.")
-                .setFooter("@" + message.author.username);
+                .setDescription(`${language.command.ping.apiLatency} ${Math.round(client.ws.ping)}ms.`)
+                .setAuthor({ name: `${language.command.ping.latency} ${msg.createdTimestamp - message.createdTimestamp}ms.` })
+                .setFooter({ text: `@${message.author.username}` });
             if (gif) embed.setImage("https://cdn.discordapp.com/attachments/605382573413236758/744671452267282472/Alert.gif");
             msg.edit({ content: "<:check_4:498523284804075541> Pong!", embeds: [embed] });
         }

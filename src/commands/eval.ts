@@ -17,7 +17,7 @@ export default class Eval extends Command {
     }
     run(_client: Bot, message: Message, args: string[], language: lang) {
         if (!super.isOwner(message)) {
-            message.channel.send(language.command.eval.permissionError);
+            message.channel.send({ content: language.command.eval.permissionError });
             return;
         }
         logger.info(message.author.tag, args.join(" "));
@@ -30,7 +30,7 @@ export default class Eval extends Command {
                     prepend: "```js\n",
                     char: "\n",
                 });
-                splitMessage.forEach((m) => message.channel.send(m));
+                splitMessage.forEach((m) => message.channel.send({ content: m }));
             }
         } catch (err) {
             logger.error(`at commands/eval by ${message.author.tag}, using lines ${args.join(" ")}, resulting in ${err}`);
@@ -39,7 +39,7 @@ export default class Eval extends Command {
                 prepend: "```js\n",
                 char: "\n",
             });
-            splitMessage.forEach((m) => message.channel.send(m));
+            splitMessage.forEach((m) => message.channel.send({ content: m }));
         }
     }
 }

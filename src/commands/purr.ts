@@ -21,7 +21,7 @@ export default class Purr extends GifCommand {
         const responseString: string = (await client.random.choice(language.command.purr.singleUser)).replace(/{a}/g, userA);
         const embed = new MessageEmbed()
             .setImage(gif)
-            .setAuthor("purr")
+            .setAuthor({ name: "purr" })
             .setDescription(responseString)
             .setColor(color);
         message.channel.send({ embeds: [embed] });
