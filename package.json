@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "@types/node": "^17.0.8",
-    "@types/pg": "^8.6.1"
+    "@types/pg": "^8.6.3"
   },
   "scripts": {
     "build": "tsc",
