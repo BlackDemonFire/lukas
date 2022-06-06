@@ -13,7 +13,7 @@
     "wmic": "^1.0.1"
   },
   "devDependencies": {
-    "@types/node": "^17.0.21",
+    "@types/node": "^17.0.40",
     "@types/pg": "^8.6.5"
   },
   "scripts": {
