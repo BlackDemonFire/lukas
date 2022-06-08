@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "@typescript-eslint/parser": "^5.14.0",
-    "discord-api-types": "^0.29.0",
+    "discord-api-types": "^0.33.5",
     "discord.js": "^13.6.0",
     "dotenv": "^16.0.0",
     "eslint": "^8.10.0",
