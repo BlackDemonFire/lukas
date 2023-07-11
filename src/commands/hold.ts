@@ -12,7 +12,7 @@ export default class Hold extends GifCommand {
     show: true,
     name: "hold",
     usage: `${this.prefix}hold [user]`,
-    category: "gifs",
+    category: "Gifs",
   };
   async run(client: Bot, message: Message, args: string[], language: lang) {
     const gif: string = await client.db.getgif(

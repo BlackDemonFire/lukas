@@ -11,7 +11,7 @@ export default class Purr extends GifCommand {
     show: true,
     name: "purr",
     usage: `${this.prefix}purr`,
-    category: "gifs",
+    category: "Gifs",
   };
   async run(client: Bot, message: Message, _args: string[], language: lang) {
     const gif: string = await client.db.getgif(

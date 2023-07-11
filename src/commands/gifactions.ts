@@ -31,6 +31,6 @@ export default class Gifaction extends Command {
     show: true,
     name: "gifaction",
     usage: `${this.prefix}gifaction`,
-    category: "gifs",
+    category: "Utility",
   };
 }

@@ -11,7 +11,7 @@ export default class Dsaadd extends Command {
     show: true,
     name: "dsaadd",
     usage: `${this.prefix}dsaadd <character> [avatar - if it doesn't start with \`http\`, it will be ignored.] <displayed name>`,
-    category: "dsa",
+    category: "DSA",
   };
   async run(client: Bot, message: Message, args: string[], language: lang) {
     if (!args || args.length <= 3) {

@@ -12,7 +12,7 @@ export default class Blush extends GifCommand {
     show: true,
     name: "blush",
     usage: `${this.prefix}blush`,
-    category: "gifs",
+    category: "Gifs",
   };
 
   async run(client: Bot, message: Message, _args: string[], language: lang) {

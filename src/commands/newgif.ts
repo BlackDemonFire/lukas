@@ -148,6 +148,6 @@ export default class Newgif extends Command {
     show: true,
     name: "newgif",
     usage: `${this.prefix}newgif <url> <command> [type (defaults to anime)]`,
-    category: "gifs",
+    category: "Gifs",
   };
 }

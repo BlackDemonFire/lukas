@@ -18,7 +18,7 @@ export default class New extends Command {
     show: true,
     name: "new",
     usage: `${this.prefix}new`,
-    category: "dsa",
+    category: "DSA",
   };
   run(client: Bot, message: Message, _args: string[], language: lang) {
     let i = 0;

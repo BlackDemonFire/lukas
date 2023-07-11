@@ -12,7 +12,7 @@ export default class Cuddle extends GifCommand {
     show: true,
     name: "cuddle",
     usage: `${this.prefix}cuddle [user]`,
-    category: "gifs",
+    category: "Gifs",
   };
   async run(client: Bot, message: Message, args: string[], language: lang) {
     const gif: string = await client.db.getgif(

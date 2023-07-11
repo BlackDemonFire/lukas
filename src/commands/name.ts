@@ -23,6 +23,6 @@ export default class Name extends Command {
     show: true,
     name: "name",
     usage: `${this.prefix}name [name]`,
-    category: "gifs",
+    category: "Gifs",
   };
 }
