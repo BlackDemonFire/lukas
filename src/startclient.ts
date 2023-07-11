@@ -1,3 +1,4 @@
+import { Events } from "discord.js";
 import { readdir, readFileSync } from "fs";
 import { Bot } from "./bot.js";
 import logger from "./modules/logger.js";
@@ -14,6 +15,10 @@ export function start() {
       if (!file.endsWith(".js")) return;
       const event = await import(`./events/${file}`);
       const eventName = file.split(".")[0];
+      if (!(eventName in Events)) {
+        logger.error(`Event ${eventName} is not a valid event!`);
+        return;
+      }
       client.on(eventName, event.event.bind(null, client));
     });
   });
