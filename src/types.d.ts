@@ -161,11 +161,11 @@ interface ILangCommand {
   };
 }
 
-export type ILanguage = {
+interface ILanguage {
   command: ILangCommand;
   general: ILangGeneral;
   permissions: ILangPermissions;
-};
+}
 export interface command {
   run: (
     client: Bot,
