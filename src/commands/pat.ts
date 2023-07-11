@@ -12,7 +12,7 @@ export default class Pat extends GifCommand {
     show: true,
     name: "pat",
     usage: `${this.prefix}pat [user]`,
-    category: "gifs",
+    category: "Gifs",
   };
   async run(client: Bot, message: Message, args: string[], language: lang) {
     const gif: string = await client.db.getgif(

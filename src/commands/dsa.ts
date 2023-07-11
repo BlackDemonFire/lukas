@@ -17,7 +17,7 @@ export default class Dsa extends Command {
     show: true,
     name: "dsa",
     usage: `${this.prefix}dsa [character] <message>`,
-    category: "dsa",
+    category: "DSA",
   };
   async run(client: Bot, message: Message, args: string[], language: lang) {
     if (!(message.channel instanceof BaseGuildTextChannel)) {

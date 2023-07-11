@@ -27,6 +27,6 @@ export default class Color extends Command {
     show: true,
     name: "color",
     usage: `${this.prefix}color [color]`,
-    category: "gifs",
+    category: "Utility",
   };
 }

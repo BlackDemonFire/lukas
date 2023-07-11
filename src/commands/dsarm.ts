@@ -11,7 +11,7 @@ export default class Dsarm extends Command {
     show: true,
     name: "dsarm",
     usage: `${this.prefix}dsarm <character>`,
-    category: "dsa",
+    category: "DSA",
   };
   async run(client: Bot, message: Message, args: string[], language: lang) {
     const pref: string | undefined = args.shift()?.slice().toLowerCase();

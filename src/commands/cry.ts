@@ -11,7 +11,7 @@ export default class Cry extends GifCommand {
     show: true,
     name: "cry",
     usage: `${this.prefix}cry`,
-    category: "gifs",
+    category: "Gifs",
   };
   async run(client: Bot, message: Message, _args: string[], language: lang) {
     const gif: string = await client.db.getgif(

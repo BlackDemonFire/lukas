@@ -12,7 +12,7 @@ export default class Kiss extends GifCommand {
     show: true,
     name: "kiss",
     usage: `${this.prefix}kiss [user]`,
-    category: "gifs",
+    category: "Gifs",
   };
   async run(client: Bot, message: Message, args: string[], language: lang) {
     const gif: string = await client.db.getgif(
