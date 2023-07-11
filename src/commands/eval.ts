@@ -1,9 +1,9 @@
 import { Message } from "discord.js";
-import { splitMessage } from "src/modules/splitMessage.js";
 import { inspect } from "util";
 import { Bot } from "../bot.js";
 import { Command } from "../modules/command.js";
 import logger from "../modules/logger.js";
+import { splitMessage } from "../modules/splitMessage.js";
 import type { ILanguage } from "../types.js";
 
 export default class Eval extends Command {
