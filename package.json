@@ -14,13 +14,21 @@
   },
   "devDependencies": {
     "@types/node": "^17.0.21",
-    "@types/pg": "^8.6.5"
+    "@types/pg": "^8.6.5",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "prettier": "3.0.0"
   },
   "scripts": {
     "build": "tsc",
     "start": "node -r dotenv/config dist/index.js",
     "watch:ts": "tsc --watch",
-    "check": "tsc --noEmit"
+    "check": "tsc --noEmit",
+    "lint": "eslint src --ext .ts"
   },
-  "type": "module"
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  }
 }
