@@ -1,5 +1,5 @@
-import { Message, MessageEmbed } from "discord.js";
-import type { language as lang } from "src/types";
+import { EmbedBuilder, Message } from "discord.js";
+import type { ILanguage as lang } from "src/types";
 import { inspect } from "util";
 import { Bot } from "../bot.js";
 import { restart } from "../execrestart.js";
@@ -36,7 +36,7 @@ export default class Restart extends Command {
     } catch (error) {
       logger.error(error);
       const resErr = inspect(error);
-      const embed = new MessageEmbed()
+      const embed = new EmbedBuilder()
         .setFooter({
           text: `@${message.author.username}`,
           iconURL: message.author.defaultAvatarURL,

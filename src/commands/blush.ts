@@ -1,8 +1,8 @@
 import type { ColorResolvable } from "discord.js";
-import { Message, MessageEmbed } from "discord.js";
+import { EmbedBuilder, Message } from "discord.js";
 import { Bot } from "../bot.js";
 import { GifCommand } from "../modules/command.js";
-import type { language as lang } from "../types";
+import type { ILanguage as lang } from "../types";
 
 export default class Blush extends GifCommand {
   constructor(client: Bot) {
@@ -29,7 +29,7 @@ export default class Blush extends GifCommand {
     const responseString: string = (
       await client.random.choice(language.command.blush.singleUser)
     ).replace(/{a}/g, userA);
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setImage(gif)
       .setAuthor({ name: "blush" })
       .setDescription(responseString)

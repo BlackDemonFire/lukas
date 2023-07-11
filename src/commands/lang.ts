@@ -1,5 +1,5 @@
-import { Message } from "discord.js";
-import type { language as lang } from "src/types";
+import { Message, PermissionFlagsBits } from "discord.js";
+import type { ILanguage as lang } from "src/types";
 import { Bot } from "../bot.js";
 import { Command } from "../modules/command.js";
 
@@ -16,14 +16,14 @@ export default class Lang extends Command {
     }
     if (
       !(
-        message.member!.permissions.has("ADMINISTRATOR") ||
+        message.member!.permissions.has(PermissionFlagsBits.Administrator) ||
         this.isOwner(message)
       )
     ) {
       message.channel.send({ content: language.command.lang.permissionError });
       return;
     }
-    if (!args || args == []) {
+    if (!args || args.length === 0) {
       newLang = "";
     } else {
       newLang = args.join(" ");

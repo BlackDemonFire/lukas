@@ -1,5 +1,5 @@
-import { Message, MessageEmbed } from "discord.js";
-import type { language as lang } from "src/types";
+import { EmbedBuilder, Message } from "discord.js";
+import type { ILanguage as lang } from "src/types";
 import { Bot } from "../bot.js";
 import { Command } from "../modules/command.js";
 import logger from "../modules/logger.js";
@@ -21,7 +21,7 @@ export default class Kill extends Command {
     }
     if (message !== null) {
       const plaintext = language.command.kill.success;
-      const embed = new MessageEmbed()
+      const embed = new EmbedBuilder()
         .setImage("https://i.imgflip.com/19f1vf.jpg")
         .setColor(0x36393e)
         .setFooter({

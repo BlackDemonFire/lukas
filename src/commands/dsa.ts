@@ -1,10 +1,11 @@
 import {
   BaseGuildTextChannel,
   Message,
+  PermissionFlagsBits,
   TextChannel,
   Webhook,
 } from "discord.js";
-import type { language as lang } from "src/types";
+import type { ILanguage as lang } from "src/types";
 import { Bot } from "../bot.js";
 import { Command } from "../modules/command.js";
 
@@ -24,9 +25,12 @@ export default class Dsa extends Command {
       return;
     }
     if (
-      !message.guild?.me
+      !message.guild?.members.me
         ?.permissionsIn(message.channel)
-        .has(["MANAGE_MESSAGES", "MANAGE_WEBHOOKS"])
+        .has([
+          PermissionFlagsBits.ManageMessages,
+          PermissionFlagsBits.ManageWebhooks,
+        ])
     ) {
       message.channel.send(language.command.dsa.permissions);
       return;
@@ -68,7 +72,7 @@ export default class Dsa extends Command {
     }
     if (message.channel instanceof TextChannel) {
       message.channel
-        .createWebhook(displayName, { avatar: displayImg })
+        .createWebhook({ name: displayName, avatar: displayImg })
         .then(async (webhook: Webhook) => {
           if (message.attachments.size == 0) {
             await webhook.send({ content: args.join(" ") });

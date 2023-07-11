@@ -7,7 +7,7 @@ import {
   Team,
   User,
 } from "discord.js";
-import type { language as lang } from "src/types";
+import type { ILanguage as lang } from "src/types";
 import { Bot } from "../bot.js";
 import { Command } from "../modules/command.js";
 

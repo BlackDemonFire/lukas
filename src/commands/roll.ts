@@ -1,5 +1,5 @@
-import { Message, MessageEmbed } from "discord.js";
-import type { language as lang } from "src/types";
+import { EmbedBuilder, Message } from "discord.js";
+import type { ILanguage as lang } from "src/types";
 import { Bot } from "../bot.js";
 import { Command } from "../modules/command.js";
 
@@ -140,8 +140,11 @@ export default class Roll extends Command {
     }
     if (rolltype == 0) {
       dicetype = dicetype.substr(1);
-      // @ts-ignore
-      if (isNaN(dicetype)) {
+      if (
+        typeof dicetype === "number"
+          ? isNaN(dicetype)
+          : isNaN(parseInt(dicetype))
+      ) {
         message.channel.send({
           content: `<:warn_3:498277726604754946> ${language.command.roll.errors.rolltypeNotNumeric}`,
         });
@@ -166,7 +169,7 @@ export default class Roll extends Command {
         "{msgauthor}",
         msgauthor,
       );
-      const embed = new MessageEmbed()
+      const embed = new EmbedBuilder()
         .setColor(0x36393e)
         .setDescription(
           `<:info_1:498285998346731530> ${language.command.roll.results.noDice.embed}`,
@@ -175,8 +178,11 @@ export default class Roll extends Command {
       message.channel.send({ content: `*${plaintext}*`, embeds: [embed] });
       return;
     }
-    // @ts-ignore
-    if (isNaN(rollcountmax)) {
+    if (
+      typeof rollcountmax === "number"
+        ? isNaN(rollcountmax)
+        : isNaN(parseInt(rollcountmax))
+    ) {
       message.channel.send({
         content: `<:warn_3:498277726604754946> ${language.command.roll.errors.rollcountNotNumeric}`,
       });
@@ -252,7 +258,7 @@ export default class Roll extends Command {
         "{rolltype}",
         rolltype.toString(),
       );
-      const embed = new MessageEmbed()
+      const embed = new EmbedBuilder()
         .setColor(0x36393e)
         .setFooter({ text: `@${msgauthor}` });
       if (useEmotes) {
@@ -267,7 +273,7 @@ export default class Roll extends Command {
       const plaintext = language.command.roll.results.multiDice
         .replace("{rolltype}", rolltype.toString())
         .replace("{rollcountmax}", rollcountmax.toString());
-      const embed = new MessageEmbed()
+      const embed = new EmbedBuilder()
         .setColor(0x36393e)
         .setFooter({ text: `@${msgauthor}` });
       if (useEmotes) {

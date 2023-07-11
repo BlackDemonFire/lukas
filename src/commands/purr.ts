@@ -1,5 +1,5 @@
-import { ColorResolvable, Message, MessageEmbed } from "discord.js";
-import type { language as lang } from "src/types";
+import { ColorResolvable, EmbedBuilder, Message } from "discord.js";
+import type { ILanguage as lang } from "src/types";
 import { Bot } from "../bot.js";
 import { GifCommand } from "../modules/command.js";
 
@@ -27,7 +27,7 @@ export default class Purr extends GifCommand {
     const responseString: string = (
       await client.random.choice(language.command.purr.singleUser)
     ).replace(/{a}/g, userA);
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setImage(gif)
       .setAuthor({ name: "purr" })
       .setDescription(responseString)

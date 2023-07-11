@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import type { language as lang } from "src/types";
+import type { ILanguage as lang } from "src/types";
 import { Bot } from "../bot.js";
 import { Command } from "../modules/command.js";
 
@@ -9,7 +9,7 @@ export default class Name extends Command {
   }
   run(client: Bot, message: Message, args: string[], language: lang) {
     let newname: string;
-    if (!args || args == []) {
+    if (!args || args.length === 0) {
       newname = "";
     } else {
       newname = args.join(" ");

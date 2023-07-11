@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
 import { Bot } from "../bot.js";
-import type { language as lang } from "../types";
+import type { ILanguage as lang } from "../types";
 
 async function cmd(client: Bot, message: Message) {
   const prefix: string = process.env.PREFIX || "^";

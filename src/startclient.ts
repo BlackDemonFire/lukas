@@ -1,7 +1,7 @@
 import { readdir, readFileSync } from "fs";
 import { Bot } from "./bot.js";
 import logger from "./modules/logger.js";
-import type { language } from "./types";
+import type { ILanguage } from "./types";
 
 export function start() {
   const client: Bot = new Bot();
@@ -39,7 +39,7 @@ export function start() {
     }
     files.forEach((file: string) => {
       if (!file.endsWith(".json")) return;
-      const lang: language = JSON.parse(
+      const lang: ILanguage = JSON.parse(
         readFileSync(`./languages/${file}`, "utf-8"),
       );
       const langName = file.split(".")[0];

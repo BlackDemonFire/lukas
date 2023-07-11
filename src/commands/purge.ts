@@ -1,5 +1,10 @@
-import { GuildChannel, Message, TextChannel } from "discord.js";
-import type { language as lang } from "src/types";
+import {
+  GuildChannel,
+  Message,
+  PermissionFlagsBits,
+  TextChannel,
+} from "discord.js";
+import type { ILanguage as lang } from "src/types";
 import { Bot } from "../bot.js";
 import { Command } from "../modules/command.js";
 import logger from "../modules/logger.js";
@@ -26,7 +31,9 @@ export default class Purge extends Command {
     }
     if (!(message.channel instanceof GuildChannel)) return;
     if (
-      !message.guild!.me!.permissionsIn(message.channel).has("MANAGE_MESSAGES")
+      !message
+        .guild!.members.me!.permissionsIn(message.channel)
+        .has(PermissionFlagsBits.ManageMessages)
     ) {
       message.channel.send({
         content: language.general.botPermissionError.replace(
@@ -57,7 +64,11 @@ export default class Purge extends Command {
   hasPermission(message: Message): boolean {
     if (super.isOwner(message)) return true;
     if (!(message.channel instanceof GuildChannel)) return false;
-    if (message.member?.permissionsIn(message.channel).has("MANAGE_MESSAGES"))
+    if (
+      message.member
+        ?.permissionsIn(message.channel)
+        .has(PermissionFlagsBits.ManageMessages)
+    )
       return true;
     return false;
   }

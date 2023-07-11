@@ -76,7 +76,10 @@ export class DB {
     }
   }
 
-  private async query(sql: string, data: any[]): Promise<QueryResult | nil> {
+  private async query(
+    sql: string,
+    data: unknown[],
+  ): Promise<QueryResult | nil> {
     const client = await this.db.connect();
     try {
       const res = await client.query(sql, data).catch((e) => {

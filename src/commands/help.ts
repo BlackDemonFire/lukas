@@ -1,5 +1,5 @@
-import { Message, MessageEmbed } from "discord.js";
-import type { language as lang } from "src/types";
+import { EmbedBuilder, Message } from "discord.js";
+import type { ILanguage as lang } from "src/types";
 import { Bot } from "../bot.js";
 import { Command } from "../modules/command.js";
 
@@ -14,7 +14,7 @@ export default class Help extends Command {
     category: "Utility",
   };
   run(client: Bot, message: Message, args: string[], language: lang) {
-    const embed = new MessageEmbed();
+    const embed = new EmbedBuilder();
     if (args && args[0]) {
       const prefix = process.env.PREFIX || "^";
       const cmd = args[0].replace(prefix, "").toLowerCase();
@@ -25,13 +25,18 @@ export default class Help extends Command {
         const desc: string = langcmds[cmd as keyof lang["command"]].description;
         embed
           .setDescription(desc)
-          .setFooter(command.help.category)
+          .setFooter({ text: command.help.category })
           .setTitle(command.help.name)
           .setAuthor({ name: "Help" })
-          .addField(language.command.help.usage.Usage, command.help.usage)
-          .addField(
-            language.command.help.usage.Usage,
-            language.command.help.usage.args,
+          .addFields(
+            {
+              name: language.command.help.usage.Usage,
+              value: command.help.usage,
+            },
+            {
+              name: language.command.help.usage.Usage,
+              value: language.command.help.usage.args,
+            },
           );
       } else {
         embed.setDescription(
@@ -50,7 +55,10 @@ export default class Help extends Command {
         }
       });
       for (const category in categories) {
-        embed.addField(category, categories[category].join(", "));
+        embed.addFields({
+          name: category,
+          value: categories[category].join(", "),
+        });
       }
       embed.setTitle("Help");
     }

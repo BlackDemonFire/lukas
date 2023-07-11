@@ -3,9 +3,8 @@ export class FakeRandom {
   int(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
-  choice(options: Array<any>) {
-    if (!options) return null;
-    if (!(options instanceof Array)) return options;
+  choice<T>(options: ArrayLike<T>): T {
+    if (!Array.isArray(options)) return options as T;
     if (options.length == 1) return options[0];
     const res = this.int(0, options.length - 1);
     return options[res];
@@ -35,9 +34,8 @@ export class Random {
     });
     return result.random.data[0];
   }
-  async choice(options: Array<any>) {
-    if (!options) return null;
-    if (!(options instanceof Array)) return options;
+  async choice<T>(options: ArrayLike<T>): Promise<T> {
+    if (!Array.isArray(options)) return options as T;
     if (options.length == 1) return options[0];
     const res = await this.int(0, options.length - 1);
     return options[res];

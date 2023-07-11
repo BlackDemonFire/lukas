@@ -1,5 +1,6 @@
-import { Message, Util } from "discord.js";
-import type { language as lang } from "src/types";
+import { Message } from "discord.js";
+import { splitMessage } from "src/modules/splitMessage.js";
+import type { ILanguage as lang } from "src/types";
 import { inspect } from "util";
 import { Bot } from "../bot.js";
 import { Command } from "../modules/command.js";
@@ -25,7 +26,7 @@ export default class Eval extends Command {
       const evaled = eval(args.join(" "));
       logger.info(message.author.tag, args.join(" "), evaled);
       if (evaled) {
-        const splitMessage = Util.splitMessage(
+        const segments = splitMessage(
           "```js\n{evaled}```".replace("{evaled}", inspect(evaled)),
           {
             append: "```",
@@ -33,7 +34,7 @@ export default class Eval extends Command {
             char: "\n",
           },
         );
-        splitMessage.forEach((m) => message.channel.send({ content: m }));
+        segments.forEach((m) => message.channel.send({ content: m }));
       }
     } catch (err) {
       logger.error(
@@ -41,7 +42,7 @@ export default class Eval extends Command {
           " ",
         )}, resulting in ${err}`,
       );
-      const splitMessage = Util.splitMessage(
+      const segments = splitMessage(
         "```js\n{error}```".replace("{error}", inspect(err)),
         {
           append: "```",
@@ -49,7 +50,7 @@ export default class Eval extends Command {
           char: "\n",
         },
       );
-      splitMessage.forEach((m) => message.channel.send({ content: m }));
+      segments.forEach((m) => message.channel.send({ content: m }));
     }
   }
 }

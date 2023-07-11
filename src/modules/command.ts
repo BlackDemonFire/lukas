@@ -1,9 +1,9 @@
 import { ClientApplication, Message, Team, User } from "discord.js";
-import type { command, language as lang, nil } from "src/types";
+import type { command, ILanguage as lang, nil } from "src/types";
 import { Bot } from "../bot.js";
 import logger from "./logger.js";
 
-abstract class Command {
+abstract class Command implements command {
   protected prefix: string;
   abstract help: command["help"];
   private client: Bot;

@@ -1,5 +1,5 @@
-import { Message, MessageEmbed } from "discord.js";
-import type { language as lang, nil } from "src/types";
+import { EmbedBuilder, Message } from "discord.js";
+import type { ILanguage as lang, nil } from "src/types";
 import { Bot } from "../bot.js";
 import { Command } from "../modules/command.js";
 import logger from "../modules/logger.js";
@@ -32,7 +32,7 @@ export default class Ping extends Command {
       }
     }
     // code
-    const embed = new MessageEmbed();
+    const embed = new EmbedBuilder();
 
     if (super.isAprilFools()) {
       embed

@@ -1,6 +1,6 @@
 import type { ColorResolvable } from "discord.js";
-import { Message, MessageEmbed } from "discord.js";
-import type { language as lang } from "src/types";
+import { EmbedBuilder, Message } from "discord.js";
+import type { ILanguage as lang } from "src/types";
 import { Bot } from "../bot.js";
 import { GifCommand } from "../modules/command.js";
 
@@ -43,7 +43,7 @@ export default class Pat extends GifCommand {
         .replace(/{a}/g, userA)
         .replace(/{b}/g, userB);
     }
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setImage(gif)
       .setAuthor({ name: "pat" })
       .setDescription(responseString)

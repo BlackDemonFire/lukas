@@ -1,6 +1,6 @@
 import type { ColorResolvable } from "discord.js";
-import { Message, MessageEmbed } from "discord.js";
-import type { language as lang } from "src/types";
+import { EmbedBuilder, Message } from "discord.js";
+import type { ILanguage as lang } from "src/types";
 import { Bot } from "../bot.js";
 import { GifCommand } from "../modules/command.js";
 export default class Cry extends GifCommand {
@@ -27,7 +27,7 @@ export default class Cry extends GifCommand {
     const responseString: string = (
       await client.random.choice(language.command.cry.singleUser)
     ).replace(/{a}/g, userA);
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setImage(gif)
       .setAuthor({ name: "cry" })
       .setDescription(responseString)
