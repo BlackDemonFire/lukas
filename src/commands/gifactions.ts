@@ -23,9 +23,9 @@ export default class Gifaction extends Command {
         message.channel.send({ content: language.command.gifactions.response.replace("{actions}", actionsstring) });
     }
     help = {
-        show: true,
+        show: false,
         name: "gifaction",
         usage: `${this.prefix}gifaction`,
-        category: "gifs",
+        category: "Utility",
     }
 }

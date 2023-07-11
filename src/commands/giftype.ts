@@ -31,6 +31,6 @@ export default class Giftype extends Command {
         show: true,
         name: "giftype",
         usage: `${this.prefix}giftype <type>`,
-        category: "gifs",
+        category: "Utility",
     }
 }
