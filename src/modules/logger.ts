@@ -4,6 +4,7 @@ const logger = createLogger({
   transports: [],
   exitOnError: false,
   handleExceptions: true,
+  level: process.env.LOG_LEVEL || "info",
 });
 logger.add(
   new transports.Console({
@@ -12,6 +13,7 @@ logger.add(
         level: true,
         message: false,
         colors: {
+          debug: "blue",
           info: "green",
           warn: "yellow",
           error: "red",

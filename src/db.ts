@@ -99,8 +99,8 @@ export class DB {
     const data = await this.query("SELECT color FROM userdb WHERE id = $1;", [
       user.id,
     ]);
-    if (!data) return "RANDOM";
-    return data.rows ? data.rows[0].color : "RANDOM";
+    if (!data) return "Random";
+    return data.rows ? data.rows[0].color : "Random";
   }
   async getDSAChar(prefix: string): Promise<dsachar | nil> {
     const data = await this.query("SELECT * FROM dsachars WHERE prefix = $1;", [
@@ -163,7 +163,7 @@ export class DB {
   newuser(user: User) {
     this.query(
       "INSERT INTO userdb VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING;",
-      [user.id, "anime", "RANDOM", ""],
+      [user.id, "anime", "Random", ""],
     );
   }
   setcolor(user: User, color: string) {

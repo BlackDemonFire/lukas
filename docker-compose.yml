@@ -1,0 +1,34 @@
+version: '3.5'
+
+services:
+  bot:
+    restart: unless-stopped
+    image: ghcr.io/blackdemonfire/lukas:latest
+    build:
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    env_file:
+      - .env
+    networks:
+      - default
+      - database
+
+  db:
+    image: postgres:latest
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_DB=${DB_NAME}
+    networks:
+      - database
+    volumes:
+      - db:/var/lib/postgresql/data
+
+networks:
+  database:
+
+volumes:
+  db:
+    driver: local
