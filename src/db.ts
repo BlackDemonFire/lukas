@@ -2,6 +2,7 @@ import type { Guild, User } from "discord.js";
 import pg, { QueryResult } from "pg";
 import logger from "./modules/logger.js";
 import type { dsachar, nil } from "./types";
+import settings from "./modules/settings.js";
 
 const { Pool } = pg;
 
@@ -10,13 +11,13 @@ export class DB {
   constructor() {
     this.db = new Pool({
       application_name: "lukas",
-      database: process.env.DB_NAME || "lukas",
-      host: process.env.DB_HOST || "localhost",
+      database: settings.DB_NAME,
+      host: settings.DB_HOST,
       keepAlive: true,
       log: (...messages) => logger.debug(messages),
-      port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 5432 || 5432,
-      password: process.env.DB_PASS,
-      user: process.env.DB_USER || "lukas",
+      port: settings.DB_PORT,
+      password: settings.DB_PASS,
+      user: settings.DB_USER,
     });
     this.ensureTables();
   }

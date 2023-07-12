@@ -1,10 +1,11 @@
 import winston from "winston";
+import settings from "./settings.js";
 const { createLogger, format, transports } = winston;
 const logger = createLogger({
   transports: [],
   exitOnError: false,
   handleExceptions: true,
-  level: process.env.LOG_LEVEL || "info",
+  level: settings.LOG_LEVEL,
 });
 logger.add(
   new transports.Console({

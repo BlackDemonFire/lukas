@@ -16,8 +16,7 @@ export default class Help extends Command {
   run(client: Bot, message: Message, args: string[], language: lang) {
     const embed = new EmbedBuilder();
     if (args && args[0]) {
-      const prefix = process.env.PREFIX || "^";
-      const cmd = args[0].replace(prefix, "").toLowerCase();
+      const cmd = args[0].replace(client.prefix, "").toLowerCase();
       const command = client.commands.get(cmd);
       if (command) {
         const langcmds = language.command;
