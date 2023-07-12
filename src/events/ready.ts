@@ -15,4 +15,5 @@ export async function event(client: Bot) {
       .map((member) => member.user.tag)
       .join(", ")}`;
   logger.info(`I belong to ${ownerstring}.`);
+  client.executedReady = true;
 }

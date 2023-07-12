@@ -25,4 +25,8 @@ export class Bot extends Client {
   random: Random | FakeRandom = settings.RANDOMKEY
     ? new Random(settings.RANDOMKEY!)
     : new FakeRandom();
+
+  loadedEvents: string[] = [];
+  loadedAll: boolean = false;
+  executedReady: boolean = false;
 }
