@@ -8,7 +8,7 @@ abstract class Command implements command {
   abstract help: command["help"];
   private client: Bot;
   constructor(client: Bot) {
-    this.prefix = process.env.PREFIX || "^";
+    this.prefix = client.prefix;
     this.client = client;
   }
   // eslint-disable-next-line no-unused-vars

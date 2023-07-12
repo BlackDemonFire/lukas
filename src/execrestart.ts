@@ -2,6 +2,7 @@ import { DMChannel, Message, TextChannel } from "discord.js";
 import { Bot } from "./bot";
 import logger from "./modules/logger.js";
 import { start } from "./startclient.js";
+import settings from "./modules/settings.js";
 
 export function restart(
   oldclient: Bot,
@@ -11,7 +12,7 @@ export function restart(
   // Neuen Client Herstellen
 
   const newclient = start();
-  newclient.login(process.env.TOKEN);
+  newclient.login(settings.TOKEN);
 
   // Alten client Entfernen
 
