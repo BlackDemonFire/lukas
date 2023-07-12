@@ -3,7 +3,7 @@ version: '3.5'
 services:
   bot:
     restart: unless-stopped
-    image: lukas-ts
+    image: ghcr.io/blackdemonfire/lukas:latest
     build:
       dockerfile: Dockerfile
     depends_on:
