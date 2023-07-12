@@ -2,6 +2,7 @@ import { Message } from "discord.js";
 import { Bot } from "../bot.js";
 import type { ILanguage as lang } from "../types.js";
 import settings from "../modules/settings.js";
+import logger from "../modules/logger.js";
 
 async function cmd(client: Bot, message: Message) {
   const args = message.content.slice(client.prefix.length).trim().split(" ");
@@ -29,9 +30,14 @@ async function cmd(client: Bot, message: Message) {
 }
 
 export async function event(client: Bot, message: Message) {
-  if (message.author.bot) return;
-  if (message.guild) client.db.initLang(message.guild, settings.DEFAULTLANG);
-  client.db.newuser(message.author);
-  if (message.content.startsWith(client.prefix))
-    return await cmd(client, message);
+  try {
+    if (message.author.bot) return;
+    if (message.guild) client.db.initLang(message.guild, settings.DEFAULTLANG);
+    client.db.newuser(message.author);
+    if (message.content.startsWith(client.prefix))
+      return await cmd(client, message);
+  } catch (err) {
+    logger.error(`A critical error occured`);
+    process.exit(1);
+  }
 }
