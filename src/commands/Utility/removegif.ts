@@ -10,33 +10,29 @@ import {
 import type { ILanguage as lang } from "src/types";
 import { Bot } from "../../bot.js";
 import { Command } from "../../modules/command.js";
-import logger from "../../modules/logger.js";
 
 function onCollect(
   reaction: MessageReaction,
   client: Bot,
   message: Message,
   url: string,
-  action: string,
-  type: string,
   collectors: Record<string, ReactionCollector>,
   requestmessages: Record<string, Message>,
 ) {
-  logger.info("collector called");
   if (!(client.application!.owner instanceof Team)) return;
   switch (reaction.emoji.name) {
     case "✅":
-      client.db.newgif(url, action, type);
+      client.db.removegif(url);
       for (const [memberid] of client.application!.owner.members) {
         collectors[memberid].stop();
         requestmessages[memberid].edit({
-          content: `Gif check request from ${message.author.tag} in <#${
+          content: `Gif remove request from ${message.author.tag} in <#${
             message.channel.id
           }> (${
             message.channel instanceof GuildChannel
               ? message.channel.name
               : "DM"
-          })\ngif: ${url}\naction: ${action}\ntype: ${type}\n\naccepted!`,
+          })\nThe removal request was accepted!`,
         });
       }
       break;
@@ -44,13 +40,13 @@ function onCollect(
       for (const [memberid] of client.application!.owner.members) {
         collectors[memberid].stop();
         requestmessages[memberid].edit({
-          content: `Gif check request from ${message.author.tag} in <#${
+          content: `Gif remove request from ${message.author.tag} in <#${
             message.channel.id
           }> (${
             message.channel instanceof GuildChannel
               ? message.channel.name
               : "DM"
-          })\ngif: ${url}\naction: ${action}\ntype: ${type}\n\nrejected!`,
+          })\nThe removal request was rejected!`,
         });
       }
       break;
@@ -59,49 +55,47 @@ function onCollect(
   }
 }
 
-export default class Newgif extends Command {
+export default class Removegif extends Command {
   constructor(client: Bot, category: string, name: string) {
     super(client, category, name);
   }
   async run(client: Bot, message: Message, args: string[], language: lang) {
     let response: string;
-    if (!args || args.length !== 3) {
-      response = language.command.newgif.wrongArgs;
+    if (!args || args.length !== 1) {
+      response = language.command.removegif.wrongArgs;
     } else {
       const url: string = args[0];
-      const action: string = args[1].toLowerCase();
-      let type: string = args[2].toLowerCase();
-      if (!type || type == "") type = "anime";
       if (this.isOwner(message)) {
-        client.db.newgif(url, action, type);
-        response = language.command.newgif.success;
+        client.db.removegif(url);
+        response = language.command.removegif.success;
       } else {
-        response = language.command.newgif.checking;
+        response = language.command.removegif.checking;
         if (client.application!.owner instanceof Team) {
           const requestmessages: Record<Snowflake, Message> = {};
           const collectors: Record<Snowflake, ReactionCollector> = {};
           for (const [memberid, member] of client.application!.owner.members) {
             requestmessages[memberid] = await member.user.send({
-              content: `Gif check request from ${message.author.tag} in <#${
+              content: `Gif remove request from ${message.author.tag} in <#${
                 message.channel.id
               }> (${
                 message.channel instanceof GuildChannel
                   ? message.channel.name
                   : "DM"
-              })\ngif: ${url}\naction: ${action}\ntype: ${type}`,
+              })\ngif: ${url}`,
             });
             await requestmessages[memberid].react("✅");
             await requestmessages[memberid].react("❌");
             collectors[memberid] = requestmessages[memberid]
-              .createReactionCollector()
+              .createReactionCollector({
+                filter: (_reaction: MessageReaction, user: User) =>
+                  user == member.user,
+              })
               .on("collect", (reaction) =>
                 onCollect(
                   reaction,
                   client,
                   message,
                   url,
-                  action,
-                  type,
                   collectors,
                   requestmessages,
                 ),
@@ -109,13 +103,13 @@ export default class Newgif extends Command {
           }
         } else if (client.application!.owner instanceof User) {
           const request = await client.application!.owner.send({
-            content: `Gif check request from ${message.author.tag} in <#${
+            content: `Gif remove request from ${message.author.tag} in <#${
               message.channel.id
             }> (${
               message.channel instanceof GuildChannel
                 ? message.channel.name
                 : "DM"
-            })\ngif: ${url}\naction: ${action}\ntype: ${type}`,
+            })\ngif: ${url}`,
           });
           await request.react("✅");
           await request.react("❌");
@@ -126,7 +120,7 @@ export default class Newgif extends Command {
           coll.on("collect", (reaction: MessageReaction) => {
             switch (reaction.emoji.name) {
               case "✅":
-                client.db.newgif(url, action, type);
+                client.db.removegif(url);
                 coll.stop();
                 request.delete();
                 break;
@@ -145,6 +139,6 @@ export default class Newgif extends Command {
   }
   help = {
     show: true,
-    usage: `${this.prefix}newgif <url> <command> [type (defaults to anime)]`,
+    usage: `${this.prefix}removegif <url>`,
   };
 }

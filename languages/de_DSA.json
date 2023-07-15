@@ -52,6 +52,12 @@
       "wrongArgs": "Du musst drei Argumente angeben:\n1. Den Link zum Gif\n2. Die Aktion, die ausgeführt wird (z.B. `hug`)\n3. Das Gif Genre (z.B. `Anime`)",
       "checking": "Ich habe die Anfrage, das Gif hinzuzufügen an meinen Meister weitergeleitet."
     },
+    "removegif": {
+      "description": "Löscht ein ausgewähltes Gif aus der Datenbank",
+      "success": "Das Gif wurde erfolgreich gelöscht.",
+      "wrongArgs": "Du musst den link des zu löschenden Gifs angeben",
+      "checking": "Ich habe die Anfrage, das Gif zu löschen an meinen Meister weitergeleitet."
+    },
     "new": {
       "description": "Füge einen NPC hinzu",
       "getPrefix": "Bitte nenne den Kürzel für den Charakter",

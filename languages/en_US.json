@@ -53,6 +53,12 @@
       "wrongArgs": "You need to supply three arguments:\n1. The gif URL\n2. The action (e.g. `hug`)\n3. The gif type (e.g. anime)",
       "checking": "I sent the owner a request to add the gif."
     },
+    "removegif": {
+      "description": "Remove a gif from the database",
+      "success": "successfully removed the gif.",
+      "wrongArgs": "You need to supply the link of the gif you want to remove",
+      "checking": "I sent the owner a request to remove the gif."
+    },
     "new": {
       "description": "Add an NPC",
       "getPrefix": "Please enter the prefix for your new character.",
