@@ -3,8 +3,6 @@ import type { ILanguage as lang } from "src/types";
 import { Bot } from "../../bot.js";
 import { Command } from "../../modules/command.js";
 
-//TODO - change category listing to new system
-
 export default class Help extends Command {
   constructor(client: Bot, category: string, name: string) {
     super(client, category, name);

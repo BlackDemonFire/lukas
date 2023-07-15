@@ -26,8 +26,6 @@ export function start() {
       .forEach((p) => moduleLoadPromises.push(p));
   });
 
-  //TODO - Add categrory to parsing
-
   recursiveReadDir("./dist/commands", function (err, files) {
     if (err) {
       logger.error(`Error while reading commands:\n\t${err}`);
