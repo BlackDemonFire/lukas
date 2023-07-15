@@ -1,17 +1,15 @@
 import { Message } from "discord.js";
 import type { ILanguage as lang } from "src/types";
-import { Bot } from "../bot.js";
-import { Command } from "../modules/command.js";
+import { Bot } from "../../bot.js";
+import { Command } from "../../modules/command.js";
 
 export default class Dsarm extends Command {
-  constructor(client: Bot) {
-    super(client);
+  constructor(client: Bot, category: string, name: string) {
+    super(client, category, name);
   }
   help = {
     show: true,
-    name: "dsarm",
     usage: `${this.prefix}dsarm <character>`,
-    category: "DSA",
   };
   async run(client: Bot, message: Message, args: string[], language: lang) {
     const pref: string | undefined = args.shift()?.slice().toLowerCase();

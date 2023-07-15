@@ -26,6 +26,9 @@ dependencies:
   random-org:
     specifier: ^2.2.0
     version: 2.2.0
+  recursive-readdir:
+    specifier: ^2.2.3
+    version: 2.2.3
   systeminformation:
     specifier: ^5.18.6
     version: 5.18.6
@@ -49,6 +52,9 @@ devDependencies:
   '@types/pg':
     specifier: ^8.10.2
     version: 8.10.2
+  '@types/recursive-readdir':
+    specifier: ^2.2.1
+    version: 2.2.1
   '@typescript-eslint/eslint-plugin':
     specifier: ^6.0.0
     version: 6.0.0(@typescript-eslint/parser@6.0.0)(eslint@8.44.0)(typescript@5.1.6)
@@ -258,6 +264,12 @@ packages:
       '@types/node': 20.4.1
       pg-protocol: 1.6.0
       pg-types: 4.0.1
+    dev: true
+
+  /@types/recursive-readdir@2.2.1:
+    resolution: {integrity: sha512-Xd+Ptc4/F2ueInqy5yK2FI5FxtwwbX2+VZpcg+9oYsFJVen8qQKGapCr+Bi5wQtHU1cTXT8s+07lo/nKPgu8Gg==}
+    dependencies:
+      '@types/node': 20.4.1
     dev: true
 
   /@types/semver@7.5.0:
@@ -1434,6 +1446,13 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       readable-stream: 3.6.2
+    dev: false
+
+  /recursive-readdir@2.2.3:
+    resolution: {integrity: sha512-8HrF5ZsXk5FAH9dgsx3BlUer73nIhuj+9OrQwEbLTPOBzGkL1lsFCR01am+v+0m2Cmbs1nP12hLDl5FA7EszKA==}
+    engines: {node: '>=6.0.0'}
+    dependencies:
+      minimatch: 3.1.2
     dev: false
 
   /resolve-from@4.0.0:

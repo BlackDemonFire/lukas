@@ -5,19 +5,17 @@ import {
   TextChannel,
 } from "discord.js";
 import type { ILanguage as lang } from "src/types";
-import { Bot } from "../bot.js";
-import { Command } from "../modules/command.js";
-import logger from "../modules/logger.js";
+import { Bot } from "../../bot.js";
+import { Command } from "../../modules/command.js";
+import logger from "../../modules/logger.js";
 
 export default class Purge extends Command {
-  constructor(client: Bot) {
-    super(client);
+  constructor(client: Bot, category: string, name: string) {
+    super(client, category, name);
   }
   help = {
     show: false,
-    name: "purge",
     usage: `${this.prefix}purge <amount>`,
-    category: "Moderation",
   };
   run(_client: Bot, message: Message, args: string[], language: lang) {
     if (!this.hasPermission(message)) {

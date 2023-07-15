@@ -1,17 +1,17 @@
 import { EmbedBuilder, Message } from "discord.js";
 import type { ILanguage as lang } from "src/types";
-import { Bot } from "../bot.js";
-import { Command } from "../modules/command.js";
+import { Bot } from "../../bot.js";
+import { Command } from "../../modules/command.js";
+
+//TODO - change category listing to new system
 
 export default class Help extends Command {
-  constructor(client: Bot) {
-    super(client);
+  constructor(client: Bot, category: string, name: string) {
+    super(client, category, name);
   }
   help = {
     show: true,
-    name: "help",
     usage: `${this.prefix}help [command]`,
-    category: "Utility",
   };
   run(client: Bot, message: Message, args: string[], language: lang) {
     const embed = new EmbedBuilder();
@@ -24,8 +24,8 @@ export default class Help extends Command {
         const desc: string = langcmds[cmd as keyof lang["command"]].description;
         embed
           .setDescription(desc)
-          .setFooter({ text: command.help.category })
-          .setTitle(command.help.name)
+          .setFooter({ text: command.category })
+          .setTitle(command.name)
           .setAuthor({ name: "Help" })
           .addFields(
             {
@@ -46,11 +46,11 @@ export default class Help extends Command {
       const categories: { [key: string]: string[] } = {};
       client.commands.map((cmd) => {
         if (!cmd.help.show) return;
-        const category: string = cmd.help.category;
+        const category: string = cmd.category;
         if (!categories[category]) {
-          categories[category] = [cmd.help.name];
+          categories[category] = [cmd.name];
         } else {
-          categories[cmd.help.category].push(cmd.help.name);
+          categories[cmd.category].push(cmd.name);
         }
       });
       for (const category in categories) {

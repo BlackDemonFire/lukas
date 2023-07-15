@@ -1,20 +1,18 @@
 import { Message } from "discord.js";
 import { inspect } from "util";
-import { Bot } from "../bot.js";
-import { Command } from "../modules/command.js";
-import logger from "../modules/logger.js";
-import { splitMessage } from "../modules/splitMessage.js";
-import type { ILanguage } from "../types.js";
+import { Bot } from "../../bot.js";
+import { Command } from "../../modules/command.js";
+import logger from "../../modules/logger.js";
+import { splitMessage } from "../../modules/splitMessage.js";
+import type { ILanguage } from "../../types.js";
 
 export default class Eval extends Command {
-  constructor(client: Bot) {
-    super(client);
+  constructor(client: Bot, category: string, name: string) {
+    super(client, category, name);
   }
   help = {
     show: false,
-    name: "eval",
     usage: `${this.prefix}eval <code>`,
-    category: "Owner only",
   };
   run(_client: Bot, message: Message, args: string[], language: ILanguage) {
     if (!super.isOwner(message)) {

@@ -1,17 +1,15 @@
 import { ColorResolvable, EmbedBuilder, Message } from "discord.js";
 import type { ILanguage as lang } from "src/types";
-import { Bot } from "../bot.js";
-import { GifCommand } from "../modules/command.js";
+import { Bot } from "../../bot.js";
+import { GifCommand } from "../../modules/command.js";
 
 export default class Purr extends GifCommand {
-  constructor(client: Bot) {
-    super(client);
+  constructor(client: Bot, category: string, name: string) {
+    super(client, category, name);
   }
   help = {
     show: true,
-    name: "purr",
     usage: `${this.prefix}purr`,
-    category: "Gifs",
   };
   async run(client: Bot, message: Message, _args: string[], language: lang) {
     const gif: string = await client.db.getgif(

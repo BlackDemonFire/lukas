@@ -1,22 +1,21 @@
 import type { ColorResolvable } from "discord.js";
 import { EmbedBuilder, Message } from "discord.js";
 import type { ILanguage as lang } from "src/types";
-import { Bot } from "../bot.js";
-import { GifCommand } from "../modules/command.js";
+import { Bot } from "../../bot.js";
+import { GifCommand } from "../../modules/command.js";
 
-export default class Cuddle extends GifCommand {
-  constructor(client: Bot) {
-    super(client);
+export default class Kiss extends GifCommand {
+  constructor(client: Bot, category: string, name: string) {
+    super(client, category, name);
   }
   help = {
     show: true,
-    name: "cuddle",
-    usage: `${this.prefix}cuddle [user]`,
+    usage: `${this.prefix}kiss [user]`,
     category: "Gifs",
   };
   async run(client: Bot, message: Message, args: string[], language: lang) {
     const gif: string = await client.db.getgif(
-      "cuddle",
+      "kiss",
       await client.db.getgiftype(message.author),
     );
     let userA: string = await client.db.getname(message.author);
@@ -31,21 +30,21 @@ export default class Cuddle extends GifCommand {
       args,
       language,
     );
-    let responseString: string;
+    let responseString = "";
     if (userB == "") {
       responseString = (
-        await client.random.choice(language.command.cuddle.singleUser)
+        await client.random.choice(language.command.kiss.singleUser)
       ).replace(/{a}/g, userA);
     } else {
       responseString = (
-        await client.random.choice(language.command.cuddle.multiUser)
+        await client.random.choice(language.command.kiss.multiUser)
       )
         .replace(/{a}/g, userA)
         .replace(/{b}/g, userB);
     }
     const embed = new EmbedBuilder()
       .setImage(gif)
-      .setAuthor({ name: "cuddle" })
+      .setAuthor({ name: "kiss" })
       .setDescription(responseString)
       .setColor(color);
     message.channel.send({ embeds: [embed] });

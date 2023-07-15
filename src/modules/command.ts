@@ -7,9 +7,13 @@ abstract class Command implements command {
   protected prefix: string;
   abstract help: command["help"];
   private client: Bot;
-  constructor(client: Bot) {
+  public readonly category: string;
+  public readonly name: string;
+  constructor(client: Bot, category: string, name: string) {
     this.prefix = client.prefix;
     this.client = client;
+    this.category = category;
+    this.name = name;
   }
   // eslint-disable-next-line no-unused-vars
   abstract run(
@@ -38,8 +42,8 @@ abstract class Command implements command {
 }
 
 abstract class GifCommand extends Command {
-  constructor(client: Bot) {
-    super(client);
+  constructor(client: Bot, category: string, name: string) {
+    super(client, category, name);
   }
   async parseUser(
     client: Bot,

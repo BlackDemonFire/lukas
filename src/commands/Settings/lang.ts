@@ -1,11 +1,11 @@
 import { Message, PermissionFlagsBits } from "discord.js";
 import type { ILanguage as lang } from "src/types";
-import { Bot } from "../bot.js";
-import { Command } from "../modules/command.js";
+import { Bot } from "../../bot.js";
+import { Command } from "../../modules/command.js";
 
 export default class Lang extends Command {
-  constructor(client: Bot) {
-    super(client);
+  constructor(client: Bot, category: string, name: string) {
+    super(client, category, name);
   }
   run(client: Bot, message: Message, args: string[], language: lang) {
     let newLang: string;
@@ -55,8 +55,6 @@ export default class Lang extends Command {
   }
   help = {
     show: true,
-    name: "lang",
     usage: `${this.prefix}lang <lang>`,
-    category: "Settings",
   };
 }

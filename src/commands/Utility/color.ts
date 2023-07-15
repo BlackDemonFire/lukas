@@ -1,11 +1,11 @@
 import { ColorResolvable, Message, resolveColor } from "discord.js";
-import { Bot } from "../bot.js";
-import { Command } from "../modules/command.js";
-import type { ILanguage as lang } from "../types";
+import { Bot } from "../../bot.js";
+import { Command } from "../../modules/command.js";
+import type { ILanguage as lang } from "../../types.js";
 
 export default class Color extends Command {
-  constructor(client: Bot) {
-    super(client);
+  constructor(client: Bot, category: string, name: string) {
+    super(client, category, name);
   }
   run(client: Bot, message: Message, args: string[], language: lang) {
     let color: ColorResolvable;
@@ -25,8 +25,6 @@ export default class Color extends Command {
   }
   help = {
     show: true,
-    name: "color",
     usage: `${this.prefix}color [color]`,
-    category: "Utility",
   };
 }
