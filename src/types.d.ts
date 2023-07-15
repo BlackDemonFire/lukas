@@ -175,9 +175,7 @@ export interface command {
   ) => unknown;
   help: {
     show: boolean;
-    name: string;
     usage: string;
-    category: string;
   };
 }
 

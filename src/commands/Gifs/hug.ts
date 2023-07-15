@@ -1,22 +1,20 @@
 import type { ColorResolvable } from "discord.js";
 import { EmbedBuilder, Message } from "discord.js";
 import type { ILanguage as lang } from "src/types";
-import { Bot } from "../bot.js";
-import { GifCommand } from "../modules/command.js";
+import { Bot } from "../../bot.js";
+import { GifCommand } from "../../modules/command.js";
 
-export default class Hold extends GifCommand {
-  constructor(client: Bot) {
-    super(client);
+export default class Hug extends GifCommand {
+  constructor(client: Bot, category: string, name: string) {
+    super(client, category, name);
   }
   help = {
     show: true,
-    name: "hold",
-    usage: `${this.prefix}hold [user]`,
-    category: "Gifs",
+    usage: `${this.prefix}hug [user]`,
   };
   async run(client: Bot, message: Message, args: string[], language: lang) {
     const gif: string = await client.db.getgif(
-      "handhold",
+      "hug",
       await client.db.getgiftype(message.author),
     );
     let userA: string = await client.db.getname(message.author);
@@ -34,18 +32,18 @@ export default class Hold extends GifCommand {
     let responseString = "";
     if (userB == "") {
       responseString = (
-        await client.random.choice(language.command.hold.singleUser)
+        await client.random.choice(language.command.hug.singleUser)
       ).replace(/{a}/g, userA);
     } else {
       responseString = (
-        await client.random.choice(language.command.hold.multiUser)
+        await client.random.choice(language.command.hug.multiUser)
       )
         .replace(/{a}/g, userA)
         .replace(/{b}/g, userB);
     }
     const embed = new EmbedBuilder()
       .setImage(gif)
-      .setAuthor({ name: "hold" })
+      .setAuthor({ name: "hug" })
       .setDescription(responseString)
       .setColor(color);
     message.channel.send({ embeds: [embed] });

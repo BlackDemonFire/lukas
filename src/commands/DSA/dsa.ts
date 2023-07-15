@@ -6,18 +6,16 @@ import {
   Webhook,
 } from "discord.js";
 import type { ILanguage as lang } from "src/types";
-import { Bot } from "../bot.js";
-import { Command } from "../modules/command.js";
+import { Bot } from "../../bot.js";
+import { Command } from "../../modules/command.js";
 
 export default class Dsa extends Command {
-  constructor(client: Bot) {
-    super(client);
+  constructor(client: Bot, category: string, name: string) {
+    super(client, category, name);
   }
   help = {
     show: true,
-    name: "dsa",
     usage: `${this.prefix}dsa [character] <message>`,
-    category: "DSA",
   };
   async run(client: Bot, message: Message, args: string[], language: lang) {
     if (!(message.channel instanceof BaseGuildTextChannel)) {

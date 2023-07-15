@@ -1,6 +1,7 @@
 import { Bot } from "./bot";
 import { start } from "./startclient.js";
 import settings from "./modules/settings.js";
+import logger from "./modules/logger.js";
 
 const client: Bot = start();
 
@@ -13,4 +14,4 @@ function shutdown() {
 
 process.on("SIGTERM", shutdown);
 process.on("SIGINT", shutdown);
-process.on("uncaughtException", shutdown);
+process.on("uncaughtException", logger.error.bind(logger));

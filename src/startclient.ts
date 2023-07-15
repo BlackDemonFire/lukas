@@ -2,6 +2,7 @@ import { readdir, readFileSync } from "fs";
 import { Bot } from "./bot.js";
 import logger from "./modules/logger.js";
 import type { ILanguage } from "./types";
+import recursiveReadDir from "recursive-readdir";
 
 export function start() {
   const client: Bot = new Bot();
@@ -25,18 +26,23 @@ export function start() {
       .forEach((p) => moduleLoadPromises.push(p));
   });
 
-  readdir("./dist/commands", (err, files) => {
+  recursiveReadDir("./dist/commands", function (err, files) {
     if (err) {
       logger.error(`Error while reading commands:\n\t${err}`);
       return;
     }
+
     files
+      .filter((file) => file.endsWith(".js"))
       .map(async (file: string) => {
-        if (!file.endsWith(".js")) return;
-        const cmd = await import(`./commands/${file}`);
-        const commandName = file.split(".")[0];
+        const cmd = await import(`../${file}`);
+        const commandName = file.split("/").at(-1)!.split(".")[0];
+        const category = file.split("/").at(-2);
         logger.debug(`Loading command ${commandName}`);
-        client.commands.set(commandName, new cmd.default(client));
+        client.commands.set(
+          commandName,
+          new cmd.default(client, category, commandName),
+        );
         logger.debug(`Loaded command ${commandName}`);
       })
       .forEach((p) => {

@@ -2,12 +2,12 @@ import { EmbedBuilder, Message } from "discord.js";
 import { freemem, hostname, uptime as sUptime, totalmem } from "os";
 import { uptime as pUptime } from "process";
 import { cpu } from "systeminformation";
-import { Bot } from "../bot.js";
-import { Command } from "../modules/command.js";
+import { Bot } from "../../bot.js";
+import { Command } from "../../modules/command.js";
 
 export default class Info extends Command {
-  constructor(client: Bot) {
-    super(client);
+  constructor(client: Bot, category: string, name: string) {
+    super(client, category, name);
   }
   async run(_client: Bot, message: Message) {
     const cpuData = await cpu();
@@ -37,8 +37,6 @@ export default class Info extends Command {
   }
   help = {
     show: true,
-    name: "info",
     usage: `${this.prefix}info`,
-    category: "Utility",
   };
 }

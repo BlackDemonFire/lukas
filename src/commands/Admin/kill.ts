@@ -1,18 +1,16 @@
 import { EmbedBuilder, Message } from "discord.js";
 import type { ILanguage as lang } from "src/types";
-import { Bot } from "../bot.js";
-import { Command } from "../modules/command.js";
-import logger from "../modules/logger.js";
+import { Bot } from "../../bot.js";
+import { Command } from "../../modules/command.js";
+import logger from "../../modules/logger.js";
 
 export default class Kill extends Command {
-  constructor(client: Bot) {
-    super(client);
+  constructor(client: Bot, category: string, name: string) {
+    super(client, category, name);
   }
   help = {
     show: false,
-    name: "kill",
     usage: `${this.prefix}kill`,
-    category: "Owner only",
   };
   async run(client: Bot, message: Message, _args: string[], language: lang) {
     if (!super.isOwner(message)) {

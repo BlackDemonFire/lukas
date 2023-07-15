@@ -1,11 +1,11 @@
 import { Message } from "discord.js";
 import type { ILanguage as lang } from "src/types";
-import { Bot } from "../bot.js";
-import { Command } from "../modules/command.js";
+import { Bot } from "../../bot.js";
+import { Command } from "../../modules/command.js";
 
 export default class Giftype extends Command {
-  constructor(client: Bot) {
-    super(client);
+  constructor(client: Bot, category: string, name: string) {
+    super(client, category, name);
   }
   async run(client: Bot, message: Message, args: string[], language: lang) {
     const giftype: string = args[0].toLowerCase();
@@ -34,8 +34,6 @@ export default class Giftype extends Command {
   }
   help = {
     show: true,
-    name: "giftype",
     usage: `${this.prefix}giftype <type>`,
-    category: "Utility",
   };
 }

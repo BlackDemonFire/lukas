@@ -4,12 +4,12 @@ import {
   OAuth2Scopes,
   PermissionsBitField,
 } from "discord.js";
-import { Bot } from "../bot.js";
-import { Command } from "../modules/command.js";
+import { Bot } from "../../bot.js";
+import { Command } from "../../modules/command.js";
 
 export default class Link extends Command {
-  constructor(client: Bot) {
-    super(client);
+  constructor(client: Bot, category: string, name: string) {
+    super(client, category, name);
   }
   async run(client: Bot, message: Message) {
     const embed: EmbedBuilder = new EmbedBuilder()
@@ -25,8 +25,6 @@ export default class Link extends Command {
   }
   help = {
     show: true,
-    name: "link",
     usage: `${this.prefix}link`,
-    category: "Utility",
   };
 }

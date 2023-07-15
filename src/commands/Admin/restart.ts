@@ -1,20 +1,18 @@
 import { EmbedBuilder, Message } from "discord.js";
 import type { ILanguage as lang } from "src/types";
 import { inspect } from "util";
-import { Bot } from "../bot.js";
-import { restart } from "../execrestart.js";
-import { Command } from "../modules/command.js";
-import logger from "../modules/logger.js";
+import { Bot } from "../../bot.js";
+import { restart } from "../../execrestart.js";
+import { Command } from "../../modules/command.js";
+import logger from "../../modules/logger.js";
 
 export default class Restart extends Command {
-  constructor(client: Bot) {
-    super(client);
+  constructor(client: Bot, category: string, name: string) {
+    super(client, category, name);
   }
   help = {
     show: false,
-    name: "restart",
     usage: `${this.prefix}restart`,
-    category: "Owner only",
   };
   async run(client: Bot, message: Message, _args: string[], language: lang) {
     // code

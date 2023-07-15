@@ -1,23 +1,19 @@
 import type { ColorResolvable } from "discord.js";
 import { EmbedBuilder, Message } from "discord.js";
-import { Bot } from "../bot.js";
-import { GifCommand } from "../modules/command.js";
-import type { ILanguage as lang } from "../types";
-
-export default class Blush extends GifCommand {
-  constructor(client: Bot) {
-    super(client);
+import type { ILanguage as lang } from "src/types";
+import { Bot } from "../../bot.js";
+import { GifCommand } from "../../modules/command.js";
+export default class Cry extends GifCommand {
+  constructor(client: Bot, category: string, name: string) {
+    super(client, category, name);
   }
   help = {
     show: true,
-    name: "blush",
-    usage: `${this.prefix}blush`,
-    category: "Gifs",
+    usage: `${this.prefix}cry`,
   };
-
   async run(client: Bot, message: Message, _args: string[], language: lang) {
     const gif: string = await client.db.getgif(
-      "blush",
+      "cry",
       await client.db.getgiftype(message.author),
     );
     let userA: string = await client.db.getname(message.author);
@@ -27,11 +23,11 @@ export default class Blush extends GifCommand {
         ? message.member!.displayName
         : message.author.username;
     const responseString: string = (
-      await client.random.choice(language.command.blush.singleUser)
+      await client.random.choice(language.command.cry.singleUser)
     ).replace(/{a}/g, userA);
     const embed = new EmbedBuilder()
       .setImage(gif)
-      .setAuthor({ name: "blush" })
+      .setAuthor({ name: "cry" })
       .setDescription(responseString)
       .setColor(color);
     message.channel.send({ embeds: [embed] });

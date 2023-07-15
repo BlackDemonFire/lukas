@@ -1,11 +1,11 @@
 import { Message } from "discord.js";
 import type { ILanguage as lang } from "src/types";
-import { Bot } from "../bot.js";
-import { Command } from "../modules/command.js";
+import { Bot } from "../../bot.js";
+import { Command } from "../../modules/command.js";
 
 export default class Gifaction extends Command {
-  constructor(client: Bot) {
-    super(client);
+  constructor(client: Bot, category: string, name: string) {
+    super(client, category, name);
   }
   async run(client: Bot, message: Message, _args: string[], language: lang) {
     const actions = await client.db.getgifactions();
@@ -29,8 +29,6 @@ export default class Gifaction extends Command {
   }
   help = {
     show: true,
-    name: "gifaction",
     usage: `${this.prefix}gifaction`,
-    category: "Utility",
   };
 }

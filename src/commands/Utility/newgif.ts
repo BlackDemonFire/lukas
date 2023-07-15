@@ -8,8 +8,8 @@ import {
   User,
 } from "discord.js";
 import type { ILanguage as lang } from "src/types";
-import { Bot } from "../bot.js";
-import { Command } from "../modules/command.js";
+import { Bot } from "../../bot.js";
+import { Command } from "../../modules/command.js";
 
 function onCollect(
   reaction: MessageReaction,
@@ -58,8 +58,8 @@ function onCollect(
 }
 
 export default class Newgif extends Command {
-  constructor(client: Bot) {
-    super(client);
+  constructor(client: Bot, category: string, name: string) {
+    super(client, category, name);
   }
   async run(client: Bot, message: Message, args: string[], language: lang) {
     let response: string;
@@ -146,8 +146,6 @@ export default class Newgif extends Command {
   }
   help = {
     show: true,
-    name: "newgif",
     usage: `${this.prefix}newgif <url> <command> [type (defaults to anime)]`,
-    category: "Gifs",
   };
 }
