@@ -10,6 +10,7 @@ import {
 import type { ILanguage as lang } from "src/types";
 import { Bot } from "../../bot.js";
 import { Command } from "../../modules/command.js";
+import logger from "../../modules/logger.js";
 
 function onCollect(
   reaction: MessageReaction,
@@ -19,6 +20,7 @@ function onCollect(
   collectors: Record<string, ReactionCollector>,
   requestmessages: Record<string, Message>,
 ) {
+  logger.info("reaction!");
   if (!(client.application!.owner instanceof Team)) return;
   switch (reaction.emoji.name) {
     case "✅":
