@@ -1,4 +1,11 @@
-import { ClientApplication, Message, Team, User } from "discord.js";
+import {
+  ClientApplication,
+  ColorResolvable,
+  EmbedBuilder,
+  Message,
+  Team,
+  User,
+} from "discord.js";
 import type { command, ILanguage as lang, nil } from "src/types";
 import { Bot } from "../bot.js";
 import logger from "./logger.js";
@@ -9,7 +16,7 @@ abstract class Command implements command {
   private client: Bot;
   public readonly category: string;
   public readonly name: string;
-  constructor(client: Bot, category: string, name: string) {
+  protected constructor(client: Bot, category: string, name: string) {
     this.prefix = client.prefix;
     this.client = client;
     this.category = category;
@@ -42,7 +49,7 @@ abstract class Command implements command {
 }
 
 abstract class GifCommand extends Command {
-  constructor(client: Bot, category: string, name: string) {
+  protected constructor(client: Bot, category: string, name: string) {
     super(client, category, name);
   }
   async parseUser(
@@ -106,6 +113,99 @@ abstract class GifCommand extends Command {
     if (userB.length > 1792) userB = userB.substring(0, 1792) + "...";
     return userB;
   }
+
+  protected getGifLanguageObject(language: lang, attr: string) {
+    type CommandKey = keyof typeof language.command;
+    const commandName = this.name as CommandKey;
+
+    const langCommand = language.command[commandName];
+
+    type AttrKey = keyof typeof langCommand;
+    const attrName = attr as AttrKey;
+    // Unknown cast is necessary, as technically the result could be a `string` which cannot be cast directly to a `string[]`
+    return langCommand[attrName] as unknown as string[];
+  }
+
+  protected buildAndSendEmbed(
+    gif: string,
+    responseString: string,
+    color: ColorResolvable,
+    message: Message,
+  ) {
+    const embed = new EmbedBuilder()
+      .setImage(gif)
+      .setAuthor({ name: this.name })
+      .setDescription(responseString)
+      .setColor(color);
+    message.channel.send({ embeds: [embed] });
+  }
 }
 
-export { Command, GifCommand };
+abstract class SingleUserGifCommand extends GifCommand {
+  protected constructor(client: Bot, category: string, name: string) {
+    super(client, category, name);
+  }
+
+  async run(client: Bot, message: Message, _args: string[], language: lang) {
+    const gif: string = await client.db.getgif(
+      this.name,
+      await client.db.getgiftype(message.author),
+    );
+    let userA: string = await client.db.getname(message.author);
+    const color: ColorResolvable = await client.db.getcolor(message.author);
+    if (userA == "")
+      userA = message.guild
+        ? message.member!.displayName
+        : message.author.username;
+    const responseString: string = (
+      await client.random.choice(
+        this.getGifLanguageObject(language, "singleUser"),
+      )
+    ).replace(/{a}/g, userA);
+    this.buildAndSendEmbed(gif, responseString, color, message);
+  }
+}
+
+abstract class MultiUserGifCommand extends GifCommand {
+  protected constructor(client: Bot, category: string, name: string) {
+    super(client, category, name);
+  }
+
+  async run(client: Bot, message: Message, args: string[], language: lang) {
+    const gif: string = await client.db.getgif(
+      this.name,
+      await client.db.getgiftype(message.author),
+    );
+    let userA: string = await client.db.getname(message.author);
+    const color: ColorResolvable = await client.db.getcolor(message.author);
+    if (userA == "")
+      userA = message.guild
+        ? message.member!.displayName
+        : message.author.username;
+    const userB: string = await super.parseUser(
+      client,
+      message,
+      args,
+      language,
+    );
+    let responseString: string;
+    if (userB == "") {
+      responseString = (
+        await client.random.choice(
+          this.getGifLanguageObject(language, "singleUser"),
+        )
+      ).replace(/{a}/g, userA);
+    } else {
+      responseString = (
+        await client.random.choice(
+          this.getGifLanguageObject(language, "multiUser"),
+        )
+      )
+        .replace(/{a}/g, userA)
+        .replace(/{b}/g, userB);
+    }
+    this.buildAndSendEmbed(gif, responseString, color, message);
+  }
+}
+
+export { Command, GifCommand, SingleUserGifCommand, MultiUserGifCommand };
