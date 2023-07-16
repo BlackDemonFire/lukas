@@ -14,7 +14,6 @@ export class Bot extends Client {
         IntentsBitField.Flags.GuildMessages,
         IntentsBitField.Flags.DirectMessages,
         IntentsBitField.Flags.MessageContent,
-        IntentsBitField.Flags.DirectMessageReactions,
       ],
     });
   }
