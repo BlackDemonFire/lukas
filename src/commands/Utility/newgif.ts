@@ -24,8 +24,7 @@ export default class Newgif extends Command {
     }
     const url: string = args[0];
     const action: string = args[1].toLowerCase();
-    let type: string = args[2].toLowerCase();
-    if (!type || type == "") type = "anime";
+    const type: string = args[2].toLowerCase();
     if (this.isOwner(message)) {
       client.db.newgif(url, action, type);
       message.channel.send(language.command.newgif.success);
