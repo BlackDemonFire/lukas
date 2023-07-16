@@ -1,23 +1,22 @@
 import {
   ActionRowBuilder,
   ButtonBuilder,
+  ButtonStyle,
   GuildChannel,
   Message,
-  MessageReaction,
-  ReactionCollector,
-  Snowflake,
   Team,
   User,
 } from "discord.js";
 import type { ILanguage as lang } from "src/types";
 import { Bot } from "../../bot.js";
 import { Command } from "../../modules/command.js";
-import logger from "../../modules/logger.js";
+import { activeRequests, GifRequest } from "../../modules/dbo/gifRequest.js";
 
 export default class Newgif extends Command {
   constructor(client: Bot, category: string, name: string) {
     super(client, category, name);
   }
+
   async run(client: Bot, message: Message, args: string[], language: lang) {
     if (!args || args.length !== 3) {
       message.channel.send(language.command.newgif.wrongArgs);
@@ -40,6 +39,18 @@ export default class Newgif extends Command {
     } else {
       admins = [owner];
     }
+    const requestMessage = await message.channel.send({ content: response });
+    activeRequests.set(
+      requestMessage.id,
+      new GifRequest(
+        requestMessage,
+        requestMessage.id,
+        message.channel.id,
+        url,
+        action,
+        type,
+      ),
+    );
     for (const admin of admins) {
       admin.send({
         content: `Gif check request from ${message.author.tag} in <#${
@@ -49,15 +60,20 @@ export default class Newgif extends Command {
         })\ngif: ${url}\naction: ${action}\ntype: ${type}`,
         components: [
           new ActionRowBuilder<ButtonBuilder>().addComponents([
-            new ButtonBuilder().setEmoji("✅").setCustomId("newgif.accept"),
-            new ButtonBuilder().setEmoji("❌").setCustomId("newgif.reject"),
+            new ButtonBuilder()
+              .setLabel("Accept")
+              .setCustomId(`newgif.accept.${requestMessage.id}`)
+              .setStyle(ButtonStyle.Success),
+            new ButtonBuilder()
+              .setLabel("Reject")
+              .setCustomId(`newgif.reject.${requestMessage.id}`)
+              .setStyle(ButtonStyle.Danger),
           ]),
         ],
       });
     }
-
-    message.channel.send({ content: response });
   }
+
   help = {
     show: true,
     usage: `${this.prefix}newgif <url> <command> [type (defaults to anime)]`,
