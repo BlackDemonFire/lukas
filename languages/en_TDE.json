@@ -114,7 +114,8 @@
     },
     "giftype": {
       "description": "Change your gif type",
-      "availableTypes": "Following gif types are available: {types}."
+      "availableTypes": "Following gif types are available: {types}.",
+      "success": "Changed your Gif Type."
     },
     "gifaction": {
       "description": "Get available gif actions",

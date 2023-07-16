@@ -110,6 +110,18 @@ export class DB {
     if (!data) return;
   }
   async getgif(actiontype: string, giftype: string): Promise<string> {
+    const amount = (await this.query(
+      "SELECT COUNT(*) FROM gifdb WHERE giftype = $1 AND actiontype = $2;",
+      [giftype, actiontype],
+    ))!.rows[0] as number;
+    if (amount === 0 || giftype == "any") {
+      const data = await this.query(
+        "SELECT url FROM gifdb WHERE actiontype = $1 ORDER BY random() LIMIT 1;",
+        [actiontype],
+      );
+      if (!data) return "";
+      return data.rows ? data.rows[0].url : "";
+    }
     const data = await this.query(
       "SELECT url FROM gifdb WHERE giftype = $1 AND actiontype = $2 ORDER BY random() LIMIT 1;",
       [giftype, actiontype],
@@ -120,6 +132,10 @@ export class DB {
   async getgifactions(): Promise<string[]> {
     const data = await this.query("SELECT DISTINCT actiontype FROM gifdb;", []);
     return data ? data.rows.map((row) => row.actiontype) : [];
+  }
+  async getgiftypes() {
+    const data = await this.query("select distinct giftype from gifdb;", []);
+    return data ? data.rows.map((row) => row.giftype) : [];
   }
   async getgiftype(user: User): Promise<string> {
     const data = await this.query("SELECT giftype FROM userdb WHERE id = $1;", [

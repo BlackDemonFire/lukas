@@ -121,6 +121,7 @@ interface ILangCommand {
   giftype: {
     description: string;
     availableTypes: string;
+    success: string;
   };
   gifactions: {
     description: string;

@@ -117,7 +117,8 @@
     },
     "giftype": {
       "description": "Ändere deinen Gif Typen",
-      "availableTypes": "Die folgenden Typen sind verfügbar: {types}."
+      "availableTypes": "Die folgenden Typen sind verfügbar: {types}.",
+      "success": "Ich habe dein Gif Typen geändert."
     },
     "gifaction": {
       "description": "Zeigt verfügbare Gif Aktionen",

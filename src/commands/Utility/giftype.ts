@@ -8,10 +8,22 @@ export default class Giftype extends Command {
     super(client, category, name);
   }
   async run(client: Bot, message: Message, args: string[], language: lang) {
+    const types = await client.db.getgiftypes();
+    types.push("any");
+    let typesstring = "";
+
+    if (args.length === 0) {
+      message.channel.send({
+        content: language.command.giftype.availableTypes.replace(
+          "{types}",
+          (typesstring = types.join(", ")),
+        ),
+      });
+      return;
+    }
+
     const giftype: string = args[0].toLowerCase();
-    const types = ["anime"];
     if (!types.includes(giftype)) {
-      let typesstring = "";
       switch (types.length) {
         case 1:
           typesstring = types[0];
@@ -20,6 +32,7 @@ export default class Giftype extends Command {
           typesstring = types.join(` ${language.general.and} `);
           break;
         default:
+          typesstring = types.join(", ");
           break;
       }
       message.channel.send({
@@ -31,6 +44,9 @@ export default class Giftype extends Command {
       return;
     }
     client.db.setgiftype(message.author, giftype);
+    message.channel.send({
+      content: language.command.giftype.success,
+    });
   }
   help = {
     show: true,
