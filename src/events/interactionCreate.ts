@@ -17,54 +17,117 @@ async function handleButtonInteraction(
 
   switch (name) {
     case "newgif":
-      const request = activeRequests.get(args[1]);
-      if (!request) {
-        await interaction.update("Unable to find request");
-        return;
-      }
-      if (request.accepted !== undefined) {
-        await interaction.update({
-          content: `Request was **${
-            request.accepted ? "ACCEPTED" : "REJECTED"
-          }** by ${request.acceptedBy}`,
-          components: [],
-        });
-        return;
-      }
-      if (args[0] == "accept") {
-        client.db.newgif(request.gifUrl, request.action, request.gifType);
-        await request.message.edit("The owner accepted your request");
-        await interaction.update({
-          content: `**ACCEPTED**\nGif check request from in <#${
-            request.message.channel.id
-          }> (${
-            request.message.channel instanceof GuildChannel
-              ? request.message.channel.name
-              : "DM"
-          })\ngif: ${request.gifUrl}\naction: ${request.action}\ntype: ${
-            request.gifType
-          }`,
-          components: [],
-        });
-        request.accepted = true;
-        request.acceptedBy = interaction.user.username;
-      } else if (args[0] == "reject") {
-        await request.message.edit("The owner rejected your request");
-        await interaction.update({
-          content: `**REJECTED**\nGif check request from in <#${
-            request.message.channel.id
-          }> (${
-            request.message.channel instanceof GuildChannel
-              ? request.message.channel.name
-              : "DM"
-          })\ngif: ${request.gifUrl}\naction: ${request.action}\ntype: ${
-            request.gifType
-          }`,
-          components: [],
-        });
-        request.accepted = false;
-        request.acceptedBy = interaction.user.username;
-      }
+      await newGif(client, interaction, args);
       break;
+
+    case "removegif":
+      await removeGif(client, interaction, args);
+      break;
+  }
+}
+
+async function newGif(
+  client: Bot,
+  interaction: ButtonInteraction,
+  args: string[],
+) {
+  const request = activeRequests.get(args[1]);
+  if (!request) {
+    await interaction.update("Unable to find request");
+    return;
+  }
+  if (request.accepted !== undefined) {
+    await interaction.update({
+      content: `Request was **${
+        request.accepted ? "ACCEPTED" : "REJECTED"
+      }** by ${request.acceptedBy}`,
+      components: [],
+    });
+    return;
+  }
+  if (args[0] == "accept") {
+    client.db.newgif(request.gifUrl, request.action!, request.gifType!);
+    await request.message.edit("The owner accepted your request");
+    await interaction.update({
+      content: `**ACCEPTED**\nGif check request from in <#${
+        request.message.channel.id
+      }> (${
+        request.message.channel instanceof GuildChannel
+          ? request.message.channel.name
+          : "DM"
+      })\ngif: ${request.gifUrl}\naction: ${request.action}\ntype: ${
+        request.gifType
+      }`,
+      components: [],
+    });
+    request.accepted = true;
+    request.acceptedBy = interaction.user.username;
+  } else if (args[0] == "reject") {
+    await request.message.edit("The owner rejected your request");
+    await interaction.update({
+      content: `**REJECTED**\nGif check request from in <#${
+        request.message.channel.id
+      }> (${
+        request.message.channel instanceof GuildChannel
+          ? request.message.channel.name
+          : "DM"
+      })\ngif: ${request.gifUrl}\naction: ${request.action}\ntype: ${
+        request.gifType
+      }`,
+      components: [],
+    });
+    request.accepted = false;
+    request.acceptedBy = interaction.user.username;
+  }
+}
+
+async function removeGif(
+  client: Bot,
+  interaction: ButtonInteraction,
+  args: string[],
+) {
+  const request = activeRequests.get(args[1]);
+  if (!request) {
+    await interaction.update("Unable to find request");
+    return;
+  }
+  if (request.accepted !== undefined) {
+    await interaction.update({
+      content: `Request was **${
+        request.accepted ? "ACCEPTED" : "REJECTED"
+      }** by ${request.acceptedBy}`,
+      components: [],
+    });
+    return;
+  }
+  if (args[0] == "accept") {
+    client.db.removegif(request.gifUrl);
+    await request.message.edit("The owner accepted your request");
+    await interaction.update({
+      content: `**ACCEPTED**\nGif remove request from in <#${
+        request.message.channel.id
+      }> (${
+        request.message.channel instanceof GuildChannel
+          ? request.message.channel.name
+          : "DM"
+      })\ngif: ${request.gifUrl} `,
+      components: [],
+    });
+    request.accepted = true;
+    request.acceptedBy = interaction.user.username;
+  } else if (args[0] == "reject") {
+    await request.message.edit("The owner rejected your request");
+    await interaction.update({
+      content: `**REJECTED**\nGif remove request from in <#${
+        request.message.channel.id
+      }> (${
+        request.message.channel instanceof GuildChannel
+          ? request.message.channel.name
+          : "DM"
+      })\ngif: ${request.gifUrl}`,
+      components: [],
+    });
+    request.accepted = false;
+    request.acceptedBy = interaction.user.username;
   }
 }

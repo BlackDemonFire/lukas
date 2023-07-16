@@ -5,8 +5,8 @@ class GifRequest {
   messageId: string;
   channelId: string;
   gifUrl: string;
-  action: string;
-  gifType: string;
+  action: string | null;
+  gifType: string | null;
   accepted: boolean | undefined;
   acceptedBy: string | undefined;
 
@@ -15,8 +15,8 @@ class GifRequest {
     messageId: string,
     channelId: string,
     gifUrl: string,
-    action: string,
-    gifType: string,
+    action: string | null,
+    gifType: string | null,
   ) {
     this.message = message;
     this.messageId = messageId;
