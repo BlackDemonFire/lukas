@@ -161,6 +161,9 @@ export class DB {
       [url, giftype, actiontype],
     );
   }
+  removegif(url: string) {
+    this.query("DELETE FROM gifdb WHERE url = $1", [url]);
+  }
   newuser(user: User) {
     this.query(
       "INSERT INTO userdb VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING;",

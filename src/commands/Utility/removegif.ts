@@ -18,19 +18,17 @@ export default class Newgif extends Command {
   }
 
   async run(client: Bot, message: Message, args: string[], language: lang) {
-    if (!args || args.length !== 3) {
-      message.channel.send(language.command.newgif.wrongArgs);
+    if (!args || args.length !== 1) {
+      message.channel.send(language.command.removegif.wrongArgs);
       return;
     }
     const url: string = args[0];
-    const action: string = args[1].toLowerCase();
-    const type: string = args[2].toLowerCase();
     if (this.isOwner(message)) {
-      client.db.newgif(url, action, type);
-      message.channel.send(language.command.newgif.success);
+      client.db.removegif(url);
+      message.channel.send(language.command.removegif.success);
       return;
     }
-    const response: string = language.command.newgif.checking;
+    const response: string = language.command.removegif.checking;
     const owner: Team | User = client.application!.owner!;
     let admins: User[];
     if (owner instanceof Team) {
@@ -46,8 +44,8 @@ export default class Newgif extends Command {
         requestMessage.id,
         message.channel.id,
         url,
-        action,
-        type,
+        null,
+        null,
       ),
     );
     for (const admin of admins) {
@@ -56,16 +54,16 @@ export default class Newgif extends Command {
           message.channel.id
         }> (${
           message.channel instanceof GuildChannel ? message.channel.name : "DM"
-        })\ngif: ${url}\naction: ${action}\ntype: ${type}`,
+        })\ngif: ${url}`,
         components: [
           new ActionRowBuilder<ButtonBuilder>().addComponents([
             new ButtonBuilder()
               .setLabel("Accept")
-              .setCustomId(`newgif.accept.${requestMessage.id}`)
+              .setCustomId(`removegif.accept.${requestMessage.id}`)
               .setStyle(ButtonStyle.Success),
             new ButtonBuilder()
               .setLabel("Reject")
-              .setCustomId(`newgif.reject.${requestMessage.id}`)
+              .setCustomId(`removegif.reject.${requestMessage.id}`)
               .setStyle(ButtonStyle.Danger),
           ]),
         ],
@@ -75,6 +73,6 @@ export default class Newgif extends Command {
 
   help = {
     show: true,
-    usage: `${this.prefix}newgif <url> <command> [type (defaults to anime)]`,
+    usage: `${this.prefix}removegif <url>`,
   };
 }

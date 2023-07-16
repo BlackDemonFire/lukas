@@ -67,6 +67,12 @@ interface ILangCommand {
     checking: string;
     success: string;
   };
+  removegif: {
+    description: string;
+    wrongArgs: string;
+    checking: string;
+    success: string;
+  };
   new: {
     description: string;
     getPrefix: string;
