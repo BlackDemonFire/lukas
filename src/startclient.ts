@@ -26,6 +26,21 @@ export function start() {
       .forEach((p) => moduleLoadPromises.push(p));
   });
 
+  readdir("./dist/interactions", (err, files) => {
+    if (err) {
+      logger.error(`Error while reading interactions:j\n\t${err}`);
+      return;
+    }
+    files.map(async (file: string) => {
+      if (!file.endsWith(".js")) return;
+      const interaction = await import(`./interactions/${file}`);
+      const interactionName = file.split(".")[0];
+      logger.debug(`Loading interaction ${interactionName}`);
+      client.interactions.set(interactionName, interaction.default);
+      logger.debug(`Loaded interaction ${interactionName}`);
+    });
+  });
+
   recursiveReadDir("./dist/commands", function (err, files) {
     if (err) {
       logger.error(`Error while reading commands:\n\t${err}`);
@@ -66,7 +81,6 @@ export function start() {
       logger.debug(`Registered language ${langName}`);
     });
   });
-  logger.info(moduleLoadPromises.length);
   setTimeout(
     () =>
       Promise.all(moduleLoadPromises).then(() => {
@@ -77,6 +91,9 @@ export function start() {
         );
         logger.info(
           `loaded following commands: [${[...client.commands.keys()]}]`,
+        );
+        logger.info(
+          `loaded following interactions: [${[...client.interactions.keys()]}]`,
         );
       }),
     500,
