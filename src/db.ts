@@ -109,13 +109,14 @@ export class DB {
     ]);
     if (!data) return;
   }
-  //FIXME - This function is probably the cause why this doesn't compile, but I'm not sure. Also, for whatever reason the random selection doesn't work.
   async getgif(actiontype: string, giftype: string): Promise<string> {
     const amount = await this.query(
       "SELECT COUNT(*) FROM gifdb WHERE giftype = $1 AND actiontype = $2;",
       [giftype, actiontype],
     );
-    if (amount!.rows[0].count === 0 || giftype == "any") {
+    // == as the count is a string and not a number for some weird reason
+    if (amount!.rows[0].count == 0 || giftype == "any") {
+      logger.debug("fallback due to no gifs or any giftype");
       const data = await this.query(
         "SELECT url FROM gifdb WHERE actiontype = $1 ORDER BY random() LIMIT 1;",
         [actiontype],
@@ -123,6 +124,7 @@ export class DB {
       if (!data) return "";
       return data.rows ? data.rows[0].url : "";
     }
+    logger.debug("default gif");
     const data = await this.query(
       "SELECT url FROM gifdb WHERE giftype = $1 AND actiontype = $2 ORDER BY random() LIMIT 1;",
       [giftype, actiontype],
