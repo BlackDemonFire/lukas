@@ -109,12 +109,13 @@ export class DB {
     ]);
     if (!data) return;
   }
+  //FIXME - This function is probably the cause why this doesn't compile, but I'm not sure. Also, for whatever reason the random selection doesn't work.
   async getgif(actiontype: string, giftype: string): Promise<string> {
-    const amount = (await this.query(
+    const amount = await this.query(
       "SELECT COUNT(*) FROM gifdb WHERE giftype = $1 AND actiontype = $2;",
       [giftype, actiontype],
-    ))!.rows[0] as number;
-    if (amount === 0 || giftype == "any") {
+    );
+    if (amount!.rows[0].count === 0 || giftype == "any") {
       const data = await this.query(
         "SELECT url FROM gifdb WHERE actiontype = $1 ORDER BY random() LIMIT 1;",
         [actiontype],
@@ -141,8 +142,8 @@ export class DB {
     const data = await this.query("SELECT giftype FROM userdb WHERE id = $1;", [
       user.id,
     ]);
-    if (!data) return "anime";
-    return data.rows ? data.rows[0].giftype : "anime";
+    if (!data) return "any";
+    return data.rows ? data.rows[0].giftype : "any";
   }
   async getLang(guild: Guild): Promise<string> {
     const data = await this.query(
