@@ -8,7 +8,7 @@
     "pg": "^8.11.1",
     "random-org": "^2.2.0",
     "recursive-readdir": "^2.2.3",
-    "systeminformation": "^5.18.6",
+    "systeminformation": "^5.18.9",
     "typescript": "^5.1.6",
     "winston": "^3.10.0",
     "wmic": "^1.1.1",
