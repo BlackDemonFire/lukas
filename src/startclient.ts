@@ -1,8 +1,8 @@
 import { readdir, readFileSync } from "fs";
+import recursiveReadDir from "recursive-readdir";
 import { Bot } from "./bot.js";
 import logger from "./modules/logger.js";
 import type { ILanguage } from "./types";
-import recursiveReadDir from "recursive-readdir";
 
 export function start() {
   const client: Bot = new Bot();
@@ -28,7 +28,7 @@ export function start() {
 
   readdir("./dist/interactions", (err, files) => {
     if (err) {
-      logger.error(`Error while reading interactions:j\n\t${err}`);
+      logger.error(`Error while reading interactions:\n\t${err}`);
       return;
     }
     files.map(async (file: string) => {

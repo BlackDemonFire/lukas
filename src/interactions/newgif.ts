@@ -1,17 +1,17 @@
-import { BaseInteraction, ButtonInteraction, GuildChannel } from "discord.js";
+import { BaseInteraction, GuildChannel } from "discord.js";
 import { Bot } from "../bot.js";
 import logger from "../modules/logger.js";
 import { activeRequests } from "../modules/dbo/gifRequest.js";
 
 export default async function run(
   client: Bot,
-  inter: BaseInteraction,
+  interaction: BaseInteraction,
   args: string[],
 ) {
-  if (!inter.isButton()) {
+  if (!interaction.isButton()) {
     logger.warn("Got non-button interaction for newgif command");
+    return;
   }
-  const interaction = inter as ButtonInteraction;
   const request = activeRequests.get(args[1]);
   if (!request) {
     await interaction.update("Unable to find request");
