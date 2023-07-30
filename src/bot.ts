@@ -1,9 +1,15 @@
-import { Client, Collection, IntentsBitField, Snowflake } from "discord.js";
+import {
+  BaseInteraction,
+  Client,
+  Collection,
+  IntentsBitField,
+  Snowflake,
+} from "discord.js";
 import { DB } from "./db.js";
 import { Command } from "./modules/command.js";
 import { FakeRandom, Random } from "./modules/random.js";
-import type { ILanguage } from "./types";
 import settings from "./modules/settings.js";
+import type { ILanguage } from "./types";
 
 export class Bot extends Client {
   constructor() {
@@ -19,6 +25,14 @@ export class Bot extends Client {
   }
   prefix: string = settings.PREFIX;
   commands: Collection<string, Command> = new Collection();
+  interactions: Collection<
+    string,
+    (
+      client: Bot,
+      interaction: BaseInteraction,
+      args: string[],
+    ) => void | Promise<void>
+  > = new Collection();
   commandusage: Map<Snowflake, Array<number>> = new Map();
   db: DB = new DB();
   languages: Map<string, ILanguage> = new Map();
