@@ -5,7 +5,7 @@
     "discord.js": "^14.11.0",
     "dotenv": "^16.3.1",
     "eslint": "^8.44.0",
-    "pg": "^8.11.1",
+    "pg": "^8.11.2",
     "random-org": "^2.2.0",
     "recursive-readdir": "^2.2.3",
     "systeminformation": "^5.18.6",
