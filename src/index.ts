@@ -1,7 +1,7 @@
-import { Bot } from "./bot";
-import { start } from "./startclient.js";
-import settings from "./modules/settings.js";
+import { Bot } from "./bot.js";
 import logger from "./modules/logger.js";
+import settings from "./modules/settings.js";
+import { start } from "./startclient.js";
 
 const client: Bot = start();
 

@@ -32,7 +32,7 @@ export function splitMessage(
     prepend = "",
     append = "",
   }: SplitOptions = {},
-) {
+): string[] {
   text = verifyString(text);
   if (text.length <= maxLength) return [text];
   let splitText = [text];

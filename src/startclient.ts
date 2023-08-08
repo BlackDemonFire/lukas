@@ -2,7 +2,7 @@ import { readdir, readFileSync } from "fs";
 import recursiveReadDir from "recursive-readdir";
 import { Bot } from "./bot.js";
 import logger from "./modules/logger.js";
-import type { ILanguage } from "./types";
+import type { ILanguage } from "./types.js";
 
 export function start() {
   const client: Bot = new Bot();

@@ -1,8 +1,8 @@
 import { DMChannel, Message, TextChannel } from "discord.js";
-import { Bot } from "./bot";
+import { Bot } from "./bot.js";
 import logger from "./modules/logger.js";
-import { start } from "./startclient.js";
 import settings from "./modules/settings.js";
+import { start } from "./startclient.js";
 
 export function restart(
   oldclient: Bot,

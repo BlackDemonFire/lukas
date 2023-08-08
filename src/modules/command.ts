@@ -1,13 +1,14 @@
 import {
   ClientApplication,
   ColorResolvable,
+  Colors,
   EmbedBuilder,
   Message,
   Team,
   User,
 } from "discord.js";
-import type { command, ILanguage as lang, nil } from "src/types";
 import { Bot } from "../bot.js";
+import type { command, ILanguage as lang, nil } from "../types.js";
 import logger from "./logger.js";
 
 abstract class Command implements command {
@@ -152,7 +153,10 @@ abstract class SingleUserGifCommand extends GifCommand {
       await client.db.getgiftype(message.author),
     );
     let userA: string = await client.db.getname(message.author);
-    const color: ColorResolvable = await client.db.getcolor(message.author);
+    const rawColor = await client.db.getcolor(message.author);
+    let color: ColorResolvable;
+    if (rawColor in Colors) color = rawColor as keyof typeof Colors;
+    else color = "Random";
     if (userA == "")
       userA = message.guild
         ? message.member!.displayName
@@ -177,7 +181,10 @@ abstract class MultiUserGifCommand extends GifCommand {
       await client.db.getgiftype(message.author),
     );
     let userA: string = await client.db.getname(message.author);
-    const color: ColorResolvable = await client.db.getcolor(message.author);
+    const rawColor = await client.db.getcolor(message.author);
+    let color: ColorResolvable;
+    if (rawColor in Colors) color = rawColor as keyof typeof Colors;
+    else color = "Random";
     if (userA == "")
       userA = message.guild
         ? message.member!.displayName
@@ -208,4 +215,4 @@ abstract class MultiUserGifCommand extends GifCommand {
   }
 }
 
-export { Command, GifCommand, SingleUserGifCommand, MultiUserGifCommand };
+export { Command, GifCommand, MultiUserGifCommand, SingleUserGifCommand };

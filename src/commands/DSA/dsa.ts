@@ -5,9 +5,9 @@ import {
   TextChannel,
   Webhook,
 } from "discord.js";
-import type { ILanguage as lang } from "src/types";
 import { Bot } from "../../bot.js";
 import { Command } from "../../modules/command.js";
+import type { ILanguage as lang } from "../../types.js";
 
 export default class Dsa extends Command {
   constructor(client: Bot, category: string, name: string) {
@@ -53,7 +53,7 @@ export default class Dsa extends Command {
     }
     const char = await client.db.getDSAChar(clean);
     if (char) {
-      displayName = char.displayname;
+      displayName = char.displayname ?? "unknown";
       displayImg = char.avatar;
     } else {
       let i = 0;

@@ -1,4 +1,4 @@
-export type nil = undefined | null | void;
+type nil = undefined | null | void;
 
 interface ILangPermissions {
   ADMINISTRATOR: string;
@@ -184,9 +184,3 @@ export interface command {
     usage: string;
   };
 }
-
-export type dsachar = {
-  prefix: string;
-  avatar: string;
-  displayname: string;
-};
