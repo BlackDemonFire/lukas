@@ -33,7 +33,7 @@ export default class Info extends Command {
         },
       )
       .setColor(0xaa7777);
-    message.channel.send({ embeds: [embed] });
+    await message.channel.send({ embeds: [embed] });
   }
   help = {
     show: true,

@@ -4,7 +4,7 @@ import logger from "./modules/logger.js";
 import settings from "./modules/settings.js";
 import { start } from "./startclient.js";
 
-export function restart(
+export async function restart(
   oldclient: Bot,
   restartmsg: Message | null,
   newtext: string,
@@ -12,7 +12,7 @@ export function restart(
   // Neuen Client Herstellen
 
   const newclient = start();
-  newclient.login(settings.TOKEN);
+  await newclient.login(settings.TOKEN);
 
   // Alten client Entfernen
 
@@ -23,7 +23,7 @@ export function restart(
       }
     }
 
-    oldclient.destroy();
+    await oldclient.destroy();
 
     logger.info("swapped clients");
     logger.info(" ");
@@ -32,7 +32,7 @@ export function restart(
       const channel = newclient.channels.resolve(restartmsg.channel.id);
       if (channel instanceof TextChannel || channel instanceof DMChannel) {
         const editMsg = await channel.messages.fetch(restartmsg.id);
-        editMsg.edit({ content: newtext });
+        await editMsg.edit({ content: newtext });
       }
     }
   });

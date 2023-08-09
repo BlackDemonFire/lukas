@@ -29,7 +29,7 @@ abstract class Command implements command {
     message: Message,
     args: string[],
     language: lang,
-  ): void | Promise<void>;
+  ): Promise<void>;
   isAprilFools() {
     const date = new Date();
     const myDate = date.toLocaleDateString();
@@ -127,7 +127,7 @@ abstract class GifCommand extends Command {
     return langCommand[attrName] as unknown as string[];
   }
 
-  protected buildAndSendEmbed(
+  protected async buildAndSendEmbed(
     gif: string,
     responseString: string,
     color: ColorResolvable,
@@ -138,7 +138,7 @@ abstract class GifCommand extends Command {
       .setAuthor({ name: this.name })
       .setDescription(responseString)
       .setColor(color);
-    message.channel.send({ embeds: [embed] });
+    await message.channel.send({ embeds: [embed] });
   }
 }
 
@@ -166,7 +166,7 @@ abstract class SingleUserGifCommand extends GifCommand {
         this.getGifLanguageObject(language, "singleUser"),
       )
     ).replace(/{a}/g, userA);
-    this.buildAndSendEmbed(gif, responseString, color, message);
+    await this.buildAndSendEmbed(gif, responseString, color, message);
   }
 }
 
@@ -211,7 +211,7 @@ abstract class MultiUserGifCommand extends GifCommand {
         .replace(/{a}/g, userA)
         .replace(/{b}/g, userB);
     }
-    this.buildAndSendEmbed(gif, responseString, color, message);
+    await this.buildAndSendEmbed(gif, responseString, color, message);
   }
 }
 

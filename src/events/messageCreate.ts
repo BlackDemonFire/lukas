@@ -27,7 +27,7 @@ async function cmd(client: Bot, message: Message) {
     language = client.languages.get(settings.DEFAULTLANG)!;
   }
   logger.debug(`Running command ${commandname}`);
-  command.run(client, message, args, language);
+  await command.run(client, message, args, language);
 }
 
 export async function event(client: Bot, message: Message) {

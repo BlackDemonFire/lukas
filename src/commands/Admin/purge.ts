@@ -17,9 +17,9 @@ export default class Purge extends Command {
     show: false,
     usage: `${this.prefix}purge <amount>`,
   };
-  run(_client: Bot, message: Message, args: string[], language: lang) {
+  async run(_client: Bot, message: Message, args: string[], language: lang) {
     if (!this.hasPermission(message)) {
-      message.channel.send(
+      await message.channel.send(
         language.general.userPermissionError.replace(
           "{}",
           language.permissions.MANAGE_MESSAGES,
@@ -33,7 +33,7 @@ export default class Purge extends Command {
         .guild!.members.me!.permissionsIn(message.channel)
         .has(PermissionFlagsBits.ManageMessages)
     ) {
-      message.channel.send({
+      await message.channel.send({
         content: language.general.botPermissionError.replace(
           "{}",
           language.permissions.MANAGE_MESSAGES,
@@ -46,18 +46,18 @@ export default class Purge extends Command {
     try {
       amount = parseInt(args[0]);
     } catch (e) {
-      message.channel.send({
+      await message.channel.send({
         content: language.command.purge.error.notNumeric,
       });
       logger.error(e);
     }
     if (!amount) {
-      message.channel.send({
+      await message.channel.send({
         content: language.command.purge.error.notNumeric,
       });
       return;
     }
-    message.channel.bulkDelete(amount);
+    await message.channel.bulkDelete(amount);
   }
   hasPermission(message: Message): boolean {
     if (super.isOwner(message)) return true;
@@ -69,8 +69,5 @@ export default class Purge extends Command {
     )
       return true;
     return false;
-  }
-  runSlash() {
-    // TODO
   }
 }

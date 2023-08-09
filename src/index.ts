@@ -5,10 +5,10 @@ import { start } from "./startclient.js";
 
 const client: Bot = start();
 
-client.login(settings.TOKEN);
+void client.login(settings.TOKEN);
 
-function shutdown() {
-  client.destroy();
+async function shutdown() {
+  await client.destroy();
   process.exit(0);
 }
 

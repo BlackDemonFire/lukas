@@ -27,7 +27,7 @@ export default async function run(
     return;
   }
   if (args[0] == "accept") {
-    client.db.newGif(request.gifUrl, request.action!, request.gifType!);
+    await client.db.newGif(request.gifUrl, request.action!, request.gifType!);
     await request.message.edit("The owner accepted your request");
     await interaction.update({
       content: `**ACCEPTED**\nGif check request from in <#${

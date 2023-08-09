@@ -14,9 +14,16 @@ export default class Eval extends Command {
     show: false,
     usage: `${this.prefix}eval <code>`,
   };
-  run(_client: Bot, message: Message, args: string[], language: ILanguage) {
+  async run(
+    _client: Bot,
+    message: Message,
+    args: string[],
+    language: ILanguage,
+  ) {
     if (!super.isOwner(message)) {
-      message.channel.send({ content: language.command.eval.permissionError });
+      await message.channel.send({
+        content: language.command.eval.permissionError,
+      });
       return;
     }
     logger.info(message.author.tag, args.join(" "));
@@ -32,7 +39,9 @@ export default class Eval extends Command {
             char: "\n",
           },
         );
-        segments.forEach((m) => message.channel.send({ content: m }));
+        await Promise.all(
+          segments.map((m) => message.channel.send({ content: m })),
+        );
       }
     } catch (err) {
       logger.error(
@@ -48,7 +57,9 @@ export default class Eval extends Command {
           char: "\n",
         },
       );
-      segments.forEach((m) => message.channel.send({ content: m }));
+      await Promise.all(
+        segments.map((m) => message.channel.send({ content: m })),
+      );
     }
   }
 }

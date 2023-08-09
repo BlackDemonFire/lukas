@@ -52,7 +52,7 @@ export default class Roll extends Command {
     // validify arguments
 
     if (args[2]) {
-      message.channel.send({
+      await message.channel.send({
         content: `<:warn_3:498277726604754946> ${language.command.roll.errors.tooManyArgs}${rollargerror}`,
       });
       return;
@@ -63,13 +63,13 @@ export default class Roll extends Command {
 
     if (args[0] && args[1]) {
       if (checkregex.test(rollarga) && checkregex.test(rollargb)) {
-        message.channel.send({
+        await message.channel.send({
           content: `<:warn_3:498277726604754946> ${language.command.roll.errors.doubleDiceType}`,
         });
         return;
       }
       if (!checkregex.test(rollarga) && !checkregex.test(rollargb)) {
-        message.channel.send({
+        await message.channel.send({
           content: `<:warn_3:498277726604754946> ${language.command.roll.errors.doubleRollCount}`,
         });
         return;
@@ -82,7 +82,7 @@ export default class Roll extends Command {
         dicetype = rollargb;
         rollcountmax = rollarga;
       } else {
-        message.channel.send({
+        await message.channel.send({
           content: `<:warn_3:498277726604754946> ${language.command.roll.errors.schroedingersArgument}`,
         });
         return;
@@ -119,19 +119,19 @@ export default class Roll extends Command {
     // convert String dicetype to Const rolltype
 
     if (rolltype == 0 && dicetype == "wx") {
-      message.channel.send({
+      await message.channel.send({
         content: `<:warn_3:498277726604754946> ${language.command.roll.errors.noDiceType}`,
       });
       return;
     }
     if (rolltype == 0 && dicetype == "w0") {
-      message.channel.send({
+      await message.channel.send({
         content: `<:warn_3:498277726604754946> ${language.command.roll.errors.noSides}`,
       });
       return;
     }
     if (rolltype == 0 && dicetype == "d0") {
-      message.channel.send({
+      await message.channel.send({
         content: `<:warn_3:498277726604754946> ${language.command.roll.errors.noSides}`,
       });
       return;
@@ -143,7 +143,7 @@ export default class Roll extends Command {
           ? isNaN(dicetype)
           : isNaN(parseInt(dicetype))
       ) {
-        message.channel.send({
+        await message.channel.send({
           content: `<:warn_3:498277726604754946> ${language.command.roll.errors.rolltypeNotNumeric}`,
         });
         return;
@@ -153,7 +153,7 @@ export default class Roll extends Command {
     }
 
     if (rolltype == 0) {
-      message.channel.send({
+      await message.channel.send({
         content: `<:warn_3:498277726604754946> ${language.command.roll.errors.rolltypeUndefined} \
                 gotDefault = ${gotDefault}\
                 gotStringReadyToConvert = ${gotStringReadyToConvert}\
@@ -173,7 +173,10 @@ export default class Roll extends Command {
           `<:info_1:498285998346731530> ${language.command.roll.results.noDice.embed}`,
         )
         .setFooter({ text: `@${msgauthor}` });
-      message.channel.send({ content: `*${plaintext}*`, embeds: [embed] });
+      await message.channel.send({
+        content: `*${plaintext}*`,
+        embeds: [embed],
+      });
       return;
     }
     if (
@@ -181,7 +184,7 @@ export default class Roll extends Command {
         ? isNaN(rollcountmax)
         : isNaN(parseInt(rollcountmax))
     ) {
-      message.channel.send({
+      await message.channel.send({
         content: `<:warn_3:498277726604754946> ${language.command.roll.errors.rollcountNotNumeric}`,
       });
       return;
@@ -195,7 +198,7 @@ export default class Roll extends Command {
     // is the response too long?
 
     if (rollcount > 70) {
-      message.channel.send({
+      await message.channel.send({
         content: `<:warn_3:498277726604754946> ${language.command.roll.errors.tooManyDice}`,
       });
       return;
@@ -265,7 +268,7 @@ export default class Roll extends Command {
         embed.setAuthor({ name: rollresult });
       }
 
-      message.channel.send({ content: plaintext, embeds: [embed] });
+      await message.channel.send({ content: plaintext, embeds: [embed] });
       return;
     } else {
       const plaintext = language.command.roll.results.multiDice
@@ -280,7 +283,7 @@ export default class Roll extends Command {
         embed.setAuthor({ name: rollresult });
       }
 
-      message.channel.send({ content: plaintext, embeds: [embed] });
+      await message.channel.send({ content: plaintext, embeds: [embed] });
       return;
     }
   }

@@ -7,15 +7,15 @@ export default class Name extends Command {
   constructor(client: Bot, category: string, name: string) {
     super(client, category, name);
   }
-  run(client: Bot, message: Message, args: string[], language: lang) {
+  async run(client: Bot, message: Message, args: string[], language: lang) {
     let newname: string;
     if (!args || args.length === 0) {
       newname = "";
     } else {
       newname = args.join(" ");
     }
-    client.db.setName(message.author, newname);
-    message.channel.send({
+    await client.db.setName(message.author, newname);
+    await message.channel.send({
       content: language.command.name.success.replace("{newname}", newname),
     });
   }

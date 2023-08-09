@@ -11,7 +11,7 @@ export default class Help extends Command {
     show: true,
     usage: `${this.prefix}help [command]`,
   };
-  run(client: Bot, message: Message, args: string[], language: lang) {
+  async run(client: Bot, message: Message, args: string[], language: lang) {
     const embed = new EmbedBuilder();
     if (args && args[0]) {
       const cmd = args[0].replace(client.prefix, "").toLowerCase();
@@ -59,6 +59,6 @@ export default class Help extends Command {
       }
       embed.setTitle("Help");
     }
-    message.channel.send({ embeds: [embed] });
+    await message.channel.send({ embeds: [embed] });
   }
 }

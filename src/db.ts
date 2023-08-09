@@ -5,13 +5,21 @@ import { Gifdb } from "./entities/Gifdb.js";
 import { Settings } from "./entities/Settings.js";
 import { Userdb } from "./entities/Userdb.js";
 import mikroOrmConfig from "./mikro-orm.config.js";
+import logger from "./modules/logger.js";
 
 export class DB {
   protected _db?: EntityManager;
   constructor() {
-    MikroORM.init(mikroOrmConfig).then((orm) => {
+    void MikroORM.init(mikroOrmConfig).then((orm) => {
       this._db = orm.em;
-      orm.getMigrator().up();
+      orm
+        .getMigrator()
+        .up()
+        .catch((e) => {
+          logger.error("Migration failed");
+          logger.error(e);
+          process.exit(1);
+        });
     });
   }
   protected get db(): EntityManager {

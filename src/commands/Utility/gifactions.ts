@@ -20,7 +20,7 @@ export default class Gifaction extends Command {
       default:
         break;
     }
-    message.channel.send({
+    await message.channel.send({
       content: language.command.gifactions.response.replace(
         "{actions}",
         actionsstring,

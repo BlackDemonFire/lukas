@@ -7,21 +7,21 @@ export default class Color extends Command {
   constructor(client: Bot, category: string, name: string) {
     super(client, category, name);
   }
-  run(client: Bot, message: Message, args: string[], language: lang) {
+  async run(client: Bot, message: Message, args: string[], language: lang) {
     let color: ColorResolvable;
     if (args && args.length > 0) {
       color = args[0] as ColorResolvable;
       try {
         resolveColor(color);
       } catch (e) {
-        message.channel.send(language.command.color.invalid_color);
+        await message.channel.send(language.command.color.invalid_color);
         return;
       }
     } else {
       color = "Random";
     }
-    client.db.setColor(message.author, color as string);
-    message.channel.send({ content: language.command.color.success });
+    await client.db.setColor(message.author, color as string);
+    await message.channel.send({ content: language.command.color.success });
   }
   help = {
     show: true,
