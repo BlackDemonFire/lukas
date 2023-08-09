@@ -7,10 +7,10 @@ import {
   Team,
   User,
 } from "discord.js";
-import type { ILanguage as lang } from "src/types";
 import { Bot } from "../../bot.js";
 import { Command } from "../../modules/command.js";
-import { activeRequests, GifRequest } from "../../modules/dbo/gifRequest.js";
+import { GifRequest, activeRequests } from "../../modules/dbo/gifRequest.js";
+import type { ILanguage as lang } from "../../types.js";
 
 export default class Newgif extends Command {
   constructor(client: Bot, category: string, name: string) {
@@ -24,7 +24,7 @@ export default class Newgif extends Command {
     }
     const url: string = args[0];
     if (this.isOwner(message)) {
-      client.db.removegif(url);
+      client.db.removeGif(url);
       message.channel.send(language.command.removegif.success);
       return;
     }

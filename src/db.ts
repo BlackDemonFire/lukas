@@ -1,191 +1,127 @@
-import type { Guild, User } from "discord.js";
-import pg, { QueryResult } from "pg";
-import logger from "./modules/logger.js";
-import type { dsachar, nil } from "./types";
-import settings from "./modules/settings.js";
-
-const { Pool } = pg;
+import { EntityManager, MikroORM } from "@mikro-orm/postgresql";
+import { type Guild, type User } from "discord.js";
+import { Dsachars } from "./entities/Dsachars.js";
+import { Gifdb } from "./entities/Gifdb.js";
+import { Settings } from "./entities/Settings.js";
+import { Userdb } from "./entities/Userdb.js";
+import mikroOrmConfig from "./mikro-orm.config.js";
 
 export class DB {
-  protected db;
+  protected _db?: EntityManager;
   constructor() {
-    this.db = new Pool({
-      application_name: "lukas",
-      database: settings.DB_NAME,
-      host: settings.DB_HOST,
-      keepAlive: true,
-      log: (...messages) => logger.debug(messages),
-      port: settings.DB_PORT,
-      password: settings.DB_PASS,
-      user: settings.DB_USER,
+    MikroORM.init(mikroOrmConfig).then((orm) => {
+      this._db = orm.em;
+      orm.getMigrator().up();
     });
-    this.ensureTables();
   }
-  private async ensureTables() {
-    const client = await this.db.connect();
-    try {
-      const tables = (
-        await client.query(
-          "SELECT * FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' AND schemaname != 'information_schema';",
-        )
-      ).rows;
-      logger.debug(
-        "Existing databases: " + tables.map((t) => t.tablename).join(", "),
-      );
-      let todoTables = [
-        [
-          "dsachars",
-          "CREATE TABLE dsachars (prefix TEXT PRIMARY KEY, avatar TEXT, displayname TEXT);",
-        ],
-        [
-          "settings",
-          `CREATE TABLE settings
-                (guild TEXT PRIMARY KEY, language TEXT);`,
-        ],
-        [
-          "userdb",
-          `CREATE TABLE userdb
-                (id TEXT PRIMARY KEY,
-                giftype TEXT,
-                color TEXT,
-                name TEXT);`,
-        ],
-        [
-          "gifdb",
-          `CREATE TABLE gifdb
-                (url TEXT PRIMARY KEY,
-                giftype TEXT,
-                actiontype TEXT);`,
-        ],
-      ];
-      if (tables && tables.length > 0) {
-        /** @type {string[]}*/
-        const tablenames = tables.map((t) => t.tablename);
-        todoTables = todoTables.filter(
-          (val) => tablenames.indexOf(val[0]) == -1,
-        );
-      }
-      for (const stmt of todoTables) {
-        logger.debug(`creating table ${stmt[0]}`);
-        client.query(stmt[1]);
-      }
-    } catch (e) {
-      logger.error(e);
-      throw e;
-    } finally {
-      client.release();
-    }
+  protected get db(): EntityManager {
+    if (!this._db) throw new Error("Database not initialized");
+    return this._db.fork();
+  }
+  protected get gifRepository() {
+    return this.db.getRepository(Gifdb);
+  }
+  protected get dsaCharRepository() {
+    return this.db.getRepository(Dsachars);
+  }
+  protected get userRepository() {
+    return this.db.getRepository(Userdb);
+  }
+  protected get settingsRepository() {
+    return this.db.getRepository(Settings);
   }
 
-  private async query(
-    sql: string,
-    data: unknown[],
-  ): Promise<QueryResult | nil> {
-    const client = await this.db.connect();
-    try {
-      const res = await client.query(sql, data).catch((e) => {
-        throw e;
-      });
-      if (res) return res;
-    } catch (e) {
-      logger.error(e);
-    } finally {
-      client.release();
-    }
+  async deleteDSAChar(prefix: string) {
+    await this.dsaCharRepository.nativeDelete({ prefix });
   }
-  deleteDSAChar(prefix: string) {
-    this.query("DELETE FROM dsachars WHERE prefix = $1;", [prefix]);
-  }
-  async getcolor(user: User) {
-    const data = await this.query("SELECT color FROM userdb WHERE id = $1;", [
-      user.id,
-    ]);
-    if (!data) return "Random";
-    return data.rows ? data.rows[0].color : "Random";
-  }
-  async getDSAChar(prefix: string): Promise<dsachar | nil> {
-    const data = await this.query("SELECT * FROM dsachars WHERE prefix = $1;", [
-      prefix,
-    ]);
-    if (!data) return;
-  }
-  async getgif(actiontype: string, giftype: string): Promise<string> {
-    const data = await this.query(
-      "SELECT url FROM gifdb WHERE giftype = $1 AND actiontype = $2 ORDER BY random() LIMIT 1;",
-      [giftype, actiontype],
+
+  async getColor(user: User): Promise<string> {
+    const data = await this.userRepository.findOne(
+      { id: user.id },
+      { fields: ["color"] },
     );
-    if (!data) return "";
-    return data.rows ? data.rows[0].url : "";
+    return data?.color ?? "Random";
   }
-  async getgifactions(): Promise<string[]> {
-    const data = await this.query("SELECT DISTINCT actiontype FROM gifdb;", []);
-    return data ? data.rows.map((row) => row.actiontype) : [];
+  async getDSAChar(prefix: string): Promise<Dsachars | null> {
+    const data = await this.dsaCharRepository.findOne({ prefix });
+    return data;
   }
-  async getgiftype(user: User): Promise<string> {
-    const data = await this.query("SELECT giftype FROM userdb WHERE id = $1;", [
-      user.id,
-    ]);
-    if (!data) return "anime";
-    return data.rows ? data.rows[0].giftype : "anime";
+  async getGif(actiontype: string, giftype: string): Promise<string> {
+    const totalCount = await this.gifRepository.count({ actiontype, giftype });
+    const data = await this.gifRepository.findOne(
+      { giftype, actiontype },
+      { offset: Math.floor(Math.random() * totalCount) },
+    );
+    return data?.url ?? "";
+  }
+  async getGifactions(): Promise<string[]> {
+    const qb = this.db.createQueryBuilder(Gifdb);
+    const data = await qb.select("actiontype").distinct().execute();
+    return data.filter((row) => !!row.actiontype).map((row) => row.actiontype!);
+  }
+  async getGiftype(user: User): Promise<string> {
+    const data = await this.userRepository.findOne({ id: user.id });
+    return data?.giftype ?? "anime";
   }
   async getLang(guild: Guild): Promise<string> {
-    const data = await this.query(
-      "SELECT language FROM settings WHERE guild = $1;",
-      [guild.id],
+    const data = await this.settingsRepository.findOne({ id: guild.id });
+    return data?.language ?? "";
+  }
+  async getName(user: User): Promise<string> {
+    const data = await this.userRepository.findOne({ id: user.id });
+    return data?.name ?? "";
+  }
+  async initLang(guild: Guild, lang: string) {
+    this.settingsRepository.create(
+      { id: guild.id, language: lang },
+      { persist: true },
     );
-    if (!data) return "";
-    return data.rows ? data.rows[0].language : "";
+    await this.db.flush();
   }
-  async getname(user: User): Promise<string> {
-    const data = await this.query("SELECT name FROM userdb WHERE id = $1;", [
-      user.id,
-    ]);
-    if (!data) return "";
-    return data.rows ? data.rows[0].name : "";
-  }
-  initLang(guild: Guild, lang: string) {
-    this.query("INSERT INTO settings VALUES ($1, $2) ON CONFLICT DO NOTHING;", [
-      guild.id,
-      lang,
-    ]);
-  }
-  newDSAChar(prefix: string, displayname: string, avatar: string) {
-    this.query(
-      "INSERT INTO dsachars VALUES ($1, $2, $3) ON CONFLICT DO NOTHING;",
-      [prefix, avatar, displayname],
+  async newDSAChar(prefix: string, displayname: string, avatar: string) {
+    this.dsaCharRepository.create(
+      { prefix, avatar, displayname },
+      { persist: true },
     );
+    await this.db.flush();
   }
-  newgif(url: string, actiontype: string, giftype: string) {
-    this.query(
-      "INSERT INTO gifdb VALUES ($1, $2, $3) ON CONFLICT DO NOTHING;",
-      [url, giftype, actiontype],
+  async newGif(url: string, actiontype: string, giftype: string) {
+    this.gifRepository.create({ url, actiontype, giftype });
+    await this.db.flush();
+  }
+  async removeGif(url: string) {
+    await this.gifRepository.nativeDelete({ url });
+  }
+  async newUser(user: User) {
+    this.userRepository.create(
+      {
+        id: user.id,
+        giftype: "anime",
+        color: "Random",
+        name: user.username ?? "",
+      },
+      { persist: true },
     );
+    await this.db.flush();
   }
-  removegif(url: string) {
-    this.query("DELETE FROM gifdb WHERE url = $1", [url]);
+  async setColor(user: User, color: string) {
+    const ref = this.db.getReference(Userdb, user.id);
+    ref.color = color;
+    await this.db.flush();
   }
-  newuser(user: User) {
-    this.query(
-      "INSERT INTO userdb VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING;",
-      [user.id, "anime", "Random", ""],
-    );
+  async setGiftype(user: User, giftype: string) {
+    const ref = this.db.getReference(Userdb, user.id);
+    ref.giftype = giftype;
+    await this.db.flush();
   }
-  setcolor(user: User, color: string) {
-    this.query("UPDATE userdb SET color = $2 WHERE id = $1;", [user.id, color]);
+  async setLang(guild: Guild, lang: string) {
+    const ref = this.db.getReference(Settings, guild.id);
+    ref.language = lang;
+    await this.db.flush();
   }
-  setgiftype(user: User, giftype: string) {
-    this.query("UPDATE userdb SET giftype = $2 WHERE id = $1;", [
-      user.id,
-      giftype,
-    ]);
-  }
-  setLang(guild: Guild, lang: string) {
-    this.query("UPDATE settings SET language = $2 WHERE guild = $1;", [
-      guild.id,
-      lang,
-    ]);
-  }
-  setname(user: User, name: string) {
-    this.query("UPDATE userdb SET name = $2 WHERE id = $1;", [user.id, name]);
+  async setName(user: User, name: string) {
+    const ref = this.db.getReference(Userdb, user.id);
+    ref.name = name;
+    await this.db.flush();
   }
 }

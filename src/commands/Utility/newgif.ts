@@ -7,10 +7,10 @@ import {
   Team,
   User,
 } from "discord.js";
-import type { ILanguage as lang } from "src/types";
 import { Bot } from "../../bot.js";
 import { Command } from "../../modules/command.js";
-import { activeRequests, GifRequest } from "../../modules/dbo/gifRequest.js";
+import { GifRequest, activeRequests } from "../../modules/dbo/gifRequest.js";
+import type { ILanguage as lang } from "../../types.js";
 
 export default class Newgif extends Command {
   constructor(client: Bot, category: string, name: string) {
@@ -26,7 +26,7 @@ export default class Newgif extends Command {
     const action: string = args[1].toLowerCase();
     const type: string = args[2].toLowerCase();
     if (this.isOwner(message)) {
-      client.db.newgif(url, action, type);
+      client.db.newGif(url, action, type);
       message.channel.send(language.command.newgif.success);
       return;
     }

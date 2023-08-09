@@ -12,6 +12,7 @@ COPY package.json pnpm-lock.yaml ./
 COPY ./languages ./languages
 RUN corepack enable
 RUN pnpm install --frozen-lockfile --prod
+RUN mkdir /app/migrations
 
 USER node
 

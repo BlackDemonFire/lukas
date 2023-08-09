@@ -1,13 +1,14 @@
 import {
   ClientApplication,
   ColorResolvable,
+  Colors,
   EmbedBuilder,
   Message,
   Team,
   User,
 } from "discord.js";
-import type { command, ILanguage as lang, nil } from "src/types";
 import { Bot } from "../bot.js";
+import type { command, ILanguage as lang, nil } from "../types.js";
 import logger from "./logger.js";
 
 abstract class Command implements command {
@@ -71,7 +72,7 @@ abstract class GifCommand extends Command {
             logger.error(e);
             user = null;
           });
-          if (user) name = await client.db.getname(user);
+          if (user) name = await client.db.getName(user);
           if (!user) {
             name = arg;
           } else if (!name || name == "") {
@@ -147,12 +148,15 @@ abstract class SingleUserGifCommand extends GifCommand {
   }
 
   async run(client: Bot, message: Message, _args: string[], language: lang) {
-    const gif: string = await client.db.getgif(
+    const gif: string = await client.db.getGif(
       this.name,
-      await client.db.getgiftype(message.author),
+      await client.db.getGiftype(message.author),
     );
-    let userA: string = await client.db.getname(message.author);
-    const color: ColorResolvable = await client.db.getcolor(message.author);
+    let userA: string = await client.db.getName(message.author);
+    const rawColor = await client.db.getColor(message.author);
+    let color: ColorResolvable;
+    if (rawColor in Colors) color = rawColor as keyof typeof Colors;
+    else color = "Random";
     if (userA == "")
       userA = message.guild
         ? message.member!.displayName
@@ -172,12 +176,15 @@ abstract class MultiUserGifCommand extends GifCommand {
   }
 
   async run(client: Bot, message: Message, args: string[], language: lang) {
-    const gif: string = await client.db.getgif(
+    const gif: string = await client.db.getGif(
       this.name,
-      await client.db.getgiftype(message.author),
+      await client.db.getGiftype(message.author),
     );
-    let userA: string = await client.db.getname(message.author);
-    const color: ColorResolvable = await client.db.getcolor(message.author);
+    let userA: string = await client.db.getName(message.author);
+    const rawColor = await client.db.getColor(message.author);
+    let color: ColorResolvable;
+    if (rawColor in Colors) color = rawColor as keyof typeof Colors;
+    else color = "Random";
     if (userA == "")
       userA = message.guild
         ? message.member!.displayName
@@ -208,4 +215,4 @@ abstract class MultiUserGifCommand extends GifCommand {
   }
 }
 
-export { Command, GifCommand, SingleUserGifCommand, MultiUserGifCommand };
+export { Command, GifCommand, MultiUserGifCommand, SingleUserGifCommand };

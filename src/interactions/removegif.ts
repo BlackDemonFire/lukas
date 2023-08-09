@@ -27,7 +27,7 @@ export default async function run(
     return;
   }
   if (args[0] == "accept") {
-    client.db.removegif(request.gifUrl);
+    client.db.removeGif(request.gifUrl);
     await request.message.edit("The owner accepted your request");
     await interaction.update({
       content: `**ACCEPTED**\nGif remove request from in <#${

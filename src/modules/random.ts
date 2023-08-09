@@ -20,7 +20,7 @@ export class FakeRandom {
 export class Random {
   api;
   constructor(apiKey: string) {
-    this.api = new RandomOrg({ apiKey });
+    this.api = new RandomOrg.default({ apiKey });
   }
   async int(min: number, max: number) {
     if (max == min) return min;

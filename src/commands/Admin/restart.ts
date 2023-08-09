@@ -1,10 +1,10 @@
 import { EmbedBuilder, Message } from "discord.js";
-import type { ILanguage as lang } from "src/types";
 import { inspect } from "util";
 import { Bot } from "../../bot.js";
 import { restart } from "../../execrestart.js";
 import { Command } from "../../modules/command.js";
 import logger from "../../modules/logger.js";
+import type { ILanguage as lang } from "../../types.js";
 
 export default class Restart extends Command {
   constructor(client: Bot, category: string, name: string) {

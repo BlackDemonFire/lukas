@@ -1,7 +1,7 @@
 import { Message } from "discord.js";
-import type { ILanguage as lang } from "src/types";
 import { Bot } from "../../bot.js";
 import { Command } from "../../modules/command.js";
+import type { ILanguage as lang } from "../../types.js";
 
 export default class Giftype extends Command {
   constructor(client: Bot, category: string, name: string) {
@@ -30,7 +30,7 @@ export default class Giftype extends Command {
       });
       return;
     }
-    client.db.setgiftype(message.author, giftype);
+    client.db.setGiftype(message.author, giftype);
   }
   help = {
     show: true,

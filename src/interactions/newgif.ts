@@ -1,7 +1,7 @@
 import { BaseInteraction, GuildChannel } from "discord.js";
 import { Bot } from "../bot.js";
-import logger from "../modules/logger.js";
 import { activeRequests } from "../modules/dbo/gifRequest.js";
+import logger from "../modules/logger.js";
 
 export default async function run(
   client: Bot,
@@ -27,7 +27,7 @@ export default async function run(
     return;
   }
   if (args[0] == "accept") {
-    client.db.newgif(request.gifUrl, request.action!, request.gifType!);
+    client.db.newGif(request.gifUrl, request.action!, request.gifType!);
     await request.message.edit("The owner accepted your request");
     await interaction.update({
       content: `**ACCEPTED**\nGif check request from in <#${
