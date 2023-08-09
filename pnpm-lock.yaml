@@ -59,8 +59,8 @@ devDependencies:
     specifier: ^5.7.14
     version: 5.7.14(@mikro-orm/core@5.7.14)(@mikro-orm/entity-generator@5.7.14)(pg@8.11.1)
   '@types/node':
-    specifier: ^20.4.1
-    version: 20.4.1
+    specifier: ^20.4.9
+    version: 20.4.9
   '@types/pg':
     specifier: ^8.10.2
     version: 8.10.2
@@ -81,7 +81,7 @@ devDependencies:
     version: 3.0.0
   ts-node:
     specifier: ^10.9.1
-    version: 10.9.1(@types/node@20.4.1)(typescript@5.1.6)
+    version: 10.9.1(@types/node@20.4.9)(typescript@5.1.6)
 
 packages:
 
@@ -551,13 +551,13 @@ packages:
     resolution: {integrity: sha512-Hr5Jfhc9eYOQNPYO5WLDq/n4jqijdHNlDXjuAQkkt+mWdQR+XJToOHrsD4cPaMXpn6KO7y2+wM8AZEs8VpBLVA==}
     dev: true
 
-  /@types/node@20.4.1:
-    resolution: {integrity: sha512-JIzsAvJeA/5iY6Y/OxZbv1lUcc8dNSE77lb2gnBH+/PJ3lFR1Ccvgwl5JWnHAkNHcRsT0TbpVOsiMKZ1F/yyJg==}
+  /@types/node@20.4.9:
+    resolution: {integrity: sha512-8e2HYcg7ohnTUbHk8focoklEQYvemQmu9M/f43DZVx43kHn0tE3BY/6gSDxS7k0SprtS0NHvj+L80cGLnoOUcQ==}
 
   /@types/pg@8.10.2:
     resolution: {integrity: sha512-MKFs9P6nJ+LAeHLU3V0cODEOgyThJ3OAnmOlsZsxux6sfQs3HRXR5bBn7xG5DjckEFhTAxsXi7k7cd0pCMxpJw==}
     dependencies:
-      '@types/node': 20.4.1
+      '@types/node': 20.4.9
       pg-protocol: 1.6.0
       pg-types: 4.0.1
     dev: true
@@ -565,7 +565,7 @@ packages:
   /@types/recursive-readdir@2.2.1:
     resolution: {integrity: sha512-Xd+Ptc4/F2ueInqy5yK2FI5FxtwwbX2+VZpcg+9oYsFJVen8qQKGapCr+Bi5wQtHU1cTXT8s+07lo/nKPgu8Gg==}
     dependencies:
-      '@types/node': 20.4.1
+      '@types/node': 20.4.9
     dev: true
 
   /@types/semver@7.5.0:
@@ -579,7 +579,7 @@ packages:
   /@types/ws@8.5.5:
     resolution: {integrity: sha512-lwhs8hktwxSjf9UaZ9tG5M03PGogvFaH8gUgLNbN9HKIg0dvv6q+gkSuJ8HN4/VbyxkuLzCjlN7GquQ0gUJfIg==}
     dependencies:
-      '@types/node': 20.4.1
+      '@types/node': 20.4.9
     dev: false
 
   /@typescript-eslint/eslint-plugin@6.0.0(@typescript-eslint/parser@6.0.0)(eslint@8.44.0)(typescript@5.1.6):
@@ -2213,7 +2213,7 @@ packages:
     resolution: {integrity: sha512-k43M7uCG1AkTyxgnmI5MPwKoUvS/bRvLvUb7+Pgpdlmok8AoqmUaZxUUw8zKM5B1lqZrt41GjYgnvAi0fppqgQ==}
     dev: false
 
-  /ts-node@10.9.1(@types/node@20.4.1)(typescript@5.1.6):
+  /ts-node@10.9.1(@types/node@20.4.9)(typescript@5.1.6):
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
     hasBin: true
     peerDependencies:
@@ -2232,7 +2232,7 @@ packages:
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      '@types/node': 20.4.1
+      '@types/node': 20.4.9
       acorn: 8.10.0
       acorn-walk: 8.2.0
       arg: 4.1.3
