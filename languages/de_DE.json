@@ -1,4 +1,5 @@
 {
+  "$schema": "./_schema.json",
   "command": {
     "roll": {
       "description": "Wirf einen Würfel - standardmäßig wird 1 w6 verwendet. Um andere Würfel zu verwenden verwende [Anzahl]w[Würfeltyp]",
