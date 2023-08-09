@@ -1,11 +1,11 @@
 import {
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-  GuildChannel,
-  Message,
-  Team,
-  User,
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    GuildChannel,
+    Message,
+    Team,
+    User,
 } from "discord.js";
 import { Bot } from "../../bot.js";
 import { Command } from "../../modules/command.js";
@@ -24,7 +24,7 @@ export default class Newgif extends Command {
     }
     const url: string = args[0];
     if (this.isOwner(message)) {
-      client.db.removegif(url);
+      client.db.removeGif(url);
       message.channel.send(language.command.removegif.success);
       return;
     }

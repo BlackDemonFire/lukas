@@ -8,7 +8,7 @@ export default class Gifaction extends Command {
     super(client, category, name);
   }
   async run(client: Bot, message: Message, _args: string[], language: lang) {
-    const actions = await client.db.getgifactions();
+    const actions = await client.db.getGifactions();
     let actionsstring: string = "";
     switch (actions.length) {
       case 1:

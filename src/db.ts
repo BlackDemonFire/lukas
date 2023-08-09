@@ -35,7 +35,7 @@ export class DB {
     await this.dsaCharRepository.nativeDelete({ prefix });
   }
 
-  async getcolor(user: User): Promise<string> {
+  async getColor(user: User): Promise<string> {
     const data = await this.userRepository.findOne(
       { id: user.id },
       { fields: ["color"] },
@@ -46,7 +46,7 @@ export class DB {
     const data = await this.dsaCharRepository.findOne({ prefix });
     return data;
   }
-  async getgif(actiontype: string, giftype: string): Promise<string> {
+  async getGif(actiontype: string, giftype: string): Promise<string> {
     const totalCount = await this.gifRepository.count({ actiontype, giftype });
     const data = await this.gifRepository.findOne(
       { giftype, actiontype },
@@ -54,12 +54,12 @@ export class DB {
     );
     return data?.url ?? "";
   }
-  async getgifactions(): Promise<string[]> {
+  async getGifactions(): Promise<string[]> {
     const qb = this.db.createQueryBuilder(Gifdb);
     const data = await qb.select("actiontype").distinct().execute();
     return data.filter((row) => !!row.actiontype).map((row) => row.actiontype!);
   }
-  async getgiftype(user: User): Promise<string> {
+  async getGiftype(user: User): Promise<string> {
     const data = await this.userRepository.findOne({ id: user.id });
     return data?.giftype ?? "anime";
   }
@@ -67,7 +67,7 @@ export class DB {
     const data = await this.settingsRepository.findOne({ id: guild.id });
     return data?.language ?? "";
   }
-  async getname(user: User): Promise<string> {
+  async getName(user: User): Promise<string> {
     const data = await this.userRepository.findOne({ id: user.id });
     return data?.name ?? "";
   }
@@ -85,14 +85,14 @@ export class DB {
     );
     await this.db.flush();
   }
-  async newgif(url: string, actiontype: string, giftype: string) {
+  async newGif(url: string, actiontype: string, giftype: string) {
     this.gifRepository.create({ url, actiontype, giftype });
     await this.db.flush();
   }
-  async removegif(url: string) {
+  async removeGif(url: string) {
     await this.gifRepository.nativeDelete({ url });
   }
-  async newuser(user: User) {
+  async newUser(user: User) {
     this.userRepository.create(
       {
         id: user.id,
@@ -104,12 +104,12 @@ export class DB {
     );
     await this.db.flush();
   }
-  async setcolor(user: User, color: string) {
+  async setColor(user: User, color: string) {
     const ref = this.db.getReference(Userdb, user.id);
     ref.color = color;
     await this.db.flush();
   }
-  async setgiftype(user: User, giftype: string) {
+  async setGiftype(user: User, giftype: string) {
     const ref = this.db.getReference(Userdb, user.id);
     ref.giftype = giftype;
     await this.db.flush();
@@ -119,7 +119,7 @@ export class DB {
     ref.language = lang;
     await this.db.flush();
   }
-  async setname(user: User, name: string) {
+  async setName(user: User, name: string) {
     const ref = this.db.getReference(Userdb, user.id);
     ref.name = name;
     await this.db.flush();

@@ -72,7 +72,7 @@ abstract class GifCommand extends Command {
             logger.error(e);
             user = null;
           });
-          if (user) name = await client.db.getname(user);
+          if (user) name = await client.db.getName(user);
           if (!user) {
             name = arg;
           } else if (!name || name == "") {
@@ -148,12 +148,12 @@ abstract class SingleUserGifCommand extends GifCommand {
   }
 
   async run(client: Bot, message: Message, _args: string[], language: lang) {
-    const gif: string = await client.db.getgif(
+    const gif: string = await client.db.getGif(
       this.name,
-      await client.db.getgiftype(message.author),
+      await client.db.getGiftype(message.author),
     );
-    let userA: string = await client.db.getname(message.author);
-    const rawColor = await client.db.getcolor(message.author);
+    let userA: string = await client.db.getName(message.author);
+    const rawColor = await client.db.getColor(message.author);
     let color: ColorResolvable;
     if (rawColor in Colors) color = rawColor as keyof typeof Colors;
     else color = "Random";
@@ -176,12 +176,12 @@ abstract class MultiUserGifCommand extends GifCommand {
   }
 
   async run(client: Bot, message: Message, args: string[], language: lang) {
-    const gif: string = await client.db.getgif(
+    const gif: string = await client.db.getGif(
       this.name,
-      await client.db.getgiftype(message.author),
+      await client.db.getGiftype(message.author),
     );
-    let userA: string = await client.db.getname(message.author);
-    const rawColor = await client.db.getcolor(message.author);
+    let userA: string = await client.db.getName(message.author);
+    const rawColor = await client.db.getColor(message.author);
     let color: ColorResolvable;
     if (rawColor in Colors) color = rawColor as keyof typeof Colors;
     else color = "Random";

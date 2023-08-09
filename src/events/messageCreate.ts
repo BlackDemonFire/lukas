@@ -35,7 +35,7 @@ export async function event(client: Bot, message: Message) {
     if (message.author.bot) return;
     if (message.guild)
       await client.db.initLang(message.guild, settings.DEFAULTLANG);
-    await client.db.newuser(message.author);
+    await client.db.newUser(message.author);
     if (message.content.startsWith(client.prefix))
       return await cmd(client, message);
   } catch (err) {

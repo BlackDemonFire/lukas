@@ -20,7 +20,7 @@ export default class Color extends Command {
     } else {
       color = "Random";
     }
-    client.db.setcolor(message.author, color as string);
+    client.db.setColor(message.author, color as string);
     message.channel.send({ content: language.command.color.success });
   }
   help = {

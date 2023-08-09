@@ -1,11 +1,11 @@
 import {
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-  GuildChannel,
-  Message,
-  Team,
-  User,
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    GuildChannel,
+    Message,
+    Team,
+    User,
 } from "discord.js";
 import { Bot } from "../../bot.js";
 import { Command } from "../../modules/command.js";
@@ -26,7 +26,7 @@ export default class Newgif extends Command {
     const action: string = args[1].toLowerCase();
     const type: string = args[2].toLowerCase();
     if (this.isOwner(message)) {
-      client.db.newgif(url, action, type);
+      client.db.newGif(url, action, type);
       message.channel.send(language.command.newgif.success);
       return;
     }

@@ -30,7 +30,7 @@ export default class Giftype extends Command {
       });
       return;
     }
-    client.db.setgiftype(message.author, giftype);
+    client.db.setGiftype(message.author, giftype);
   }
   help = {
     show: true,
