@@ -1,11 +1,11 @@
 import {
-    ActionRowBuilder,
-    ButtonBuilder,
-    ButtonStyle,
-    GuildChannel,
-    Message,
-    Team,
-    User,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  GuildChannel,
+  Message,
+  Team,
+  User,
 } from "discord.js";
 import { Bot } from "../../bot.js";
 import { Command } from "../../modules/command.js";
