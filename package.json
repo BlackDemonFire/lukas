@@ -22,7 +22,7 @@
     "@types/node": "^20.4.1",
     "@types/pg": "^8.10.2",
     "@types/recursive-readdir": "^2.2.1",
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.3.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^5.0.0",
     "prettier": "3.0.0",
