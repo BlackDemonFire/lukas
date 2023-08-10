@@ -18,6 +18,10 @@ export default class Gifaction extends Command {
         actionsstring = actions.join(` ${language.general.and} `);
         break;
       default:
+        actionsstring = `${actions
+          .slice(0, -1)
+          .map((action) => `\`${action}\``)
+          .join(", ")} ${language.general.and} \`${actions.slice(-1)}\``;
         break;
     }
     await message.channel.send({
