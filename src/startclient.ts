@@ -70,16 +70,18 @@ export function start() {
       logger.error(`Error while reading languages:\n\t${err}`);
       return;
     }
-    files.forEach((file: string) => {
-      if (!file.endsWith(".json")) return;
-      const lang: ILanguage = JSON.parse(
-        readFileSync(`./languages/${file}`, "utf-8"),
-      );
-      const langName = file.split(".")[0];
-      logger.debug(`Registering language ${langName}`);
-      client.languages.set(langName, lang);
-      logger.debug(`Registered language ${langName}`);
-    });
+    files
+      .filter((lang) => !lang.endsWith("_schema.json"))
+      .forEach((file: string) => {
+        if (!file.endsWith(".json")) return;
+        const lang: ILanguage = JSON.parse(
+          readFileSync(`./languages/${file}`, "utf-8"),
+        );
+        const langName = file.split(".")[0];
+        logger.debug(`Registering language ${langName}`);
+        client.languages.set(langName, lang);
+        logger.debug(`Registered language ${langName}`);
+      });
   });
   setTimeout(
     () =>

@@ -40,6 +40,10 @@ export default class Lang extends Command {
           languages = langs.join(` ${language.general.and} `);
           break;
         default:
+          languages = `${langs
+            .slice(0, -1)
+            .map((langName) => `\`${langName}\``)
+            .join(", ")} ${language.general.and} \`${langs.slice(-1)}\``;
           break;
       }
       await message.channel.send({

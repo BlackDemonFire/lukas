@@ -11,6 +11,9 @@ dependencies:
   '@mikro-orm/entity-generator':
     specifier: ^5.7.14
     version: 5.7.14(@mikro-orm/core@5.7.14)(@mikro-orm/migrations@5.7.14)(pg@8.11.1)
+  '@mikro-orm/migrations':
+    specifier: ^5.7.14
+    version: 5.7.14(@mikro-orm/core@5.7.14)(@mikro-orm/entity-generator@5.7.14)(pg@8.11.1)
   '@mikro-orm/postgresql':
     specifier: ^5.7.14
     version: 5.7.14(@mikro-orm/core@5.7.14)(@mikro-orm/entity-generator@5.7.14)(@mikro-orm/migrations@5.7.14)
@@ -55,9 +58,6 @@ devDependencies:
   '@mikro-orm/cli':
     specifier: ^5.7.14
     version: 5.7.14(@mikro-orm/entity-generator@5.7.14)(@mikro-orm/migrations@5.7.14)(@mikro-orm/postgresql@5.7.14)(pg@8.11.1)
-  '@mikro-orm/migrations':
-    specifier: ^5.7.14
-    version: 5.7.14(@mikro-orm/core@5.7.14)(@mikro-orm/entity-generator@5.7.14)(pg@8.11.1)
   '@types/node':
     specifier: ^20.4.9
     version: 20.4.9
