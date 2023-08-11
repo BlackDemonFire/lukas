@@ -1,4 +1,5 @@
 {
+  "$schema": "./_schema.json",
   "command": {
     "roll": {
       "description": "roll a dice - defaults to 1d6, to select the number of dice, use a number - to change the dice type use d<number>/w<number>",
@@ -31,7 +32,10 @@
     },
     "purr": {
       "description": "Purr",
-      "singleUser": ["{a} is purring~ Nya Nya~", "{a} is purring"]
+      "singleUser": [
+        "{a} is purring~ Nya Nya~",
+        "{a} is purring"
+      ]
     },
     "ping": {
       "description": "Get the bot's latency",
@@ -40,7 +44,9 @@
     },
     "pat": {
       "description": "Pat a User",
-      "singleUser": ["Do you need pats {a}?"],
+      "singleUser": [
+        "Do you need pats {a}?"
+      ],
       "multiUser": [
         "{a} pats {b}",
         "{a} pats {b}. Cute!",
@@ -78,18 +84,27 @@
     },
     "kiss": {
       "description": "Kiss a User",
-      "singleUser": ["I will kiss you {a} 🥺"],
-      "multiUser": ["{a} kisses {b}", "{a} kisses {b}s lips 🥺"]
+      "singleUser": [
+        "I will kiss you {a} 🥺"
+      ],
+      "multiUser": [
+        "{a} kisses {b}",
+        "{a} kisses {b}s lips 🥺"
+      ]
     },
     "kill": {
-      "success": "Committing suicide..."
+      "success": "Committing suicide...",
+      "description": "Stop the bot"
     },
     "info": {
       "description": "Get System info for the bot"
     },
     "hug": {
       "description": "Hug a User",
-      "singleUser": ["I will hug you {a} 🥺", "Do you need a hug {a}?"],
+      "singleUser": [
+        "I will hug you {a} 🥺",
+        "Do you need a hug {a}?"
+      ],
       "multiUser": [
         "{a} hugs {b}",
         "{a} hugs {b}. Squeeze hard but not too hard",
@@ -102,7 +117,9 @@
         "I'll hold your hand {a} 🥺",
         "Do you want me to hold your hand, {a}?"
       ],
-      "multiUser": ["{a} holds {b}'s hand. Hot!"]
+      "multiUser": [
+        "{a} holds {b}'s hand. Hot!"
+      ]
     },
     "help": {
       "description": "displays help (for a command)",
@@ -116,7 +133,7 @@
       "description": "Change your gif type",
       "availableTypes": "Following gif types are available: {types}."
     },
-    "gifaction": {
+    "gifactions": {
       "description": "Get available gif actions",
       "response": "Following gif actions are available: {actions}."
     },
@@ -130,7 +147,7 @@
       "success": "Character `{pref}` was successfully deleted."
     },
     "dsaadd": {
-      "desctiption": "Add an NPC",
+      "description": "Add an NPC",
       "args": "you need to supply three arguments:\n1. the prefix\n2. the avatar URL\n3. the name to be displayed",
       "success": "Der Charakter `{pref}` wurde erfolgreich hinzugefügt."
     },
@@ -146,11 +163,17 @@
         "I will cuddle you {a} 🥺",
         "Do you need somebody to cuddle you?"
       ],
-      "multiUser": ["{a} cuddles {b}", "{a} cuddles {b} - adorable"]
+      "multiUser": [
+        "{a} cuddles {b}",
+        "{a} cuddles {b} - adorable"
+      ]
     },
     "cry": {
       "description": "Cry",
-      "singleUser": ["{a} is crying...", "Do you need a hug, {a}?"]
+      "singleUser": [
+        "{a} is crying...",
+        "Do you need a hug, {a}?"
+      ]
     },
     "color": {
       "description": "Change your embed color (no specified color will result in random colors)",

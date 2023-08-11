@@ -21,7 +21,7 @@ export default class Link extends Command {
         })})\n[GitHub](https://github.com/BlackDemonFire/lukas.git)`,
       )
       .setColor(0xaa7777);
-    message.channel.send({ embeds: [embed] });
+    await message.channel.send({ embeds: [embed] });
   }
   help = {
     show: true,

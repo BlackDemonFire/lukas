@@ -14,7 +14,9 @@ export default class Kill extends Command {
   };
   async run(client: Bot, message: Message, _args: string[], language: lang) {
     if (!super.isOwner(message)) {
-      message.channel.send({ content: language.command.kill.permissionError });
+      await message.channel.send({
+        content: language.command.kill.permissionError,
+      });
       return;
     }
     if (message !== null) {
@@ -29,7 +31,7 @@ export default class Kill extends Command {
       await message.channel.send({ content: plaintext, embeds: [embed] });
     }
     logger.info("stopping bot...");
-    client.destroy();
+    await client.destroy();
     process.exit();
   }
 }

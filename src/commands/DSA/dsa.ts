@@ -3,7 +3,6 @@ import {
   Message,
   PermissionFlagsBits,
   TextChannel,
-  Webhook,
 } from "discord.js";
 import { Bot } from "../../bot.js";
 import { Command } from "../../modules/command.js";
@@ -19,7 +18,7 @@ export default class Dsa extends Command {
   };
   async run(client: Bot, message: Message, args: string[], language: lang) {
     if (!(message.channel instanceof BaseGuildTextChannel)) {
-      message.channel.send(language.general.guildOnly);
+      await message.channel.send(language.general.guildOnly);
       return;
     }
     if (
@@ -30,7 +29,7 @@ export default class Dsa extends Command {
           PermissionFlagsBits.ManageWebhooks,
         ])
     ) {
-      message.channel.send(language.command.dsa.permissions);
+      await message.channel.send(language.command.dsa.permissions);
       return;
     }
     let sl: boolean = true;
@@ -39,8 +38,10 @@ export default class Dsa extends Command {
     } else if (message.attachments.size > 1) {
       sl = true;
     } else {
-      message.delete();
-      message.author.send(language.command.dsa.contentRequired);
+      await message.delete();
+      await message.author.send({
+        content: language.command.dsa.contentRequired,
+      });
     }
     const clean = args[0].slice().toLowerCase();
     let count = 0;
@@ -61,7 +62,7 @@ export default class Dsa extends Command {
         npc = npc.replace("$", " ");
         i = i + 1;
       }
-      displayName = npc.substr(1);
+      displayName = npc.substring(1);
     }
     if (sl) {
       displayName = language.command.dsa.gameMaster;
@@ -69,23 +70,21 @@ export default class Dsa extends Command {
         "https://cdn.discordapp.com/icons/790938544293019649/d0843b10f5e7dabd10ebbea93acfca28.webp";
     }
     if (message.channel instanceof TextChannel) {
-      message.channel
-        .createWebhook({ name: displayName, avatar: displayImg })
-        .then(async (webhook: Webhook) => {
-          if (message.attachments.size == 0) {
-            await webhook.send({ content: args.join(" ") });
-            webhook.delete();
-            message.delete();
-          } else {
-            const attarr: string[] = [];
-            message.attachments.forEach((a) => {
-              attarr.push(a.url);
-            });
-            await webhook.send({ content: args.join(" "), files: attarr });
-            webhook.delete();
-            message.delete();
-          }
+      const webhook = await message.channel.createWebhook({
+        name: displayName,
+        avatar: displayImg,
+      });
+      if (message.attachments.size == 0) {
+        await webhook.send({ content: args.join(" ") });
+      } else {
+        const attarr: string[] = [];
+        message.attachments.forEach((a) => {
+          attarr.push(a.url);
         });
+        await webhook.send({ content: args.join(" "), files: attarr });
+      }
+      await webhook.delete();
+      await message.delete();
     }
   }
 }

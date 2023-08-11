@@ -2,7 +2,7 @@ import { EmbedBuilder, Message } from "discord.js";
 import { Bot } from "../../bot.js";
 import { Command } from "../../modules/command.js";
 import logger from "../../modules/logger.js";
-import type { ILanguage as lang, nil } from "../../types.js";
+import type { ILanguage as lang } from "../../types.js";
 
 export default class Ping extends Command {
   constructor(client: Bot, category: string, name: string) {
@@ -51,12 +51,12 @@ export default class Ping extends Command {
           }`,
           iconURL: message.author.defaultAvatarURL,
         });
-      message.channel.send({
+      await message.channel.send({
         content: message.author.toString(),
         embeds: [embed],
       });
     } else {
-      const msg: Message | nil = await message.channel
+      const msg: Message | void = await message.channel
         .send({
           content: `${client.emojis.resolve("498280749271744512")} Ping?`,
         })
@@ -81,7 +81,7 @@ export default class Ping extends Command {
         embed.setImage(
           "https://cdn.discordapp.com/attachments/605382573413236758/744671452267282472/Alert.gif",
         );
-      msg.edit({
+      await msg.edit({
         content: "<:check_4:498523284804075541> Pong!",
         embeds: [embed],
       });

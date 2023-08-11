@@ -7,11 +7,11 @@ export default class Lang extends Command {
   constructor(client: Bot, category: string, name: string) {
     super(client, category, name);
   }
-  run(client: Bot, message: Message, args: string[], language: lang) {
+  async run(client: Bot, message: Message, args: string[], language: lang) {
     let newLang: string;
     let languages: string = "";
     if (!message.guild) {
-      message.channel.send(language.general.guildOnly);
+      await message.channel.send(language.general.guildOnly);
       return;
     }
     if (
@@ -20,7 +20,9 @@ export default class Lang extends Command {
         this.isOwner(message)
       )
     ) {
-      message.channel.send({ content: language.command.lang.permissionError });
+      await message.channel.send({
+        content: language.command.lang.permissionError,
+      });
       return;
     }
     if (!args || args.length === 0) {
@@ -38,9 +40,13 @@ export default class Lang extends Command {
           languages = langs.join(` ${language.general.and} `);
           break;
         default:
+          languages = `${langs
+            .slice(0, -1)
+            .map((langName) => `\`${langName}\``)
+            .join(", ")} ${language.general.and} \`${langs.slice(-1)}\``;
           break;
       }
-      message.channel.send({
+      await message.channel.send({
         content: language.command.lang.noSuchLanguage.replace(
           "{languages}",
           languages,
@@ -48,8 +54,8 @@ export default class Lang extends Command {
       });
       return;
     }
-    client.db.setLang(message.guild, newLang);
-    message.channel.send({
+    await client.db.setLang(message.guild, newLang);
+    await message.channel.send({
       content: language.command.lang.success.replace("{lang}", newLang),
     });
   }

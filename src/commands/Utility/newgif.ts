@@ -19,15 +19,15 @@ export default class Newgif extends Command {
 
   async run(client: Bot, message: Message, args: string[], language: lang) {
     if (!args || args.length !== 3) {
-      message.channel.send(language.command.newgif.wrongArgs);
+      await message.channel.send(language.command.newgif.wrongArgs);
       return;
     }
     const url: string = args[0];
     const action: string = args[1].toLowerCase();
     const type: string = args[2].toLowerCase();
     if (this.isOwner(message)) {
-      client.db.newGif(url, action, type);
-      message.channel.send(language.command.newgif.success);
+      await client.db.newGif(url, action, type);
+      await message.channel.send(language.command.newgif.success);
       return;
     }
     const response: string = language.command.newgif.checking;
@@ -51,7 +51,7 @@ export default class Newgif extends Command {
       ),
     );
     for (const admin of admins) {
-      admin.send({
+      await admin.send({
         content: `Gif check request from ${message.author.tag} in <#${
           message.channel.id
         }> (${

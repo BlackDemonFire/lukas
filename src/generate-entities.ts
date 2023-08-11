@@ -4,7 +4,7 @@ import settings from "./modules/settings.js";
 // This script will generate entities from the database. - Development only!
 // build with `pnpm run build` and run with `node -r 'dotenv/config' dist/generate-entities.js`
 
-(async () => {
+void (async () => {
   const orm = await MikroORM.init<PostgreSqlDriver>({
     type: "postgresql",
     discovery: {

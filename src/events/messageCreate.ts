@@ -27,15 +27,15 @@ async function cmd(client: Bot, message: Message) {
     language = client.languages.get(settings.DEFAULTLANG)!;
   }
   logger.debug(`Running command ${commandname}`);
-  command.run(client, message, args, language);
+  await command.run(client, message, args, language);
 }
 
 export async function event(client: Bot, message: Message) {
   try {
     if (message.author.bot) return;
     if (message.guild)
-      await client.db.initLang(message.guild, settings.DEFAULTLANG);
-    await client.db.newUser(message.author);
+      await client.db.ensureGuildSettings(message.guild, settings.DEFAULTLANG);
+    await client.db.ensureUser(message.author);
     if (message.content.startsWith(client.prefix))
       return await cmd(client, message);
   } catch (err) {

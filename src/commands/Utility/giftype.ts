@@ -22,7 +22,7 @@ export default class Giftype extends Command {
         default:
           break;
       }
-      message.channel.send({
+      await message.channel.send({
         content: language.command.giftype.availableTypes.replace(
           "{types}",
           typesstring,
@@ -30,7 +30,7 @@ export default class Giftype extends Command {
       });
       return;
     }
-    client.db.setGiftype(message.author, giftype);
+    await client.db.setGiftype(message.author, giftype);
   }
   help = {
     show: true,

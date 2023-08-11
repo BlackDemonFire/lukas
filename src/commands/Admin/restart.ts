@@ -26,7 +26,7 @@ export default class Restart extends Command {
     }
     logger.info("restarting bot...");
     try {
-      restart(
+      await restart(
         client,
         msg,
         `<:check_4:498523284804075541> ${language.command.restart.success}`,
@@ -43,7 +43,7 @@ export default class Restart extends Command {
         .setAuthor({ name: "Restart" })
         .setDescription(resErr);
       if (msg)
-        msg.edit({
+        await msg.edit({
           content: `⚠ ${language.command.restart.error}`,
           embeds: [embed],
         });
