@@ -6,7 +6,7 @@
     "@mikro-orm/postgresql": "^5.7.14",
     "@typescript-eslint/parser": "^6.3.0",
     "discord-api-types": "^0.37.52",
-    "discord.js": "^14.12.1",
+    "discord.js": "^14.13.0",
     "dotenv": "^16.3.1",
     "eslint": "^8.46.0",
     "random-org": "^2.2.0",
