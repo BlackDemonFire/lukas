@@ -140,6 +140,13 @@ abstract class GifCommand extends Command {
       .setColor(color);
     await message.channel.send({ embeds: [embed] });
   }
+
+  protected async getColor(client: Bot, author: User) {
+    const rawColor = await client.db.getColor(author);
+
+    logger.debug(`available colors: ${rawColor.split(";")}`);
+    return client.random.choice(rawColor.split(";"));
+  }
 }
 
 abstract class SingleUserGifCommand extends GifCommand {
@@ -153,7 +160,7 @@ abstract class SingleUserGifCommand extends GifCommand {
       await client.db.getGiftype(message.author),
     );
     let userA: string = await client.db.getName(message.author);
-    const rawColor = await client.db.getColor(message.author);
+    const rawColor = await this.getColor(client, message.author);
     let color: ColorResolvable;
     if (rawColor in Colors) color = rawColor as keyof typeof Colors;
     else color = "Random";
@@ -181,10 +188,9 @@ abstract class MultiUserGifCommand extends GifCommand {
       await client.db.getGiftype(message.author),
     );
     let userA: string = await client.db.getName(message.author);
-    const rawColor = await client.db.getColor(message.author);
-    let color: ColorResolvable;
-    if (rawColor in Colors) color = rawColor as keyof typeof Colors;
-    else color = "Random";
+    const rawColor = await this.getColor(client, message.author);
+    const color: ColorResolvable = rawColor as ColorResolvable;
+
     if (userA == "")
       userA = message.guild
         ? message.member!.displayName

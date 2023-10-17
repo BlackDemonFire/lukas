@@ -591,7 +591,10 @@
                         },
                         "invalid_color": {
                             "type": "string"
-                        }
+                        },
+					  	"show_colors": {
+						  	"type": "string"
+						}
                     },
                     "required": [
                         "description",
@@ -599,6 +602,39 @@
                         "invalid_color"
                     ]
                 },
+			  	"addcolor": {
+				  "type": "object",
+				  "properties": {
+					"description": {
+					  "type": "string"
+					}
+				  },
+				  "required": [
+					"description"
+				  ]
+				},
+				"removecolor": {
+				  "type": "object",
+				  "properties": {
+					"description": {
+					  "type": "string"
+					}
+				  },
+				  "required": [
+					"description"
+				  ]
+				},
+			  	"setcolor": {
+				  "type": "object",
+				  "properties": {
+					"description": {
+					  "type": "string"
+					}
+				  },
+				  "required": [
+					"description"
+				  ]
+				},
                 "blush": {
                     "type": "object",
                     "properties": {

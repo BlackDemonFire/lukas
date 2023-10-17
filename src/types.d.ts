@@ -157,6 +157,7 @@ interface ILangCommand {
     singleUser: string[];
   };
   color: {
+    show_colors: string;
     description: string;
     success: string;
     invalid_color: string;
