@@ -176,10 +176,20 @@
       ]
     },
     "color": {
-      "description": "Change your embed color (no specified color will result in random colors)",
+      "description": "Shows what colors you currently use",
       "success": "Your color was changed.",
-      "invalid_color": "I don't know such a color."
+      "invalid_color": "I don't know such a color.",
+	  "show_colors": "Your chosen colors are: {c}"
     },
+	"addcolor": {
+	  "description": "Adds colors to your embed colors"
+	},
+	"removecolor": {
+	  "description": "Removes colors from your embed colors"
+	},
+	"setcolor": {
+	  "description": "Sets your embed colors to the given colors"
+	},
     "blush": {
       "description": "Blush",
       "singleUser": [
