@@ -21,7 +21,7 @@
           "embed": "If you want a result, it would probably be useful to throw a dice."
         },
         "singleDice": "you rolled a {rolltype}-sided dice.",
-        "multiDice": "you rolled {rollcountmax {rolltype}-sided dice."
+        "multiDice": "you rolled {rollcountmax} {rolltype}-sided dice."
       }
     },
     "restart": {
