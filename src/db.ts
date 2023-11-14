@@ -68,8 +68,7 @@ export class DB {
   }
   async getDSAChar(prefix: string): Promise<Dsachars | null> {
     const { repo } = this.dsaCharRepository;
-    const data = await repo.findOne({ prefix });
-    return data;
+    return await repo.findOne({ prefix });
   }
   async getGif(actiontype: string, giftype: string): Promise<string> {
     const { repo } = this.gifRepository;
@@ -82,8 +81,7 @@ export class DB {
         { actiontype },
         { offset: Math.floor(Math.random() * cnt) },
       );
-    }
-    else {
+    } else {
       data = await repo.findOne(
         { giftype, actiontype },
         { offset: Math.floor(Math.random() * totalCount) },
