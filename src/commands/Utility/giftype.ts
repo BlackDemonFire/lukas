@@ -8,20 +8,21 @@ export default class Giftype extends Command {
     super(client, category, name);
   }
   async run(client: Bot, message: Message, args: string[], language: lang) {
-    const giftype: string = args[0].toLowerCase();
-    const types = ["anime"];
-    if (!types.includes(giftype)) {
-      let typesstring = "";
-      switch (types.length) {
-        case 1:
-          typesstring = types[0];
-          break;
-        case 2:
-          typesstring = types.join(` ${language.general.and} `);
-          break;
-        default:
-          break;
-      }
+    const types = await client.db.getGiftypes();
+    let typesstring = "";
+    switch (types.length) {
+      case 1:
+        typesstring = types[0];
+        break;
+      case 2:
+        typesstring = types.join(` ${language.general.and} `);
+        break;
+      default:
+        break;
+    }
+
+    const giftype: string = args.length == 0 ? "" : args[0].toLowerCase();
+    if (args.length == 0 || !types.includes(giftype)) {
       await message.channel.send({
         content: language.command.giftype.availableTypes.replace(
           "{types}",

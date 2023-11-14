@@ -74,10 +74,22 @@ export class DB {
   async getGif(actiontype: string, giftype: string): Promise<string> {
     const { repo } = this.gifRepository;
     const totalCount = await repo.count({ actiontype, giftype });
-    const data = await repo.findOne(
-      { giftype, actiontype },
-      { offset: Math.floor(Math.random() * totalCount) },
-    );
+
+    let data;
+    if (totalCount == 0) {
+      const cnt = await repo.count({ actiontype });
+      data = await repo.findOne(
+        { actiontype },
+        { offset: Math.floor(Math.random() * cnt) },
+      );
+    }
+    else {
+      data = await repo.findOne(
+        { giftype, actiontype },
+        { offset: Math.floor(Math.random() * totalCount) },
+      );
+    }
+
     return data?.url ?? "";
   }
   async getGifactions(): Promise<string[]> {
@@ -91,6 +103,13 @@ export class DB {
     const data = await repo.findOne({ id: user.id });
     return data?.giftype ?? "anime";
   }
+
+  async getGiftypes(): Promise<string[]> {
+    const query = this.db.createQueryBuilder(Gifdb);
+    const data = await query.select("giftype").distinct().execute();
+    return data.filter((row) => !!row.giftype).map((row) => row.giftype!);
+  }
+
   async getLang(guild: Guild): Promise<string> {
     const { repo } = this.settingsRepository;
     const data = await repo.findOne({ id: guild.id });
