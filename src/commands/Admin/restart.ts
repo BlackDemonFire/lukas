@@ -1,8 +1,8 @@
-import { EmbedBuilder, Message } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { inspect } from "util";
 import { Bot } from "../../bot.js";
 import { restart } from "../../execrestart.js";
-import { Command } from "../../modules/command.js";
+import { Command, CommandInput } from "../../modules/command.js";
 import logger from "../../modules/logger.js";
 import type { ILanguage as lang } from "../../types.js";
 
@@ -14,7 +14,12 @@ export default class Restart extends Command {
     show: false,
     usage: `${this.prefix}restart`,
   };
-  async run(client: Bot, message: Message, _args: string[], language: lang) {
+  async run(
+    client: Bot,
+    message: CommandInput,
+    _args: string[],
+    language: lang,
+  ) {
     // code
     let msg = null;
     if (message !== null) {

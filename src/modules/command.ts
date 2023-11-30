@@ -1,14 +1,21 @@
 import {
+  Attachment,
+  ChatInputCommandInteraction,
   ClientApplication,
+  Collection,
   ColorResolvable,
   Colors,
   EmbedBuilder,
+  Guild,
+  GuildMember,
   Message,
+  SlashCommandBuilder,
+  Snowflake,
   Team,
   User,
 } from "discord.js";
 import { Bot } from "../bot.js";
-import type { command, ILanguage as lang, nil } from "../types.js";
+import type { ILanguage, command, nil } from "../types.js";
 import logger from "./logger.js";
 
 abstract class Command implements command {
@@ -26,9 +33,9 @@ abstract class Command implements command {
   // eslint-disable-next-line no-unused-vars
   abstract run(
     client: Bot,
-    message: Message,
+    message: CommandInput,
     args: string[],
-    language: lang,
+    language: ILanguage,
   ): Promise<void>;
   isAprilFools() {
     const date = new Date();
@@ -38,7 +45,7 @@ abstract class Command implements command {
     const dom = datesplit.shift();
     return dom == "1" && mon == "4";
   }
-  isOwner(message: Message): boolean {
+  isOwner(message: CommandInput): boolean {
     const apk: ClientApplication = this.client.application!;
     if (apk.owner instanceof Team) {
       return apk.owner.members.has(message.author.id);
@@ -55,9 +62,9 @@ abstract class GifCommand extends Command {
   }
   async parseUser(
     client: Bot,
-    message: Message,
+    message: CommandInput,
     args: string[],
-    language: lang,
+    language: ILanguage,
   ) {
     let userB: string = "";
     const mentioned: string[] = [];
@@ -115,7 +122,7 @@ abstract class GifCommand extends Command {
     return userB;
   }
 
-  protected getGifLanguageObject(language: lang, attr: string) {
+  protected getGifLanguageObject(language: ILanguage, attr: string) {
     type CommandKey = keyof typeof language.command;
     const commandName = this.name as CommandKey;
 
@@ -131,7 +138,7 @@ abstract class GifCommand extends Command {
     gif: string,
     responseString: string,
     color: ColorResolvable,
-    message: Message,
+    message: CommandInput,
   ) {
     const embed = new EmbedBuilder()
       .setImage(gif)
@@ -154,7 +161,12 @@ abstract class SingleUserGifCommand extends GifCommand {
     super(client, category, name);
   }
 
-  async run(client: Bot, message: Message, _args: string[], language: lang) {
+  async run(
+    client: Bot,
+    message: CommandInput,
+    _args: string[],
+    language: ILanguage,
+  ) {
     const gif: string = await client.db.getGif(
       this.name,
       await client.db.getGiftype(message.author),
@@ -166,7 +178,7 @@ abstract class SingleUserGifCommand extends GifCommand {
     else color = "Random";
     if (userA == "")
       userA = message.guild
-        ? message.member!.displayName
+        ? (message.member as GuildMember)!.displayName
         : message.author.username;
     const responseString: string = (
       await client.random.choice(
@@ -182,7 +194,12 @@ abstract class MultiUserGifCommand extends GifCommand {
     super(client, category, name);
   }
 
-  async run(client: Bot, message: Message, args: string[], language: lang) {
+  async run(
+    client: Bot,
+    message: CommandInput,
+    args: string[],
+    language: ILanguage,
+  ) {
     const gif: string = await client.db.getGif(
       this.name,
       await client.db.getGiftype(message.author),
@@ -193,7 +210,7 @@ abstract class MultiUserGifCommand extends GifCommand {
 
     if (userA == "")
       userA = message.guild
-        ? message.member!.displayName
+        ? (message.member as GuildMember)!.displayName
         : message.author.username;
     const userB: string = await super.parseUser(
       client,
@@ -220,5 +237,67 @@ abstract class MultiUserGifCommand extends GifCommand {
     await this.buildAndSendEmbed(gif, responseString, color, message);
   }
 }
+abstract class CustomSlashCommand {
+  abstract execute(
+    client: Bot,
+    interaction: ChatInputCommandInteraction,
+    language: ILanguage,
+  ): void;
+  abstract getBuilder(): SlashCommandBuilder;
+}
 
-export { Command, GifCommand, MultiUserGifCommand, SingleUserGifCommand };
+class CommandInput {
+  guild: Guild | null;
+  member:
+    | Exclude<ChatInputCommandInteraction["member"], null>
+    | Message["member"];
+  author: User;
+  attachments: Collection<string, Attachment>;
+  channel:
+    | Exclude<ChatInputCommandInteraction["channel"], null>
+    | Message["channel"];
+  id: Snowflake;
+  timestamp: number;
+  //TODO - Add a timestamp for the ping command!
+  $tmp = Symbol();
+
+  constructor(
+    message: Message | null,
+    interaction: ChatInputCommandInteraction | null,
+  ) {
+    if (message != null) {
+      this.guild = message.guild;
+      this.member = message.member;
+      this.author = message.author;
+      this.attachments = message.attachments;
+      this.channel = message.channel;
+      this.id = message.id;
+      this.timestamp = message.createdTimestamp;
+    } else if (interaction != null) {
+      this.guild = interaction.guild;
+      this.member = interaction.member;
+      this.author = interaction.user;
+      this.attachments = new Collection<string, Attachment>();
+      if (interaction.options.getAttachment("attachment") != null) {
+        this.attachments.set(
+          "attachment",
+          interaction.options.getAttachment("attachment")!,
+        );
+      }
+      this.channel = interaction.channel!;
+      this.id = interaction.id;
+      this.timestamp = interaction.createdTimestamp;
+    } else {
+      throw new Error("Either Message or Interaction must be given.");
+    }
+  }
+}
+
+export {
+  Command,
+  CommandInput,
+  CustomSlashCommand,
+  GifCommand,
+  MultiUserGifCommand,
+  SingleUserGifCommand,
+};

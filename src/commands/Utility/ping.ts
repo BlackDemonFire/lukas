@@ -1,6 +1,6 @@
-import { EmbedBuilder, Message } from "discord.js";
+import { EmbedBuilder, GuildMember, Message } from "discord.js";
 import { Bot } from "../../bot.js";
-import { Command } from "../../modules/command.js";
+import { Command, CommandInput } from "../../modules/command.js";
 import logger from "../../modules/logger.js";
 import type { ILanguage as lang } from "../../types.js";
 
@@ -12,7 +12,12 @@ export default class Ping extends Command {
     show: true,
     usage: `${this.prefix}ping`,
   };
-  async run(client: Bot, message: Message, _args: string[], language: lang) {
+  async run(
+    client: Bot,
+    message: CommandInput,
+    _args: string[],
+    language: lang,
+  ) {
     let gif;
     const commandusage: Array<number> = client.commandusage.get(
       message.author.id,
@@ -39,14 +44,14 @@ export default class Ping extends Command {
         .setAuthor({
           name: `Ping: @${
             message.member
-              ? message.member.displayName
+              ? (message.member as GuildMember).displayName
               : message.author.username
           }`,
         })
         .setFooter({
           text: `@${
             message.member
-              ? message.member.displayName
+              ? (message.member as GuildMember).displayName
               : message.author.username
           }`,
           iconURL: message.author.defaultAvatarURL,
@@ -73,7 +78,7 @@ export default class Ping extends Command {
         )
         .setAuthor({
           name: `${language.command.ping.latency} ${
-            msg.createdTimestamp - message.createdTimestamp
+            msg.createdTimestamp - message.timestamp
           }ms.`,
         })
         .setFooter({ text: `@${message.author.username}` });

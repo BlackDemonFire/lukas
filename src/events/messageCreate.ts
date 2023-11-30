@@ -3,6 +3,7 @@ import { Bot } from "../bot.js";
 import logger from "../modules/logger.js";
 import settings from "../modules/settings.js";
 import type { ILanguage as lang } from "../types.js";
+import { CommandInput } from "src/modules/command.js";
 
 async function cmd(client: Bot, message: Message) {
   const args = message.content.slice(client.prefix.length).trim().split(" ");
@@ -27,7 +28,7 @@ async function cmd(client: Bot, message: Message) {
     language = client.languages.get(settings.DEFAULTLANG)!;
   }
   logger.debug(`Running command ${commandname}`);
-  await command.run(client, message, args, language);
+  await command.run(client, new CommandInput(message, null), args, language);
 }
 
 export async function event(client: Bot, message: Message) {

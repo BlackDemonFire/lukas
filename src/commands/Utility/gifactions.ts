@@ -1,13 +1,17 @@
-import { Message } from "discord.js";
 import { Bot } from "../../bot.js";
-import { Command } from "../../modules/command.js";
+import { Command, CommandInput } from "../../modules/command.js";
 import type { ILanguage as lang } from "../../types.js";
 
 export default class Gifaction extends Command {
   constructor(client: Bot, category: string, name: string) {
     super(client, category, name);
   }
-  async run(client: Bot, message: Message, _args: string[], language: lang) {
+  async run(
+    client: Bot,
+    message: CommandInput,
+    _args: string[],
+    language: lang,
+  ) {
     const actions = await client.db.getGifactions();
     let actionsstring: string = "";
     switch (actions.length) {

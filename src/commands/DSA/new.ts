@@ -7,7 +7,7 @@ import {
   TextChannel,
 } from "discord.js";
 import { Bot } from "../../bot.js";
-import { Command } from "../../modules/command.js";
+import { Command, CommandInput } from "../../modules/command.js";
 import type { ILanguage as lang } from "../../types.js";
 
 export default class New extends Command {
@@ -18,7 +18,12 @@ export default class New extends Command {
     show: true,
     usage: `${this.prefix}new`,
   };
-  async run(client: Bot, message: Message, _args: string[], language: lang) {
+  async run(
+    client: Bot,
+    message: CommandInput,
+    _args: string[],
+    language: lang,
+  ) {
     let i = 0;
     let collector: MessageCollector;
     let av: string;

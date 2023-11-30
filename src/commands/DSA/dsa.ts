@@ -1,11 +1,10 @@
 import {
   BaseGuildTextChannel,
-  Message,
   PermissionFlagsBits,
   TextChannel,
 } from "discord.js";
 import { Bot } from "../../bot.js";
-import { Command } from "../../modules/command.js";
+import { Command, CommandInput } from "../../modules/command.js";
 import type { ILanguage as lang } from "../../types.js";
 
 export default class Dsa extends Command {
@@ -16,7 +15,12 @@ export default class Dsa extends Command {
     show: true,
     usage: `${this.prefix}dsa [character] <message>`,
   };
-  async run(client: Bot, message: Message, args: string[], language: lang) {
+  async run(
+    client: Bot,
+    message: CommandInput,
+    args: string[],
+    language: lang,
+  ) {
     if (!(message.channel instanceof BaseGuildTextChannel)) {
       await message.channel.send(language.general.guildOnly);
       return;

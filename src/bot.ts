@@ -6,7 +6,7 @@ import {
   Snowflake,
 } from "discord.js";
 import { DB } from "./db.js";
-import { Command } from "./modules/command.js";
+import { Command, CustomSlashCommand } from "./modules/command.js";
 import { FakeRandom, Random } from "./modules/random.js";
 import settings from "./modules/settings.js";
 import type { ILanguage } from "./types.js";
@@ -25,6 +25,7 @@ export class Bot extends Client {
   }
   prefix: string = settings.PREFIX;
   commands: Collection<string, Command> = new Collection();
+  slashcommands: Collection<string, CustomSlashCommand> = new Collection();
   interactions: Collection<
     string,
     (

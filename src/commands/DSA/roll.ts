@@ -1,6 +1,6 @@
-import { EmbedBuilder, Message } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { Bot } from "../../bot.js";
-import { Command } from "../../modules/command.js";
+import { Command, CommandInput } from "../../modules/command.js";
 import type { ILanguage as lang } from "../../types.js";
 
 export default class Roll extends Command {
@@ -11,7 +11,12 @@ export default class Roll extends Command {
     show: true,
     usage: `${this.prefix}roll [args]`,
   };
-  async run(client: Bot, message: Message, args: string[], language: lang) {
+  async run(
+    client: Bot,
+    message: CommandInput,
+    args: string[],
+    language: lang,
+  ) {
     const msgauthor: string = message.author.username;
     // register args and variables
 

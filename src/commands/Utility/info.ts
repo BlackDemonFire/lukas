@@ -1,15 +1,15 @@
-import { EmbedBuilder, Message } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { freemem, hostname, uptime as sUptime, totalmem } from "os";
 import { uptime as pUptime } from "process";
 import { cpu } from "systeminformation";
 import { Bot } from "../../bot.js";
-import { Command } from "../../modules/command.js";
+import { Command, CommandInput } from "../../modules/command.js";
 
 export default class Info extends Command {
   constructor(client: Bot, category: string, name: string) {
     super(client, category, name);
   }
-  async run(_client: Bot, message: Message) {
+  async run(_client: Bot, message: CommandInput) {
     const cpuData = await cpu();
     const humanReadableFreemem = Math.round(freemem() / 1024 / 1024);
     const humanReadableTotalmem = Math.round(totalmem() / 1024 / 1024);

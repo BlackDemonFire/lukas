@@ -15,5 +15,10 @@ export async function event(client: Bot) {
       .map((member) => member.user.tag)
       .join(", ")}`;
   logger.info(`I belong to ${ownerstring}.`);
+
+  logger.info("Publishing commands...");
+  await client.application?.commands.set(
+    client.slashcommands.map((cmd) => cmd.getBuilder().toJSON()),
+  );
   client.executedReady = true;
 }

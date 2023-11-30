@@ -1,17 +1,12 @@
-import {
-  EmbedBuilder,
-  Message,
-  OAuth2Scopes,
-  PermissionsBitField,
-} from "discord.js";
+import { EmbedBuilder, OAuth2Scopes, PermissionsBitField } from "discord.js";
 import { Bot } from "../../bot.js";
-import { Command } from "../../modules/command.js";
+import { Command, CommandInput } from "../../modules/command.js";
 
 export default class Link extends Command {
   constructor(client: Bot, category: string, name: string) {
     super(client, category, name);
   }
-  async run(client: Bot, message: Message) {
+  async run(client: Bot, message: CommandInput) {
     const embed: EmbedBuilder = new EmbedBuilder()
       .setTitle("Links")
       .setDescription(

@@ -1,6 +1,6 @@
-import { EmbedBuilder, Message } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { Bot } from "../../bot.js";
-import { Command } from "../../modules/command.js";
+import { Command, CommandInput } from "../../modules/command.js";
 import type { ILanguage as lang } from "../../types.js";
 
 export default class Help extends Command {
@@ -11,7 +11,12 @@ export default class Help extends Command {
     show: true,
     usage: `${this.prefix}help [command]`,
   };
-  async run(client: Bot, message: Message, args: string[], language: lang) {
+  async run(
+    client: Bot,
+    message: CommandInput,
+    args: string[],
+    language: lang,
+  ) {
     const embed = new EmbedBuilder();
     if (args && args[0]) {
       const cmd = args[0].replace(client.prefix, "").toLowerCase();

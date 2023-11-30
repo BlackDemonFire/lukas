@@ -1,14 +1,19 @@
-import { ColorResolvable, Message, resolveColor } from "discord.js";
+import { ColorResolvable, resolveColor } from "discord.js";
 import { Bot } from "../../bot.js";
-import { Command } from "../../modules/command.js";
-import type { ILanguage as lang } from "../../types.js";
+import { Command, CommandInput } from "../../modules/command.js";
 import logger from "../../modules/logger.js";
+import type { ILanguage as lang } from "../../types.js";
 
 export default class Removecolor extends Command {
   constructor(client: Bot, category: string, name: string) {
     super(client, category, name);
   }
-  async run(client: Bot, message: Message, args: string[], language: lang) {
+  async run(
+    client: Bot,
+    message: CommandInput,
+    args: string[],
+    language: lang,
+  ) {
     const current_colors = new Set(
       (await client.db.getColor(message.author)).split(";"),
     );

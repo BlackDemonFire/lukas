@@ -1,6 +1,6 @@
-import { EmbedBuilder, Message } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { Bot } from "../../bot.js";
-import { Command } from "../../modules/command.js";
+import { Command, CommandInput } from "../../modules/command.js";
 import logger from "../../modules/logger.js";
 import type { ILanguage as lang } from "../../types.js";
 
@@ -12,7 +12,12 @@ export default class Kill extends Command {
     show: false,
     usage: `${this.prefix}kill`,
   };
-  async run(client: Bot, message: Message, _args: string[], language: lang) {
+  async run(
+    client: Bot,
+    message: CommandInput,
+    _args: string[],
+    language: lang,
+  ) {
     if (!super.isOwner(message)) {
       await message.channel.send({
         content: language.command.kill.permissionError,

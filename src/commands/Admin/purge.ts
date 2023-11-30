@@ -1,11 +1,6 @@
-import {
-  GuildChannel,
-  Message,
-  PermissionFlagsBits,
-  TextChannel,
-} from "discord.js";
+import { GuildChannel, PermissionFlagsBits, TextChannel } from "discord.js";
 import { Bot } from "../../bot.js";
-import { Command } from "../../modules/command.js";
+import { Command, CommandInput } from "../../modules/command.js";
 import logger from "../../modules/logger.js";
 import type { ILanguage as lang } from "../../types.js";
 
@@ -17,7 +12,12 @@ export default class Purge extends Command {
     show: false,
     usage: `${this.prefix}purge <amount>`,
   };
-  async run(_client: Bot, message: Message, args: string[], language: lang) {
+  async run(
+    _client: Bot,
+    message: CommandInput,
+    args: string[],
+    language: lang,
+  ) {
     if (!this.hasPermission(message)) {
       await message.channel.send(
         language.general.userPermissionError.replace(
@@ -59,12 +59,12 @@ export default class Purge extends Command {
     }
     await message.channel.bulkDelete(amount);
   }
-  hasPermission(message: Message): boolean {
+  hasPermission(message: CommandInput): boolean {
     if (super.isOwner(message)) return true;
     if (!(message.channel instanceof GuildChannel)) return false;
     if (
       message.member
-        ?.permissionsIn(message.channel)
+        ?.permissions(message.channel)
         .has(PermissionFlagsBits.ManageMessages)
     )
       return true;

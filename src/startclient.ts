@@ -65,6 +65,26 @@ export function start() {
       });
   });
 
+  recursiveReadDir("./dist/slashCommands", function (err, files) {
+    if (err) {
+      logger.error(`Error while reading slash commands:\n\t${err}`);
+      return;
+    }
+
+    files
+      .filter((file) => file.endsWith(".js"))
+      .map(async (file: string) => {
+        const cmd = await import(`../${file}`);
+        const commandName = file.split("/").at(-1)!.split(".")[0];
+        logger.debug(`Loading slash command ${commandName}`);
+        client.slashcommands.set(commandName, new cmd.default());
+        logger.debug(`Loaded command ${commandName}`);
+      })
+      .forEach((p) => {
+        moduleLoadPromises.push(p);
+      });
+  });
+
   readdir("./languages", (err, files) => {
     if (err) {
       logger.error(`Error while reading languages:\n\t${err}`);
@@ -83,6 +103,7 @@ export function start() {
         logger.debug(`Registered language ${langName}`);
       });
   });
+
   setTimeout(
     () =>
       Promise.all(moduleLoadPromises).then(() => {
@@ -100,5 +121,6 @@ export function start() {
       }),
     500,
   );
+
   return client;
 }
