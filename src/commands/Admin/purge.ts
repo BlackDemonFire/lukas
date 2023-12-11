@@ -2,7 +2,7 @@ import { GuildChannel, PermissionFlagsBits, TextChannel } from "discord.js";
 import { Bot } from "../../bot.js";
 import { Command, CommandInput } from "../../modules/command.js";
 import logger from "../../modules/logger.js";
-import type { ILanguage as lang } from "../../types.js";
+import type { ILanguage } from "../../types.js";
 
 export default class Purge extends Command {
   constructor(client: Bot, category: string, name: string) {
@@ -16,7 +16,7 @@ export default class Purge extends Command {
     _client: Bot,
     message: CommandInput,
     args: string[],
-    language: lang,
+    language: ILanguage,
   ) {
     if (!this.hasPermission(message)) {
       await message.channel.send(
@@ -63,8 +63,8 @@ export default class Purge extends Command {
     if (super.isOwner(message)) return true;
     if (!(message.channel instanceof GuildChannel)) return false;
     if (
-      message.member
-        ?.permissions(message.channel)
+      message.channel
+        .permissionsFor(message.member!)
         .has(PermissionFlagsBits.ManageMessages)
     )
       return true;

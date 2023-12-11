@@ -5,7 +5,7 @@ import {
 } from "discord.js";
 import { Bot } from "../../bot.js";
 import { Command, CommandInput } from "../../modules/command.js";
-import type { ILanguage as lang } from "../../types.js";
+import type { ILanguage } from "../../types.js";
 
 export default class Dsa extends Command {
   constructor(client: Bot, category: string, name: string) {
@@ -19,7 +19,7 @@ export default class Dsa extends Command {
     client: Bot,
     message: CommandInput,
     args: string[],
-    language: lang,
+    language: ILanguage,
   ) {
     if (!(message.channel instanceof BaseGuildTextChannel)) {
       await message.channel.send(language.general.guildOnly);
@@ -42,7 +42,7 @@ export default class Dsa extends Command {
     } else if (message.attachments.size > 1) {
       sl = true;
     } else {
-      await message.delete();
+      await message.delete?.();
       await message.author.send({
         content: language.command.dsa.contentRequired,
       });
@@ -88,7 +88,7 @@ export default class Dsa extends Command {
         await webhook.send({ content: args.join(" "), files: attarr });
       }
       await webhook.delete();
-      await message.delete();
+      await message.delete?.();
     }
   }
 }

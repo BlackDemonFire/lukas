@@ -243,14 +243,14 @@ abstract class CustomSlashCommand {
     interaction: ChatInputCommandInteraction,
     language: ILanguage,
   ): void;
-  abstract getBuilder(): SlashCommandBuilder;
+  abstract getBuilder(language: Map<string, ILanguage>): SlashCommandBuilder;
 }
 
 class CommandInput {
   guild: Guild | null;
   member:
-    | Exclude<ChatInputCommandInteraction["member"], null>
-    | Message["member"];
+    | Exclude<ChatInputCommandInteraction<"cached">["member"], null>
+    | Message<true>["member"];
   author: User;
   attachments: Collection<string, Attachment>;
   channel:
@@ -258,12 +258,11 @@ class CommandInput {
     | Message["channel"];
   id: Snowflake;
   timestamp: number;
-  //TODO - Add a timestamp for the ping command!
-  $tmp = Symbol();
+  public delete: Message["delete"] | undefined;
 
   constructor(
     message: Message | null,
-    interaction: ChatInputCommandInteraction | null,
+    interaction: ChatInputCommandInteraction<"cached"> | null,
   ) {
     if (message != null) {
       this.guild = message.guild;
@@ -273,6 +272,7 @@ class CommandInput {
       this.channel = message.channel;
       this.id = message.id;
       this.timestamp = message.createdTimestamp;
+      this.delete = message.delete;
     } else if (interaction != null) {
       this.guild = interaction.guild;
       this.member = interaction.member;

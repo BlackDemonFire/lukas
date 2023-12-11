@@ -1,7 +1,7 @@
 import { EmbedBuilder } from "discord.js";
 import { Bot } from "../../bot.js";
 import { Command, CommandInput } from "../../modules/command.js";
-import type { ILanguage as lang } from "../../types.js";
+import type { ILanguage } from "../../types.js";
 
 export default class Help extends Command {
   constructor(client: Bot, category: string, name: string) {
@@ -15,7 +15,7 @@ export default class Help extends Command {
     client: Bot,
     message: CommandInput,
     args: string[],
-    language: lang,
+    language: ILanguage,
   ) {
     const embed = new EmbedBuilder();
     if (args && args[0]) {
@@ -24,7 +24,8 @@ export default class Help extends Command {
       if (command) {
         const langcmds = language.command;
 
-        const desc: string = langcmds[cmd as keyof lang["command"]].description;
+        const desc: string =
+          langcmds[cmd as keyof ILanguage["command"]].description;
         embed
           .setDescription(desc)
           .setFooter({ text: command.category })

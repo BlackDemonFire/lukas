@@ -1,7 +1,7 @@
 import { EmbedBuilder } from "discord.js";
 import { Bot } from "../../bot.js";
 import { Command, CommandInput } from "../../modules/command.js";
-import type { ILanguage as lang } from "../../types.js";
+import type { ILanguage } from "../../types.js";
 
 export default class Roll extends Command {
   constructor(client: Bot, category: string, name: string) {
@@ -15,7 +15,7 @@ export default class Roll extends Command {
     client: Bot,
     message: CommandInput,
     args: string[],
-    language: lang,
+    language: ILanguage,
   ) {
     const msgauthor: string = message.author.username;
     // register args and variables

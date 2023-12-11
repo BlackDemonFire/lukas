@@ -1,6 +1,6 @@
 import { Bot } from "../../bot.js";
 import { Command, CommandInput } from "../../modules/command.js";
-import type { ILanguage as lang } from "../../types.js";
+import type { ILanguage } from "../../types.js";
 
 export default class Dsaadd extends Command {
   constructor(client: Bot, category: string, name: string) {
@@ -14,7 +14,7 @@ export default class Dsaadd extends Command {
     client: Bot,
     message: CommandInput,
     args: string[],
-    language: lang,
+    language: ILanguage,
   ) {
     if (!args || args.length <= 3) {
       await message.channel.send(language.command.dsaadd.args);

@@ -1,6 +1,6 @@
 import { Bot } from "../../bot.js";
 import { Command, CommandInput } from "../../modules/command.js";
-import type { ILanguage as lang } from "../../types.js";
+import type { ILanguage } from "../../types.js";
 
 export default class Dsarm extends Command {
   constructor(client: Bot, category: string, name: string) {
@@ -14,7 +14,7 @@ export default class Dsarm extends Command {
     client: Bot,
     message: CommandInput,
     args: string[],
-    language: lang,
+    language: ILanguage,
   ) {
     const pref: string | undefined = args.shift()?.slice().toLowerCase();
     if (!pref) {

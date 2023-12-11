@@ -1,6 +1,6 @@
 import { Bot } from "../../bot.js";
 import { Command, CommandInput } from "../../modules/command.js";
-import type { ILanguage as lang } from "../../types.js";
+import type { ILanguage } from "../../types.js";
 
 export default class Gifaction extends Command {
   constructor(client: Bot, category: string, name: string) {
@@ -10,7 +10,7 @@ export default class Gifaction extends Command {
     client: Bot,
     message: CommandInput,
     _args: string[],
-    language: lang,
+    language: ILanguage,
   ) {
     const actions = await client.db.getGifactions();
     let actionsstring: string = "";

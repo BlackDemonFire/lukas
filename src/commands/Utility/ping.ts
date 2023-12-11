@@ -2,7 +2,7 @@ import { EmbedBuilder, GuildMember, Message } from "discord.js";
 import { Bot } from "../../bot.js";
 import { Command, CommandInput } from "../../modules/command.js";
 import logger from "../../modules/logger.js";
-import type { ILanguage as lang } from "../../types.js";
+import type { ILanguage } from "../../types.js";
 
 export default class Ping extends Command {
   constructor(client: Bot, category: string, name: string) {
@@ -16,13 +16,13 @@ export default class Ping extends Command {
     client: Bot,
     message: CommandInput,
     _args: string[],
-    language: lang,
+    language: ILanguage,
   ) {
     let gif;
     const commandusage: Array<number> = client.commandusage.get(
       message.author.id,
     )!;
-    if (commandusage.length == 3) {
+    if (commandusage && commandusage.length == 3) {
       logger.debug(commandusage[2] + "|" + commandusage[0]);
       const diff = commandusage[2] - commandusage[0];
       logger.debug(diff);

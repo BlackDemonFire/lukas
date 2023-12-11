@@ -6,17 +6,17 @@ import { ILanguage } from "src/types.js";
 export default class PingCommand extends CustomSlashCommand {
   async execute(
     client: Bot,
-    interaction: ChatInputCommandInteraction,
+    interaction: ChatInputCommandInteraction<"cached">,
     language: ILanguage,
   ) {
+    await interaction.reply("Pong!");
     await client.commands
       .get("ping")!
       .run(client, new CommandInput(null, interaction), [], language);
   }
-
-  getBuilder(): SlashCommandBuilder {
+  getBuilder(language: Map<string, ILanguage>): SlashCommandBuilder {
     return new SlashCommandBuilder()
       .setName("ping")
-      .setDescription("Replies with Pong!");
+      .setDescription(language.get("en_US")!.command.ping.description);
   }
 }

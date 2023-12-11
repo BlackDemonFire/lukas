@@ -2,7 +2,7 @@ import { EmbedBuilder } from "discord.js";
 import { Bot } from "../../bot.js";
 import { Command, CommandInput } from "../../modules/command.js";
 import logger from "../../modules/logger.js";
-import type { ILanguage as lang } from "../../types.js";
+import type { ILanguage } from "../../types.js";
 
 export default class Kill extends Command {
   constructor(client: Bot, category: string, name: string) {
@@ -16,7 +16,7 @@ export default class Kill extends Command {
     client: Bot,
     message: CommandInput,
     _args: string[],
-    language: lang,
+    language: ILanguage,
   ) {
     if (!super.isOwner(message)) {
       await message.channel.send({

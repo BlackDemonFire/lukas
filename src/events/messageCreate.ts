@@ -3,7 +3,7 @@ import { Bot } from "../bot.js";
 import logger from "../modules/logger.js";
 import settings from "../modules/settings.js";
 import type { ILanguage as lang } from "../types.js";
-import { CommandInput } from "src/modules/command.js";
+import { CommandInput } from "../modules/command.js";
 
 async function cmd(client: Bot, message: Message) {
   const args = message.content.slice(client.prefix.length).trim().split(" ");

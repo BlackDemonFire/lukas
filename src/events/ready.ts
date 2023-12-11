@@ -18,7 +18,9 @@ export async function event(client: Bot) {
 
   logger.info("Publishing commands...");
   await client.application?.commands.set(
-    client.slashcommands.map((cmd) => cmd.getBuilder().toJSON()),
+    client.slashcommands.map((cmd) =>
+      cmd.getBuilder(client.languages).toJSON(),
+    ),
   );
   client.executedReady = true;
 }

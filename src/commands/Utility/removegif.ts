@@ -9,7 +9,7 @@ import {
 import { Bot } from "../../bot.js";
 import { Command, CommandInput } from "../../modules/command.js";
 import { GifRequest, activeRequests } from "../../modules/dbo/gifRequest.js";
-import type { ILanguage as lang } from "../../types.js";
+import type { ILanguage } from "../../types.js";
 
 export default class Newgif extends Command {
   constructor(client: Bot, category: string, name: string) {
@@ -20,7 +20,7 @@ export default class Newgif extends Command {
     client: Bot,
     message: CommandInput,
     args: string[],
-    language: lang,
+    language: ILanguage,
   ) {
     if (!args || args.length !== 1) {
       await message.channel.send(language.command.removegif.wrongArgs);
