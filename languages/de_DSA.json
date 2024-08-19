@@ -190,6 +190,11 @@
 	"setcolor": {
 	  "description": "Setzt deine Embedfarben auf die angegebenen Farben"
 	},
+    "pk": {
+      "description": "Schalte Pluralkitunterstützung an",
+      "enabled": "Pluralkitunterstützung ist angeschaltet",
+      "disabled": "Pluralkitunterstützung ist ausgeschaltet"
+    },
     "blush": {
       "description": "Blush",
       "singleUser": [

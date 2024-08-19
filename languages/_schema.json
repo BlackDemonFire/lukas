@@ -635,6 +635,25 @@
 					"description"
 				  ]
 				},
+                "pk": {
+                    "type": "object",
+                    "properties": {
+                        "description": {
+                            "type": "string"
+                        },
+                        "enabled": {
+                            "type": "string"
+                        },
+                        "disabled": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "description",
+                        "enabled",
+                        "disabled"
+                    ]
+                },
                 "blush": {
                     "type": "object",
                     "properties": {

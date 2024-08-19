@@ -166,6 +166,11 @@ interface ILangCommand {
     description: string;
     singleUser: string[];
   };
+  pk: {
+    description: string;
+    enabled: string;
+    disabled: string;
+  };
 }
 
 interface ILanguage {

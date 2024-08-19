@@ -13,4 +13,7 @@ export class Userdb {
 
   @Property({ columnType: "text", nullable: true })
   name?: string;
+
+  @Property({ columnType: "text", nullable: false, default: false })
+  pkEnabled!: boolean;
 }

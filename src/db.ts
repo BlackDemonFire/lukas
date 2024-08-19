@@ -153,6 +153,7 @@ export class DB {
       giftype: "anime",
       color: "Random",
       name: user.username ?? "",
+      pkEnabled: false,
     });
     await db.persistAndFlush(userDBO);
   }
@@ -181,6 +182,19 @@ export class DB {
     const { repo, db } = this.userRepository;
     const userDBO = await repo.findOne({ id: user.id });
     wrap(userDBO).assign({ name });
+    await db.flush();
+  }
+
+  async getPkEnabled(user: User): Promise<boolean> {
+    const { repo } = this.userRepository;
+    const data = await repo.findOne({ id: user.id });
+    return data?.pkEnabled ?? false;
+  }
+
+  async setPkEnabled(user: User, pkEnabled: boolean) {
+    const { repo, db } = this.userRepository;
+    const userDBO = await repo.findOne({ id: user.id });
+    wrap(userDBO).assign({ pkEnabled });
     await db.flush();
   }
 }

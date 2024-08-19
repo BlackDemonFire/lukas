@@ -190,6 +190,11 @@
 	"setcolor": {
 	  "description": "Sets your embed colors to the given colors"
 	},
+    "pk": {
+      "description": "Set Pluralkit support",
+      "enabled": "Pluralkit support is enabled",
+      "disabled": "Pluralkit support is disabled"
+    },
     "blush": {
       "description": "Blush",
       "singleUser": [
