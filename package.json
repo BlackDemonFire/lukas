@@ -1,4 +1,6 @@
 {
+  "name": "lukasbot",
+  "version": "1.0.0",
   "dependencies": {
     "@mikro-orm/core": "^5.7.14",
     "@mikro-orm/entity-generator": "^5.7.14",
@@ -23,14 +25,15 @@
     "@types/pg": "^8.10.2",
     "@types/recursive-readdir": "^2.2.1",
     "@typescript-eslint/eslint-plugin": "^6.3.0",
+    "esbuild": "^0.23.1",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
     "prettier": "3.0.1",
     "ts-node": "^10.9.1"
   },
   "scripts": {
-    "build": "tsc",
-    "start": "node -r dotenv/config dist/index.js",
+    "build": "esbuild  src/**/*.ts src/*.ts --outdir=dist --format=esm --platform=node --tsconfig=tsconfig.json --minify --sourcemap",
+    "start": "node --enable-source-maps -r dotenv/config dist/index.js",
     "watch:ts": "tsc --watch",
     "check": "tsc --noEmit",
     "lint": "eslint src --ext .ts"
