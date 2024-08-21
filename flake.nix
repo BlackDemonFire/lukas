@@ -77,37 +77,31 @@
                   hash = "sha256-g7dGb3j8f4bHvenaPPlZtdOs8Kn5VBRXz+LzheXGijw=";
                 };
               in
-              pkgs.stdenv.mkDerivation (
-                _finalAttrs:
-                let
-                  node_ver = pkgs.nodejs_20;
-                in
-                {
-                  name = "type-check";
-                  version = "0.0.0";
-                  src = pkgs.lib.cleanSource ./.;
-                  dontBuild = true;
-                  doCheck = true;
-                  nativeBuildInputs = [
-                    node_ver
-                    pkgs.pnpm
-                    pkgs.pnpm.configHook
-                  ];
-                  # include dependencies from pnpm
-                  inherit pnpmDeps;
-                  # install dependencies using pnpm
-                  preCheck = ''
-                    pnpm install
-                  '';
-                  checkPhase = ''
-                    pnpm check
-                  '';
-                  # don't yell about not producing an output path for a check
-                  installPhase = ''
-                    touch $out
-                  '';
-                }
-              );
+              pkgs.stdenv.mkDerivation (_finalAttrs: {
+                name = "type-check";
+                version = "0.0.0";
+                src = pkgs.lib.cleanSource ./.;
+                dontBuild = true;
+                doCheck = true;
+                nativeBuildInputs = [
+                  node_ver
+                  pkgs.pnpm
+                  pkgs.pnpm.configHook
+                ];
+                # include dependencies from pnpm
+                inherit pnpmDeps;
+                # install dependencies using pnpm
+                preCheck = ''
+                  pnpm install
+                '';
+                checkPhase = ''
+                  pnpm check
+                '';
+                # don't yell about not producing an output path for a check
+                installPhase = ''
+                  touch $out
+                '';
+              });
           };
         };
       flake = {
