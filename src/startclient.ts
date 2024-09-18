@@ -31,7 +31,7 @@ export function start() {
       logger.error(`Error while reading interactions:\n\t${err}`);
       return;
     }
-    files.map(async (file: string) => {
+    files.forEach(async (file: string) => {
       if (!file.endsWith(".js")) return;
       const interaction = await import(`./interactions/${file}`);
       const interactionName = file.split(".")[0];
