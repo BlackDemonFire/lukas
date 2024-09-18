@@ -10,35 +10,89 @@ jobs:
     name: Publish Docker image
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        arch: [x86_64, aarch64]
+
+
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v14
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+      - name: Setup Nix cache
+        uses: DeterminateSystems/magic-nix-cache-action@v8
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
+
+      - name: Build Docker image
+        id: build
+        env:
+          ARCH: ${{ matrix.arch }}
+        run: |
+          nix build --print-build-logs .#docker
+          [ ! -L result ] && exit 1
+          echo "path=$(readlink -f result)" >> "$GITHUB_OUTPUT"
+
+      - name: Upload image
+        uses: actions/upload-artifact@v4
         with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          name: container-${{ matrix.arch }}
+          path: ${{ steps.build.outputs.path }}
+          if-no-files-found: error
+          retention-days: 3
 
-      - name: Lowercase Repo Name
-        id: lowercase
-        run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+  push:
+    name: Push image
+    needs: docker
+    runs-on: ubuntu-latest
+        
+    permissions:
+      packages: write
+        
+    env:
+      REGISTRY: ghcr.io
+      USERNAME: ${{ github.actor }}
 
-      - name: Build and push
-        uses: docker/build-push-action@v3
+    if: github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v4
+       
+      - name: Determine image name
+        run: |
+          echo "IMAGE_NAME=${REPOSITORY,,}" >> "$GITHUB_ENV"
+        env:
+          REPOSITORY: '${{ github.repository }}'
+
+      - name: Download images
+        uses: actions/download-artifact@v4
         with:
-          context: .
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: |
-            ghcr.io/${{ env.REPO }}:latest
-            ghcr.io/${{ env.REPO }}:${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          path: images
+
+      - name: Login to registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ env.USERNAME }}
+          password: ${{ github.token }}
+
+      - name: Push to registry
+        env:
+          TAG: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+        run: |
+          set -eu
+
+          architectures=("x86_64" "aarch64")
+          for arch in "${architectures[@]}"; do
+            docker load < images/container-"$arch"/*.tar.gz
+            docker tag BlackDemonFire/lukas:latest-"$arch"-linux "$TAG"-"$arch"
+            docker push ${{ env.TAG }}-"$arch"
+          done
+
+          docker manifest create "$TAG" \
+            --amend "$TAG"-x86_64 \
+            --amend "$TAG"-aarch64
+
+          docker manifest push "$TAG"
