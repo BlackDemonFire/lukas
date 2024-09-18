@@ -23,7 +23,7 @@ stdenv.mkDerivation (finalAttrs: {
   pnpmDeps = pnpm.fetchDeps {
     inherit (finalAttrs) pname version src;
     installFlags = "--production";
-    hash = "sha256-g7dGb3j8f4bHvenaPPlZtdOs8Kn5VBRXz+LzheXGijw=";
+    hash = "sha256-f671A/axvoho+qnHkqlcwZS1VpeJww8XBcGjsFyFVWo=";
   };
   buildPhase = ''
     runHook preBuild

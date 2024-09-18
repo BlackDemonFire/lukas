@@ -2,6 +2,7 @@ import { Message } from "discord.js";
 import { Bot } from "../../bot.js";
 import { Command } from "../../modules/command.js";
 import type { ILanguage as lang } from "../../types.js";
+import logger from "../../modules/logger.js";
 
 export default class Dsarm extends Command {
   constructor(client: Bot, category: string, name: string) {
@@ -12,6 +13,10 @@ export default class Dsarm extends Command {
     usage: `${this.prefix}dsarm <character>`,
   };
   async run(client: Bot, message: Message, args: string[], language: lang) {
+    if (!message.channel.isSendable()) {
+      logger.error(`channel ${message.channel.id} is not sendable`);
+      return;
+    }
     const pref: string | undefined = args.shift()?.slice().toLowerCase();
     if (!pref) {
       await message.reply({ content: language.command.dsarm.args });

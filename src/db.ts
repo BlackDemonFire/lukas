@@ -35,7 +35,7 @@ export class DB {
     }
   }
 
-  protected get db(): EntityManager {
+  protected get db(): Exclude<typeof this._db, undefined> {
     logger.debug("Getting Database session");
     if (!this._db) throw new Error("Database not initialized");
     return this._db.fork();
@@ -159,12 +159,14 @@ export class DB {
   async setColor(user: User, color: string) {
     const { repo, db } = this.userRepository;
     const userDBO = await repo.findOne({ id: user.id });
+    if (!userDBO) return;
     wrap(userDBO).assign({ color });
     await db.flush();
   }
   async setGiftype(user: User, giftype: string) {
     const { repo, db } = this.userRepository;
     const userDBO = await repo.findOne({ id: user.id });
+    if (!userDBO) return;
     wrap(userDBO).assign({ giftype });
     await db.flush();
   }
@@ -174,12 +176,13 @@ export class DB {
       id: guild.id,
     });
     logger.debug(`Setting language for ${guild.name} to ${lang}`);
-    wrap(settings).assign({ language: lang }, { mergeObjects: true });
+    wrap(settings).assign({ language: lang }, { mergeObjectProperties: true });
     await db.flush();
   }
   async setName(user: User, name: string) {
     const { repo, db } = this.userRepository;
     const userDBO = await repo.findOne({ id: user.id });
+    if (!userDBO) return;
     wrap(userDBO).assign({ name });
     await db.flush();
   }

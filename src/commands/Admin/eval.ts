@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import { Message, SendableChannels } from "discord.js";
 import { inspect } from "util";
 import { Bot } from "../../bot.js";
 import { Command } from "../../modules/command.js";
@@ -20,6 +20,10 @@ export default class Eval extends Command {
     args: string[],
     language: ILanguage,
   ) {
+    if (!message.channel.isSendable()) {
+      logger.error(`channel ${message.channel.id} is not sendable`);
+      return;
+    }
     if (!super.isOwner(message)) {
       await message.channel.send({
         content: language.command.eval.permissionError,
@@ -40,7 +44,9 @@ export default class Eval extends Command {
           },
         );
         await Promise.all(
-          segments.map((m) => message.channel.send({ content: m })),
+          segments.map((m) =>
+            (message.channel as SendableChannels).send({ content: m }),
+          ),
         );
       }
     } catch (err) {
@@ -58,7 +64,9 @@ export default class Eval extends Command {
         },
       );
       await Promise.all(
-        segments.map((m) => message.channel.send({ content: m })),
+        segments.map((m) =>
+          (message.channel as SendableChannels).send({ content: m }),
+        ),
       );
     }
   }

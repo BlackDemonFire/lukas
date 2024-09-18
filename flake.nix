@@ -44,7 +44,6 @@
               node_ver
               nil
               pnpm
-              pnpm.configHook
               nixfmt-rfc-style
             ];
           };

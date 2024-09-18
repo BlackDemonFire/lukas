@@ -7,6 +7,7 @@ import {
 import { Bot } from "../../bot.js";
 import { Command } from "../../modules/command.js";
 import type { ILanguage as lang } from "../../types.js";
+import logger from "../../modules/logger.js";
 
 export default class Dsa extends Command {
   constructor(client: Bot, category: string, name: string) {
@@ -17,6 +18,10 @@ export default class Dsa extends Command {
     usage: `${this.prefix}dsa [character] <message>`,
   };
   async run(client: Bot, message: Message, args: string[], language: lang) {
+    if (!message.channel.isSendable()) {
+      logger.error(`channel ${message.channel.id} is not sendable`);
+      return;
+    }
     if (!(message.channel instanceof BaseGuildTextChannel)) {
       await message.channel.send(language.general.guildOnly);
       return;

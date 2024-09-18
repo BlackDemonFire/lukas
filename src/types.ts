@@ -1,4 +1,5 @@
-type nil = undefined | null | void;
+import { Message } from "discord.js";
+import { Bot } from "./bot.js";
 
 interface ILangPermissions {
   ADMINISTRATOR: string;
@@ -168,7 +169,7 @@ interface ILangCommand {
   };
 }
 
-interface ILanguage {
+export interface ILanguage {
   command: ILangCommand;
   general: ILangGeneral;
   permissions: ILangPermissions;
@@ -178,7 +179,7 @@ export interface command {
     client: Bot,
     message: Message,
     args: string[],
-    language: lang,
+    language: ILanguage,
   ) => unknown;
   help: {
     show: boolean;
