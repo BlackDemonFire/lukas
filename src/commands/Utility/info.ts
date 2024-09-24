@@ -1,15 +1,20 @@
 import { EmbedBuilder, Message } from "discord.js";
-import { freemem, hostname, uptime as sUptime, totalmem } from "os";
-import { uptime as pUptime } from "process";
+import { freemem, hostname, uptime as sUptime, totalmem } from "node:os";
+import { uptime as pUptime } from "node:process";
 import { cpu } from "systeminformation";
-import { Bot } from "../../bot.js";
+import type { Bot } from "../../bot.js";
 import { Command } from "../../modules/command.js";
+import logger from "../../modules/logger.js";
 
 export default class Info extends Command {
   constructor(client: Bot, category: string, name: string) {
     super(client, category, name);
   }
   async run(_client: Bot, message: Message) {
+    if (!message.channel.isSendable()) {
+      logger.error(`channel ${message.channel.id} is not sendable`);
+      return;
+    }
     const cpuData = await cpu();
     const humanReadableFreemem = Math.round(freemem() / 1024 / 1024);
     const humanReadableTotalmem = Math.round(totalmem() / 1024 / 1024);
@@ -25,11 +30,11 @@ export default class Info extends Command {
         { name: "CPU", value: `${cpuData.manufacturer} ${cpuData.brand}` },
         {
           name: "Bot Uptime",
-          value: new Date(1000 * pUptime()).toISOString().substr(11, 8),
+          value: new Date(1000 * pUptime()).toLocaleTimeString(),
         },
         {
           name: "System Uptime",
-          value: new Date(1000 * sUptime()).toISOString().substr(11, 8),
+          value: new Date(1000 * sUptime()).toLocaleTimeString(),
         },
       )
       .setColor(0xaa7777);

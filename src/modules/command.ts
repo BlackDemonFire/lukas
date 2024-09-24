@@ -8,7 +8,7 @@ import {
   User,
 } from "discord.js";
 import { Bot } from "../bot.js";
-import type { command, ILanguage as lang, nil } from "../types.js";
+import type { command, ILanguage } from "../types.js";
 import logger from "./logger.js";
 
 abstract class Command implements command {
@@ -28,7 +28,7 @@ abstract class Command implements command {
     client: Bot,
     message: Message,
     args: string[],
-    language: lang,
+    language: ILanguage,
   ): Promise<void>;
   isAprilFools() {
     const date = new Date();
@@ -57,7 +57,7 @@ abstract class GifCommand extends Command {
     client: Bot,
     message: Message,
     args: string[],
-    language: lang,
+    language: ILanguage,
   ) {
     let userB: string = "";
     const mentioned: string[] = [];
@@ -67,10 +67,9 @@ abstract class GifCommand extends Command {
         let name: string = "";
         const ping = arg.match(/<@!?(\d+)>/);
         if (ping) {
-          let user: User | nil;
-          user = await client.users.fetch(ping[1]).catch((e) => {
+          const user = await client.users.fetch(ping[1]).catch((e) => {
             logger.error(e);
-            user = null;
+            return null;
           });
           if (user) name = await client.db.getName(user);
           if (!user) {
@@ -115,7 +114,7 @@ abstract class GifCommand extends Command {
     return userB;
   }
 
-  protected getGifLanguageObject(language: lang, attr: string) {
+  protected getGifLanguageObject(language: ILanguage, attr: string) {
     type CommandKey = keyof typeof language.command;
     const commandName = this.name as CommandKey;
 
@@ -133,6 +132,9 @@ abstract class GifCommand extends Command {
     color: ColorResolvable,
     message: Message,
   ) {
+    if (!message.channel.isSendable()) {
+      throw new Error(`channel ${message.channel.id} is not sendable`);
+    }
     const embed = new EmbedBuilder()
       .setImage(gif)
       .setAuthor({ name: this.name })
@@ -154,7 +156,12 @@ abstract class SingleUserGifCommand extends GifCommand {
     super(client, category, name);
   }
 
-  async run(client: Bot, message: Message, _args: string[], language: lang) {
+  async run(
+    client: Bot,
+    message: Message,
+    _args: string[],
+    language: ILanguage,
+  ) {
     const gif: string = await client.db.getGif(
       this.name,
       await client.db.getGiftype(message.author),
@@ -182,7 +189,12 @@ abstract class MultiUserGifCommand extends GifCommand {
     super(client, category, name);
   }
 
-  async run(client: Bot, message: Message, args: string[], language: lang) {
+  async run(
+    client: Bot,
+    message: Message,
+    args: string[],
+    language: ILanguage,
+  ) {
     const gif: string = await client.db.getGif(
       this.name,
       await client.db.getGiftype(message.author),

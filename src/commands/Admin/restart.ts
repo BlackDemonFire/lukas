@@ -15,8 +15,12 @@ export default class Restart extends Command {
     usage: `${this.prefix}restart`,
   };
   async run(client: Bot, message: Message, _args: string[], language: lang) {
-    // code
     let msg = null;
+
+    if (!message.channel.isSendable()) {
+      logger.error(`channel ${message.channel.id} is not sendable`);
+      return;
+    }
     if (message !== null) {
       msg = await message.channel.send(
         `<a:load_1:498280749271744512> ${language.command.restart.start}`,

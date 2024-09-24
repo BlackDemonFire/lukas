@@ -2,6 +2,7 @@ import { Message } from "discord.js";
 import { Bot } from "../../bot.js";
 import { Command } from "../../modules/command.js";
 import type { ILanguage as lang } from "../../types.js";
+import logger from "../../modules/logger.js";
 
 export default class Dsaadd extends Command {
   constructor(client: Bot, category: string, name: string) {
@@ -12,6 +13,10 @@ export default class Dsaadd extends Command {
     usage: `${this.prefix}dsaadd <character> [avatar - if it doesn't start with \`http\`, it will be ignored.] <displayed name>`,
   };
   async run(client: Bot, message: Message, args: string[], language: lang) {
+    if (!message.channel.isSendable()) {
+      logger.error(`channel ${message.channel.id} is not sendable`);
+      return;
+    }
     if (!args || args.length <= 3) {
       await message.channel.send(language.command.dsaadd.args);
       return;

@@ -11,7 +11,6 @@ export default defineConfig({
   port: settings.DB_PORT,
   user: settings.DB_USER,
   password: settings.DB_PASS,
-  type: "postgresql",
   entities: ["./dist/entities"],
   entitiesTs: ["./src/entities"],
   // ...

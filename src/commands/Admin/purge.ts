@@ -18,6 +18,10 @@ export default class Purge extends Command {
     usage: `${this.prefix}purge <amount>`,
   };
   async run(_client: Bot, message: Message, args: string[], language: lang) {
+    if (!message.channel.isSendable()) {
+      logger.error(`channel ${message.channel.id} is not sendable`);
+      return;
+    }
     if (!this.hasPermission(message)) {
       await message.channel.send(
         language.general.userPermissionError.replace(

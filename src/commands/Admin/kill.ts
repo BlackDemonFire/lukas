@@ -13,6 +13,10 @@ export default class Kill extends Command {
     usage: `${this.prefix}kill`,
   };
   async run(client: Bot, message: Message, _args: string[], language: lang) {
+    if (!message.channel.isSendable()) {
+      logger.error(`channel ${message.channel.id} is not sendable`);
+      return;
+    }
     if (!super.isOwner(message)) {
       await message.channel.send({
         content: language.command.kill.permissionError,

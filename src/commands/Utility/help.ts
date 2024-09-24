@@ -1,7 +1,8 @@
 import { EmbedBuilder, Message } from "discord.js";
-import { Bot } from "../../bot.js";
+import type { Bot } from "../../bot.js";
 import { Command } from "../../modules/command.js";
-import type { ILanguage as lang } from "../../types.js";
+import type { ILanguage } from "../../types.js";
+import logger from "../../modules/logger.js";
 
 export default class Help extends Command {
   constructor(client: Bot, category: string, name: string) {
@@ -11,7 +12,16 @@ export default class Help extends Command {
     show: true,
     usage: `${this.prefix}help [command]`,
   };
-  async run(client: Bot, message: Message, args: string[], language: lang) {
+  async run(
+    client: Bot,
+    message: Message,
+    args: string[],
+    language: ILanguage,
+  ) {
+    if (!message.channel.isSendable()) {
+      logger.error(`channel ${message.channel.id} is not sendable`);
+      return;
+    }
     const embed = new EmbedBuilder();
     if (args && args[0]) {
       const cmd = args[0].replace(client.prefix, "").toLowerCase();
@@ -19,7 +29,8 @@ export default class Help extends Command {
       if (command) {
         const langcmds = language.command;
 
-        const desc: string = langcmds[cmd as keyof lang["command"]].description;
+        const desc: string =
+          langcmds[cmd as keyof ILanguage["command"]].description;
         embed
           .setDescription(desc)
           .setFooter({ text: command.category })

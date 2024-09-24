@@ -6,7 +6,6 @@ import settings from "./modules/settings.js";
 
 void (async () => {
   const orm = await MikroORM.init<PostgreSqlDriver>({
-    type: "postgresql",
     discovery: {
       // we need to disable validation for no entities
       warnWhenNoEntities: false,
@@ -20,7 +19,7 @@ void (async () => {
   const generator = orm.getEntityGenerator();
   await generator.generate({
     save: true,
-    baseDir: `${process.cwd()}/src/entities`,
+    path: `${process.cwd()}/src/entities`,
   });
   await orm.close(true);
 })();

@@ -37,16 +37,11 @@
     },
     "purr": {
       "description": "Purr",
-      "singleUser": [
-        "{a} schnurrt~ Nya Nya~",
-        "{a} schnurrt"
-      ]
+      "singleUser": ["{a} schnurrt~ Nya Nya~", "{a} schnurrt"]
     },
     "pat": {
       "description": "Jemanden streicheln",
-      "singleUser": [
-        "Möchtest du gestreichelt werden {a}?"
-      ],
+      "singleUser": ["Möchtest du gestreichelt werden {a}?"],
       "multiUser": [
         "{a} streichelt {b}",
         "{a} streichelt {b}. Cuuute!",
@@ -84,13 +79,8 @@
     },
     "kiss": {
       "description": "Jemanden küssen",
-      "singleUser": [
-        "Soll ich dich küssen {a} 🥺"
-      ],
-      "multiUser": [
-        "{a} küsst {b}",
-        "{a} küsst {b} 🥺"
-      ]
+      "singleUser": ["Soll ich dich küssen {a} 🥺"],
+      "multiUser": ["{a} küsst {b}", "{a} küsst {b} 🥺"]
     },
     "kill": {
       "description": "Fährt den Bot herunter",
@@ -117,9 +107,7 @@
         "Ich werde deine Hand halten, {a} 🥺",
         "Soll ich deine Hand halten, {a}?"
       ],
-      "multiUser": [
-        "{a} hält mit {b} Händchen 😊"
-      ]
+      "multiUser": ["{a} hält mit {b} Händchen 😊"]
     },
     "help": {
       "description": "Hilfe für Befehle",
@@ -163,33 +151,27 @@
         "Soll ich mit dir kuscheln {a}? 🥺",
         "Brauchst du jemanden zum kuscheln {a}?"
       ],
-      "multiUser": [
-        "{a} kuschelt mit {b}",
-        "{a} kuschelt mit {b} - cute"
-      ]
+      "multiUser": ["{a} kuschelt mit {b}", "{a} kuschelt mit {b} - cute"]
     },
     "cry": {
       "description": "Weinen",
-      "singleUser": [
-        "{a} weint...",
-        "Brauchst du eine Umarmung {a}?"
-      ]
+      "singleUser": ["{a} weint...", "Brauchst du eine Umarmung {a}?"]
     },
-	"color": {
-	  "description": "Zeigt an, welche Farben du aktuell verwendest",
-	  "success": "Deine Farbe wurde geändert.",
-	  "invalid_color": "Diese Farbe gibt es nicht.",
-	  "show_colors": "Deine gewählten Fraben sind: {c}"
-	},
-	"addcolor": {
-	  "description": "Fügt weitere Farben deiner Embed Farben hinzu"
-	},
-	"removecolor": {
-	  "description": "Löscht Farben aus deinen Embed Farben"
-	},
-	"setcolor": {
-	  "description": "Setzt deine Embedfarben auf die angegebenen Farben"
-	},
+    "color": {
+      "description": "Zeigt an, welche Farben du aktuell verwendest",
+      "success": "Deine Farbe wurde geändert.",
+      "invalid_color": "Diese Farbe gibt es nicht.",
+      "show_colors": "Deine gewählten Fraben sind: {c}"
+    },
+    "addcolor": {
+      "description": "Fügt weitere Farben deiner Embed Farben hinzu"
+    },
+    "removecolor": {
+      "description": "Löscht Farben aus deinen Embed Farben"
+    },
+    "setcolor": {
+      "description": "Setzt deine Embedfarben auf die angegebenen Farben"
+    },
     "blush": {
       "description": "Blush",
       "singleUser": [

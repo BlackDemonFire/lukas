@@ -161,17 +161,17 @@
       "description": "Zeigt an, welche Farben du aktuell verwendest",
       "success": "Deine Farbe wurde geändert.",
       "invalid_color": "Diese Farbe gibt es nicht.",
-	  "show_colors": "Deine gewählten Fraben sind: {c}"
+      "show_colors": "Deine gewählten Fraben sind: {c}"
     },
-	"addcolor": {
-	  "description": "Fügt weitere Farben deiner Embed Farben hinzu"
-	},
-	"removecolor": {
-	  "description": "Löscht Farben aus deinen Embed Farben"
-	},
-	"setcolor": {
-	  "description": "Setzt deine Embedfarben auf die angegebenen Farben"
-	},
+    "addcolor": {
+      "description": "Fügt weitere Farben deiner Embed Farben hinzu"
+    },
+    "removecolor": {
+      "description": "Löscht Farben aus deinen Embed Farben"
+    },
+    "setcolor": {
+      "description": "Setzt deine Embedfarben auf die angegebenen Farben"
+    },
     "blush": {
       "description": "Blush",
       "singleUser": [

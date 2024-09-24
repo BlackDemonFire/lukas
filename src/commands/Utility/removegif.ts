@@ -10,14 +10,24 @@ import {
 import { Bot } from "../../bot.js";
 import { Command } from "../../modules/command.js";
 import { GifRequest, activeRequests } from "../../modules/dbo/gifRequest.js";
-import type { ILanguage as lang } from "../../types.js";
+import type { ILanguage } from "../../types.js";
+import logger from "../../modules/logger.js";
 
 export default class Newgif extends Command {
   constructor(client: Bot, category: string, name: string) {
     super(client, category, name);
   }
 
-  async run(client: Bot, message: Message, args: string[], language: lang) {
+  async run(
+    client: Bot,
+    message: Message,
+    args: string[],
+    language: ILanguage,
+  ) {
+    if (!message.channel.isSendable()) {
+      logger.error(`channel ${message.channel.id} is not sendable`);
+      return;
+    }
     if (!args || args.length !== 1) {
       await message.channel.send(language.command.removegif.wrongArgs);
       return;
