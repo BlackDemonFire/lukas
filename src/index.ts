@@ -20,4 +20,7 @@ process.on("SIGINT", async () => {
 });
 process.on("uncaughtException", logger.error.bind(logger));
 
-await client.login(settings.TOKEN);
+client.login(settings.TOKEN).catch((err) => {
+  logger.crit(`Failed to login: ${err}`);
+  process.exit(1);
+});
