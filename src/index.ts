@@ -10,8 +10,14 @@ async function shutdown() {
   process.exit(0);
 }
 
-process.on("SIGTERM", shutdown);
-process.on("SIGINT", shutdown);
+process.on("SIGTERM", async () => {
+  logger.info("SIGTERM received, shutting down");
+  await shutdown();
+});
+process.on("SIGINT", async () => {
+  logger.info("SIGINT received, shutting down");
+  await shutdown();
+});
 process.on("uncaughtException", logger.error.bind(logger));
 
 await client.login(settings.TOKEN);
