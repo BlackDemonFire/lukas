@@ -33,7 +33,7 @@ stdenv.mkDerivation (finalAttrs: {
   installPhase = ''
     runHook preInstall
     mkdir -p $out
-    cp -r dist package.json node_modules $out
+    cp -r dist package.json node_modules languages $out
     runHook postInstall
   '';
 })

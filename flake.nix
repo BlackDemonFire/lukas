@@ -54,7 +54,7 @@
               tag = "latest";
               created = "now";
               config = {
-                entrypoint = [
+                Cmd = [
                   "${pkgs.lib.getExe node_ver}"
                   "--enable-source-maps"
                   "${self'.packages.default}/dist/index.js"
@@ -65,7 +65,9 @@
           };
           apps.default = {
             type = "app";
-            program = "${pkgs.writeScriptBin "lukasbot" ''${pkgs.lib.getExe node_ver} --enable-source-maps ${self'.packages.default}/dist/index.js''}/bin/lukasbot";
+            program = "${pkgs.writeShellScriptBin "lukasbot" ''
+              ${pkgs.lib.getExe node_ver} --enable-source-maps ${self'.packages.default}/dist/index.js
+            ''}/bin/lukasbot";
           };
           checks = {
             # write a derivation that runs the type checker that runs on `pnpm check`. make sure the pnpm deps are installed. use stdenv.mkDerivation

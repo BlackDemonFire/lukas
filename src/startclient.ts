@@ -8,7 +8,7 @@ export function start() {
   const client: Bot = new Bot();
   const moduleLoadPromises: Promise<void>[] = [];
 
-  readdir("./dist/events", (err, files) => {
+  readdir(new URL("./events", import.meta.url), (err, files) => {
     if (err) {
       logger.error(`Error while reading events:\n\t${err}`);
       return;
@@ -26,7 +26,7 @@ export function start() {
       .forEach((p) => moduleLoadPromises.push(p));
   });
 
-  readdir("./dist/interactions", (err, files) => {
+  readdir(new URL("./interactions", import.meta.url), (err, files) => {
     if (err) {
       logger.error(`Error while reading interactions:\n\t${err}`);
       return;
@@ -41,31 +41,34 @@ export function start() {
     });
   });
 
-  recursiveReadDir("./dist/commands", function (err, files) {
-    if (err) {
-      logger.error(`Error while reading commands:\n\t${err}`);
-      return;
-    }
+  recursiveReadDir(
+    new URL("./commands", import.meta.url).pathname,
+    function (err, files) {
+      if (err) {
+        logger.error(`Error while reading commands:\n\t${err}`);
+        return;
+      }
 
-    files
-      .filter((file) => file.endsWith(".js"))
-      .map(async (file: string) => {
-        const cmd = await import(`../${file}`);
-        const commandName = file.split("/").at(-1)!.split(".")[0];
-        const category = file.split("/").at(-2);
-        logger.debug(`Loading command ${commandName}`);
-        client.commands.set(
-          commandName,
-          new cmd.default(client, category, commandName),
-        );
-        logger.debug(`Loaded command ${commandName}`);
-      })
-      .forEach((p) => {
-        moduleLoadPromises.push(p);
-      });
-  });
+      files
+        .filter((file) => file.endsWith(".js"))
+        .map(async (file: string) => {
+          const cmd = await import(file);
+          const commandName = file.split("/").at(-1)!.split(".")[0];
+          const category = file.split("/").at(-2);
+          logger.debug(`Loading command ${commandName}`);
+          client.commands.set(
+            commandName,
+            new cmd.default(client, category, commandName),
+          );
+          logger.debug(`Loaded command ${commandName}`);
+        })
+        .forEach((p) => {
+          moduleLoadPromises.push(p);
+        });
+    },
+  );
 
-  readdir("./languages", (err, files) => {
+  readdir(new URL("../languages", import.meta.url), (err, files) => {
     if (err) {
       logger.error(`Error while reading languages:\n\t${err}`);
       return;
