@@ -61,6 +61,11 @@ export class DB {
     const { repo } = this.dsaCharRepository;
     await repo.nativeDelete({ prefix });
   }
+
+  async listChars() {
+    const { repo } = this.dsaCharRepository;
+    return await repo.findAll();
+  }
   async getColor(user: User): Promise<string> {
     const { repo } = this.userRepository;
     const data = await repo.findOne({ id: user.id }, { fields: ["color"] });
