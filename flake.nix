@@ -23,7 +23,7 @@
       perSystem =
         { pkgs, self', ... }:
         let
-          node_ver = pkgs.nodejs_20;
+          node_ver = pkgs.nodejs;
         in
         {
           # Per-system attributes can be defined here. The self' and inputs'

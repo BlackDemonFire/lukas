@@ -1,13 +1,13 @@
 {
   esbuild,
-  nodejs_20,
+  nodejs,
   pnpm,
   lib,
   stdenv,
   ...
 }:
 let
-  node_ver = nodejs_20;
+  node_ver = nodejs;
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "lukasbot";
