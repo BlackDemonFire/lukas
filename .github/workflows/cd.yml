@@ -87,7 +87,7 @@ jobs:
           architectures=("x86_64" "aarch64")
           for arch in "${architectures[@]}"; do
             docker load < images/container-"$arch"/*.tar.gz
-            docker tag blackdemonfire/lukas:latest-"$arch"-linux "$TAG"-"$arch"
+            docker tag blackdemonfire/lukas:latest "$TAG"-"$arch"
             docker push ${{ env.TAG }}-"$arch"
           done
 
