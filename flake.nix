@@ -56,8 +56,10 @@
               config = {
                 entrypoint = [
                   "${pkgs.lib.getExe node_ver}"
+                  "--enable-source-maps"
                   "${self'.packages.default}/dist/index.js"
                 ];
+                WorkingDir = self'.packages.default;
               };
             };
           };
