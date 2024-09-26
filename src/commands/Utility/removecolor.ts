@@ -1,15 +1,18 @@
 import { ColorResolvable, Message, resolveColor } from "discord.js";
+import { eq } from "drizzle-orm";
 import { Bot } from "../../bot.js";
+import { userdb } from "../../db/userdb.js";
+import { db } from "../../drizzle.js";
 import { Command } from "../../modules/command.js";
-import type { ILanguage } from "../../types.js";
 import logger from "../../modules/logger.js";
+import type { ILanguage } from "../../types.js";
 
 export default class Removecolor extends Command {
   constructor(client: Bot, category: string, name: string) {
     super(client, category, name);
   }
   async run(
-    client: Bot,
+    _client: Bot,
     message: Message,
     args: string[],
     language: ILanguage,
@@ -18,31 +21,40 @@ export default class Removecolor extends Command {
       logger.error(`channel ${message.channel.id} is not sendable`);
       return;
     }
-    const current_colors = new Set(
-      (await client.db.getColor(message.author)).split(";"),
+    const currentColors = new Set(
+      (
+        await db
+          .select({ color: userdb.color })
+          .from(userdb)
+          .where(eq(userdb.id, message.author.id))
+      )[0]?.color?.split(";") ?? [],
     );
 
     if (args && args.length > 0) {
-      for (const color_string of args) {
-        const color = color_string as ColorResolvable;
+      for (const colorString of args) {
+        const color = colorString as ColorResolvable;
         try {
           resolveColor(color);
         } catch (e) {
+          void e;
           await message.channel.send(language.command.color.invalid_color);
           return;
         }
-        logger.debug([...current_colors].join(" "));
-        logger.debug(color_string);
-        logger.debug(color_string in current_colors);
-        const found = current_colors.delete(color_string);
+        logger.debug([...currentColors].join(" "));
+        logger.debug(colorString);
+        logger.debug(colorString in currentColors);
+        const found = currentColors.delete(colorString);
         logger.debug(`Color ${color} was ${found ? "" : "not"} removed`);
       }
     } else {
       await message.channel.send(language.command.color.invalid_color);
       return;
     }
-    const colors = [...current_colors].join(";");
-    await client.db.setColor(message.author, colors);
+    const colors = [...currentColors].join(";");
+    await db
+      .update(userdb)
+      .set({ color: colors })
+      .where(eq(userdb.id, message.author.id));
     await message.channel.send({ content: language.command.color.success });
   }
   help = {

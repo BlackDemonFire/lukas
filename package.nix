@@ -23,7 +23,7 @@ stdenv.mkDerivation (finalAttrs: {
   pnpmDeps = pnpm.fetchDeps {
     inherit (finalAttrs) pname version src;
     installFlags = "--production";
-    hash = "sha256-f671A/axvoho+qnHkqlcwZS1VpeJww8XBcGjsFyFVWo=";
+    hash = "sha256-u/QK1sKmUCRSkMaiia3picNL2A4zt7JTF3WCnPMflS4=";
   };
   buildPhase = ''
     runHook preBuild
@@ -33,7 +33,7 @@ stdenv.mkDerivation (finalAttrs: {
   installPhase = ''
     runHook preInstall
     mkdir -p $out
-    cp -r dist package.json node_modules languages $out
+    cp -r dist package.json node_modules languages drizzle drizzle.config.js $out
     runHook postInstall
   '';
 })

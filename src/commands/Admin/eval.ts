@@ -15,7 +15,8 @@ export default class Eval extends Command {
     usage: `${this.prefix}eval <code>`,
   };
   async run(
-    _client: Bot,
+    // @ts-expect-error -- we want the client to be available for eval.
+    client: Bot,
     message: Message,
     args: string[],
     language: ILanguage,
@@ -32,7 +33,7 @@ export default class Eval extends Command {
     }
     logger.info(message.author.tag, args.join(" "));
     try {
-      const evaled = eval(args.join(" "));
+      const evaled: unknown = eval(args.join(" "));
       logger.info(message.author.tag, args.join(" "), evaled);
       if (evaled) {
         const segments = splitMessage(
@@ -47,6 +48,10 @@ export default class Eval extends Command {
           segments.map((m) =>
             (message.channel as SendableChannels).send({ content: m }),
           ),
+        );
+      } else {
+        message.channel.send(
+          "Eval executed successfully but did not return a value.",
         );
       }
     } catch (err) {

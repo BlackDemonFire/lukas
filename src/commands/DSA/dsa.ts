@@ -6,8 +6,11 @@ import {
 } from "discord.js";
 import { Bot } from "../../bot.js";
 import { Command } from "../../modules/command.js";
-import type { ILanguage as lang } from "../../types.js";
+import type { ILanguage } from "../../types.js";
 import logger from "../../modules/logger.js";
+import { dsachars } from "../../db/dsachars.js";
+import { eq } from "drizzle-orm";
+import { db } from "../../drizzle.js";
 
 export default class Dsa extends Command {
   constructor(client: Bot, category: string, name: string) {
@@ -17,7 +20,12 @@ export default class Dsa extends Command {
     show: true,
     usage: `${this.prefix}dsa [character] <message>`,
   };
-  async run(client: Bot, message: Message, args: string[], language: lang) {
+  async run(
+    _client: Bot,
+    message: Message,
+    args: string[],
+    language: ILanguage,
+  ) {
     if (!message.channel.isSendable()) {
       logger.error(`channel ${message.channel.id} is not sendable`);
       return;
@@ -57,10 +65,13 @@ export default class Dsa extends Command {
       npc = npc + args.shift();
       count = count + 1;
     }
-    const char = await client.db.getDSAChar(clean);
+    const [char] = await db
+      .select()
+      .from(dsachars)
+      .where(eq(dsachars.prefix, clean));
     if (char) {
       displayName = char.displayname ?? "unknown";
-      displayImg = char.avatar;
+      displayImg = char.avatar ?? undefined;
     } else {
       let i = 0;
       while (i < count) {
@@ -82,10 +93,7 @@ export default class Dsa extends Command {
       if (message.attachments.size == 0) {
         await webhook.send({ content: args.join(" ") });
       } else {
-        const attarr: string[] = [];
-        message.attachments.forEach((a) => {
-          attarr.push(a.url);
-        });
+        const attarr = message.attachments.map((a) => a.url);
         await webhook.send({ content: args.join(" "), files: attarr });
       }
       await webhook.delete();

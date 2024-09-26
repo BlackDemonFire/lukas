@@ -2,9 +2,12 @@ import { BaseInteraction, GuildChannel } from "discord.js";
 import { Bot } from "../bot.js";
 import { activeRequests } from "../modules/dbo/gifRequest.js";
 import logger from "../modules/logger.js";
+import { db } from "../drizzle.js";
+import { gifdb } from "../db/gifdb.js";
+import { eq } from "drizzle-orm";
 
 export default async function run(
-  client: Bot,
+  _client: Bot,
   interaction: BaseInteraction,
   args: string[],
 ) {
@@ -27,7 +30,7 @@ export default async function run(
     return;
   }
   if (args[0] == "accept") {
-    await client.db.removeGif(request.gifUrl);
+    await db.delete(gifdb).where(eq(gifdb.url, request.gifUrl));
     await request.message.edit("The owner accepted your request");
     await interaction.update({
       content: `**ACCEPTED**\nGif remove request from in <#${

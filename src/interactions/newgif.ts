@@ -1,10 +1,12 @@
 import { BaseInteraction, GuildChannel } from "discord.js";
-import { Bot } from "../bot.js";
+import type { Bot } from "../bot.js";
+import { gifdb } from "../db/gifdb.js";
+import { db } from "../drizzle.js";
 import { activeRequests } from "../modules/dbo/gifRequest.js";
 import logger from "../modules/logger.js";
 
 export default async function run(
-  client: Bot,
+  _client: Bot,
   interaction: BaseInteraction,
   args: string[],
 ) {
@@ -27,7 +29,11 @@ export default async function run(
     return;
   }
   if (args[0] == "accept") {
-    await client.db.newGif(request.gifUrl, request.action!, request.gifType!);
+    await db.insert(gifdb).values({
+      url: request.gifUrl,
+      actiontype: request.action,
+      giftype: request.gifType,
+    });
     await request.message.edit("The owner accepted your request");
     await interaction.update({
       content: `**ACCEPTED**\nGif check request from in <#${

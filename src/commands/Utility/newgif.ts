@@ -12,6 +12,8 @@ import { Command } from "../../modules/command.js";
 import { GifRequest, activeRequests } from "../../modules/dbo/gifRequest.js";
 import type { ILanguage } from "../../types.js";
 import logger from "../../modules/logger.js";
+import { db } from "../../drizzle.js";
+import { gifdb } from "../../db/gifdb.js";
 
 export default class Newgif extends Command {
   constructor(client: Bot, category: string, name: string) {
@@ -36,7 +38,7 @@ export default class Newgif extends Command {
     const action: string = args[1].toLowerCase();
     const type: string = args[2].toLowerCase();
     if (this.isOwner(message)) {
-      await client.db.newGif(url, action, type);
+      await db.insert(gifdb).values({ url, actiontype: action, giftype: type });
       await message.channel.send(language.command.newgif.success);
       return;
     }

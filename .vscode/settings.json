@@ -1,4 +1,6 @@
 {
     "typescript.tsdk": "node_modules/typescript/lib",
-    "nixEnvSelector.nixFile": "${workspaceFolder}/flake.nix"
+    "nixEnvSelector.nixFile": "${workspaceFolder}/flake.nix",
+    "javascript.preferences.importModuleSpecifier": "relative",
+    "typescript.preferences.importModuleSpecifier": "relative"
 }

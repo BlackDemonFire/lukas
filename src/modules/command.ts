@@ -1,13 +1,17 @@
 import {
-  ClientApplication,
-  ColorResolvable,
+  type ClientApplication,
+  type ColorResolvable,
   Colors,
   EmbedBuilder,
-  Message,
+  type Message,
   Team,
   User,
 } from "discord.js";
+import { and, eq } from "drizzle-orm";
 import { Bot } from "../bot.js";
+import { gifdb } from "../db/gifdb.js";
+import { userdb } from "../db/userdb.js";
+import { db } from "../drizzle.js";
 import type { command, ILanguage } from "../types.js";
 import logger from "./logger.js";
 
@@ -23,7 +27,6 @@ abstract class Command implements command {
     this.category = category;
     this.name = name;
   }
-  // eslint-disable-next-line no-unused-vars
   abstract run(
     client: Bot,
     message: Message,
@@ -53,32 +56,33 @@ abstract class GifCommand extends Command {
   protected constructor(client: Bot, category: string, name: string) {
     super(client, category, name);
   }
-  async parseUser(
-    client: Bot,
-    message: Message,
-    args: string[],
-    language: ILanguage,
-  ) {
+  async parseUser(client: Bot, message: Message, args: string[]) {
     let userB: string = "";
     const mentioned: string[] = [];
     let self: boolean = false;
     if (args && args.length > 0) {
       for (const arg of args) {
-        let name: string = "";
+        let name: string | null = null;
         const ping = arg.match(/<@!?(\d+)>/);
         if (ping) {
           const user = await client.users.fetch(ping[1]).catch((e) => {
             logger.error(e);
             return null;
           });
-          if (user) name = await client.db.getName(user);
+          if (user) {
+            const [dbUser] = await db
+              .select({ name: userdb.name })
+              .from(userdb)
+              .where(eq(userdb.id, user.id));
+            if (dbUser) name = dbUser.name;
+          }
           if (!user) {
             name = arg;
           } else if (!name || name == "") {
-            const member = message.guild
+            const member = message.inGuild()
               ? message.guild.members.resolve(user)
               : null;
-            name = member ? member.displayName : user.username;
+            name = member ? member.displayName : user.displayName;
           }
           if (user == message.author) {
             userB = "";
@@ -90,25 +94,9 @@ abstract class GifCommand extends Command {
         }
       }
       if (userB == "" && !self) {
-        switch (mentioned.length) {
-          case 1:
-            userB = mentioned[0];
-            break;
-          case 2:
-            userB = mentioned.join(` ${language.general.and} `);
-            break;
-          default:
-            {
-              const last = mentioned.pop();
-              userB = mentioned.join(", ");
-              userB += ` ${language.general.and} `;
-              userB += last;
-            }
-            break;
-        }
+        const lf = new Intl.ListFormat("en"); // TODO: get locale from message
+        userB = lf.format(mentioned);
       }
-    } else {
-      userB = "";
     }
     if (userB.length > 1792) userB = userB.substring(0, 1792) + "...";
     return userB;
@@ -144,7 +132,11 @@ abstract class GifCommand extends Command {
   }
 
   protected async getColor(client: Bot, author: User) {
-    const rawColor = await client.db.getColor(author);
+    const [user] = await db
+      .select()
+      .from(userdb)
+      .where(eq(userdb.id, author.id));
+    const rawColor = user?.color ?? "random";
 
     logger.debug(`available colors: ${rawColor.split(";")}`);
     return client.random.choice(rawColor.split(";"));
@@ -162,19 +154,27 @@ abstract class SingleUserGifCommand extends GifCommand {
     _args: string[],
     language: ILanguage,
   ) {
-    const gif: string = await client.db.getGif(
-      this.name,
-      await client.db.getGiftype(message.author),
-    );
-    let userA: string = await client.db.getName(message.author);
+    const [user] = await db
+      .select()
+      .from(userdb)
+      .where(eq(userdb.id, message.author.id));
+    const filter = user?.giftype
+      ? and(eq(gifdb.actiontype, this.name), eq(gifdb.giftype, user.giftype))
+      : eq(gifdb.actiontype, this.name);
+    const gifs = await db
+      .select()
+      .from(gifdb)
+      .where(filter)
+      .then((g) => g.map((g) => g.url));
+    const gif = gifs[Math.floor(Math.random() * gifs.length)];
+    let userA: string = user?.name ?? message.author.displayName;
     const rawColor = await this.getColor(client, message.author);
     let color: ColorResolvable;
     if (rawColor in Colors) color = rawColor as keyof typeof Colors;
     else color = "Random";
     if (userA == "")
-      userA = message.guild
-        ? message.member!.displayName
-        : message.author.username;
+      userA =
+        user?.name ?? message.member?.displayName ?? message.author.displayName;
     const responseString: string = (
       await client.random.choice(
         this.getGifLanguageObject(language, "singleUser"),
@@ -195,24 +195,25 @@ abstract class MultiUserGifCommand extends GifCommand {
     args: string[],
     language: ILanguage,
   ) {
-    const gif: string = await client.db.getGif(
-      this.name,
-      await client.db.getGiftype(message.author),
-    );
-    let userA: string = await client.db.getName(message.author);
+    const [user] = await db
+      .select()
+      .from(userdb)
+      .where(eq(userdb.id, message.author.id));
+    const filter = user?.giftype
+      ? and(eq(gifdb.actiontype, this.name), eq(gifdb.giftype, user.giftype))
+      : eq(gifdb.actiontype, this.name);
+    const gifs = await db
+      .select()
+      .from(gifdb)
+      .where(filter)
+      .then((g) => g.map((g) => g.url));
+    const gif = gifs[Math.floor(Math.random() * gifs.length)];
+    const userA: string =
+      user?.name ?? message.member?.displayName ?? message.author.displayName;
     const rawColor = await this.getColor(client, message.author);
     const color: ColorResolvable = rawColor as ColorResolvable;
 
-    if (userA == "")
-      userA = message.guild
-        ? message.member!.displayName
-        : message.author.username;
-    const userB: string = await super.parseUser(
-      client,
-      message,
-      args,
-      language,
-    );
+    const userB: string = await super.parseUser(client, message, args);
     let responseString: string;
     if (userB == "") {
       responseString = (

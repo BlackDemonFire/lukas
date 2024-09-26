@@ -60,6 +60,9 @@
                   "${self'.packages.default}/dist/index.js"
                 ];
                 WorkingDir = self'.packages.default;
+                Env = [
+                  "SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
+                ];
               };
             };
           };

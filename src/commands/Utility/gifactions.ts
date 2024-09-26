@@ -3,13 +3,15 @@ import { Bot } from "../../bot.js";
 import { Command } from "../../modules/command.js";
 import type { ILanguage } from "../../types.js";
 import logger from "../../modules/logger.js";
+import { db } from "../../drizzle.js";
+import { gifdb } from "../../db/gifdb.js";
 
 export default class Gifaction extends Command {
   constructor(client: Bot, category: string, name: string) {
     super(client, category, name);
   }
   async run(
-    client: Bot,
+    _client: Bot,
     message: Message,
     _args: string[],
     language: ILanguage,
@@ -18,22 +20,12 @@ export default class Gifaction extends Command {
       logger.error(`channel ${message.channel.id} is not sendable`);
       return;
     }
-    const actions = await client.db.getGifactions();
-    let actionsstring: string = "";
-    switch (actions.length) {
-      case 1:
-        actionsstring = actions[0];
-        break;
-      case 2:
-        actionsstring = actions.join(` ${language.general.and} `);
-        break;
-      default:
-        actionsstring = `${actions
-          .slice(0, -1)
-          .map((action) => `\`${action}\``)
-          .join(", ")} ${language.general.and} \`${actions.slice(-1)}\``;
-        break;
-    }
+    const actions = await db
+      .select({ action: gifdb.actiontype })
+      .from(gifdb)
+      .then((a) => a.map((b) => b.action));
+    const lf = new Intl.ListFormat(); // TODO: use the correct language
+    const actionsstring: string = lf.format(actions.filter((a) => a !== null));
     await message.channel.send({
       content: language.command.gifactions.response.replace(
         "{actions}",

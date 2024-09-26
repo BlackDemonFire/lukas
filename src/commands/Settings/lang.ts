@@ -3,6 +3,9 @@ import { Bot } from "../../bot.js";
 import { Command } from "../../modules/command.js";
 import type { ILanguage as lang } from "../../types.js";
 import logger from "../../modules/logger.js";
+import { db } from "../../drizzle.js";
+import { settings } from "../../db/settings.js";
+import { eq } from "drizzle-orm";
 
 export default class Lang extends Command {
   constructor(client: Bot, category: string, name: string) {
@@ -15,7 +18,7 @@ export default class Lang extends Command {
     }
     let newLang: string;
     let languages: string = "";
-    if (!message.guild) {
+    if (!message.inGuild()) {
       await message.channel.send(language.general.guildOnly);
       return;
     }
@@ -59,7 +62,10 @@ export default class Lang extends Command {
       });
       return;
     }
-    await client.db.setLang(message.guild, newLang);
+    await db
+      .update(settings)
+      .set({ language: newLang })
+      .where(eq(settings.guild, message.guildId));
     await message.channel.send({
       content: language.command.lang.success.replace("{lang}", newLang),
     });

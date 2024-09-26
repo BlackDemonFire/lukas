@@ -3,6 +3,9 @@ import { Bot } from "../../bot.js";
 import { Command } from "../../modules/command.js";
 import type { ILanguage as lang } from "../../types.js";
 import logger from "../../modules/logger.js";
+import { db } from "../../drizzle.js";
+import { dsachars } from "../../db/dsachars.js";
+import { eq } from "drizzle-orm";
 
 export default class Dsarm extends Command {
   constructor(client: Bot, category: string, name: string) {
@@ -12,7 +15,7 @@ export default class Dsarm extends Command {
     show: true,
     usage: `${this.prefix}dsarm <character>`,
   };
-  async run(client: Bot, message: Message, args: string[], language: lang) {
+  async run(_client: Bot, message: Message, args: string[], language: lang) {
     if (!message.channel.isSendable()) {
       logger.error(`channel ${message.channel.id} is not sendable`);
       return;
@@ -22,13 +25,17 @@ export default class Dsarm extends Command {
       await message.reply({ content: language.command.dsarm.args });
       return;
     }
-    if (!(await client.db.getDSAChar(pref))) {
+    const [existingCharacter] = await db
+      .select()
+      .from(dsachars)
+      .where(eq(dsachars.prefix, pref));
+    if (!existingCharacter) {
       await message.channel.send({
         content: language.command.dsarm.noSuchChar.replace("{pref}", pref),
       });
       return;
     }
-    await client.db.deleteDSAChar(pref);
+    await db.delete(dsachars).where(eq(dsachars.prefix, pref));
     await message.channel.send({
       content: language.command.dsarm.success.replace("{pref}", pref),
     });

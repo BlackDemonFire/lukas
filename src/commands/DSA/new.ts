@@ -1,13 +1,9 @@
-import {
-  DMChannel,
-  Message,
-  MessageCollector,
-  SendableChannels,
-  TextChannel,
-} from "discord.js";
-import logger from "../../modules/logger.js";
-import { Bot } from "../../bot.js";
+import type { Message, SendableChannels } from "discord.js";
+import type { Bot } from "../../bot.js";
+import { dsachars } from "../../db/dsachars.js";
+import { db } from "../../drizzle.js";
 import { Command } from "../../modules/command.js";
+import logger from "../../modules/logger.js";
 import type { ILanguage as lang } from "../../types.js";
 
 export default class New extends Command {
@@ -18,7 +14,7 @@ export default class New extends Command {
     show: true,
     usage: `${this.prefix}new`,
   };
-  async run(client: Bot, message: Message, _args: string[], language: lang) {
+  async run(_client: Bot, message: Message, _args: string[], language: lang) {
     if (!message.channel.isSendable()) {
       logger.error(`channel ${message.channel.id} is not sendable`);
       return;
@@ -27,14 +23,8 @@ export default class New extends Command {
     let av: string;
     let pref: string;
     await message.channel.send({ content: language.command.new.getPrefix });
-    if (
-      !(
-        message.channel instanceof DMChannel ||
-        message.channel instanceof TextChannel
-      )
-    )
-      return;
-    const collector = new MessageCollector(message.channel, {
+
+    const collector = message.channel.createMessageCollector({
       filter: (m: Message) => m.author.id === message.author.id,
       time: 50000,
     });
@@ -79,7 +69,9 @@ export default class New extends Command {
                 .replace("{name}", name)
                 .replace("{pref}", pref),
             });
-            await client.db.newDSAChar(pref, name, av);
+            await db
+              .insert(dsachars)
+              .values({ prefix: pref, displayname: name, avatar: av });
           }
           break;
       }

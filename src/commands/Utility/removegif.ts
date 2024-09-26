@@ -12,6 +12,9 @@ import { Command } from "../../modules/command.js";
 import { GifRequest, activeRequests } from "../../modules/dbo/gifRequest.js";
 import type { ILanguage } from "../../types.js";
 import logger from "../../modules/logger.js";
+import { db } from "../../drizzle.js";
+import { gifdb } from "../../db/gifdb.js";
+import { eq } from "drizzle-orm";
 
 export default class Newgif extends Command {
   constructor(client: Bot, category: string, name: string) {
@@ -34,7 +37,7 @@ export default class Newgif extends Command {
     }
     const url: string = args[0];
     if (this.isOwner(message)) {
-      await client.db.removeGif(url);
+      await db.delete(gifdb).where(eq(gifdb.url, url));
       await message.channel.send(language.command.removegif.success);
       return;
     }
