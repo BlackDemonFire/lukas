@@ -3,6 +3,7 @@
   nodejs_24,
   lib,
   stdenv,
+  pnpm,
   pnpmConfigHook,
   fetchPnpmDeps,
   ...
@@ -19,13 +20,14 @@ stdenv.mkDerivation (finalAttrs: {
     esbuild
     node_ver
     pnpmConfigHook
+    pnpm
   ];
 
   pnpmDeps = fetchPnpmDeps {
     inherit (finalAttrs) pname version src;
     installFlags = "--production";
     fetcherVersion = 4;
-    hash = lib.fakeHash; # "sha256-gvRfgPHbZmCU50RUqUH3Z0mth5TEqfAY4zxc2uSQpzE=";
+    hash = "sha256-wmBmvo1EyhzHyOBu4+RciG0EP5XfnNKAud8knl3Eef0=";
   };
   buildPhase = ''
     runHook preBuild
