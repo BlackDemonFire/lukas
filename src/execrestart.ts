@@ -4,11 +4,7 @@ import logger from "./modules/logger.js";
 import settings from "./modules/settings.js";
 import { start } from "./startclient.js";
 
-export async function restart(
-  oldclient: Bot,
-  restartmsg: Message | null,
-  newtext: string,
-) {
+export async function restart(oldclient: Bot, restartmsg: Message | null, newtext: string) {
   // Neuen Client Herstellen
 
   const newclient = start();
@@ -16,6 +12,7 @@ export async function restart(
 
   // Alten client Entfernen
 
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   newclient.once("ready", async () => {
     for (const key of Object.keys(require.cache)) {
       if (key.indexOf("node_modules") == -1) {

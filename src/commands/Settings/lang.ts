@@ -19,15 +19,8 @@ export default class Lang extends Command {
       await message.channel.send(language.general.guildOnly);
       return;
     }
-    if (
-      !(
-        message.member!.permissions.has(PermissionFlagsBits.Administrator) ||
-        this.isOwner(message)
-      )
-    ) {
-      await message.channel.send({
-        content: language.command.lang.permissionError,
-      });
+    if (!(message.member!.permissions.has(PermissionFlagsBits.Administrator) || this.isOwner(message))) {
+      await message.channel.send({ content: language.command.lang.permissionError });
       return;
     }
     if (!args || args.length === 0) {
@@ -48,24 +41,14 @@ export default class Lang extends Command {
           languages = `${langs
             .slice(0, -1)
             .map((langName) => `\`${langName}\``)
-            .join(", ")} ${language.general.and} \`${langs.slice(-1)}\``;
+            .join(", ")} ${language.general.and} \`${langs.slice(-1).join(",")}\``;
           break;
       }
-      await message.channel.send({
-        content: language.command.lang.noSuchLanguage.replace(
-          "{languages}",
-          languages,
-        ),
-      });
+      await message.channel.send({ content: language.command.lang.noSuchLanguage.replace("{languages}", languages) });
       return;
     }
     await client.db.setLang(message.guild, newLang);
-    await message.channel.send({
-      content: language.command.lang.success.replace("{lang}", newLang),
-    });
+    await message.channel.send({ content: language.command.lang.success.replace("{lang}", newLang) });
   }
-  help = {
-    show: true,
-    usage: `${this.prefix}lang <lang>`,
-  };
+  help = { show: true, usage: `${this.prefix}lang <lang>` };
 }

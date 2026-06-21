@@ -8,12 +8,7 @@ export default class Giftype extends Command {
   constructor(client: Bot, category: string, name: string) {
     super(client, category, name);
   }
-  async run(
-    client: Bot,
-    message: Message,
-    args: string[],
-    language: ILanguage,
-  ) {
+  async run(client: Bot, message: Message, args: string[], language: ILanguage) {
     if (!message.channel.isSendable()) {
       logger.error(`channel ${message.channel.id} is not sendable`);
       return;
@@ -33,18 +28,10 @@ export default class Giftype extends Command {
 
     const giftype: string = args.length == 0 ? "" : args[0].toLowerCase();
     if (args.length == 0 || !types.includes(giftype)) {
-      await message.channel.send({
-        content: language.command.giftype.availableTypes.replace(
-          "{types}",
-          typesstring,
-        ),
-      });
+      await message.channel.send({ content: language.command.giftype.availableTypes.replace("{types}", typesstring) });
       return;
     }
     await client.db.setGiftype(message.author, giftype);
   }
-  help = {
-    show: true,
-    usage: `${this.prefix}giftype <type>`,
-  };
+  help = { show: true, usage: `${this.prefix}giftype <type>` };
 }

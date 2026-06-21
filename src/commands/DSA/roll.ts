@@ -8,10 +8,7 @@ export default class Roll extends Command {
   constructor(client: Bot, category: string, name: string) {
     super(client, category, name);
   }
-  help = {
-    show: true,
-    usage: `${this.prefix}roll [args]`,
-  };
+  help = { show: true, usage: `${this.prefix}roll [args]` };
   async run(client: Bot, message: Message, args: string[], language: lang) {
     if (!message.channel.isSendable()) {
       logger.error(`channel ${message.channel.id} is not sendable`);
@@ -130,24 +127,16 @@ export default class Roll extends Command {
       return;
     }
     if (rolltype == 0 && dicetype == "w0") {
-      await message.channel.send({
-        content: `<:warn_3:498277726604754946> ${language.command.roll.errors.noSides}`,
-      });
+      await message.channel.send({ content: `<:warn_3:498277726604754946> ${language.command.roll.errors.noSides}` });
       return;
     }
     if (rolltype == 0 && dicetype == "d0") {
-      await message.channel.send({
-        content: `<:warn_3:498277726604754946> ${language.command.roll.errors.noSides}`,
-      });
+      await message.channel.send({ content: `<:warn_3:498277726604754946> ${language.command.roll.errors.noSides}` });
       return;
     }
     if (rolltype == 0) {
       dicetype = dicetype.substr(1);
-      if (
-        typeof dicetype === "number"
-          ? isNaN(dicetype)
-          : isNaN(parseInt(dicetype))
-      ) {
+      if (typeof dicetype === "number" ? isNaN(dicetype) : isNaN(parseInt(dicetype))) {
         await message.channel.send({
           content: `<:warn_3:498277726604754946> ${language.command.roll.errors.rolltypeNotNumeric}`,
         });
@@ -168,27 +157,15 @@ export default class Roll extends Command {
       return;
     }
     if (rollcountmax == "0") {
-      const plaintext = language.command.roll.results.noDice.plaintext.replace(
-        "{msgauthor}",
-        msgauthor,
-      );
+      const plaintext = language.command.roll.results.noDice.plaintext.replace("{msgauthor}", msgauthor);
       const embed = new EmbedBuilder()
         .setColor(0x36393e)
-        .setDescription(
-          `<:info_1:498285998346731530> ${language.command.roll.results.noDice.embed}`,
-        )
+        .setDescription(`<:info_1:498285998346731530> ${language.command.roll.results.noDice.embed}`)
         .setFooter({ text: `@${msgauthor}` });
-      await message.channel.send({
-        content: `*${plaintext}*`,
-        embeds: [embed],
-      });
+      await message.channel.send({ content: `*${plaintext}*`, embeds: [embed] });
       return;
     }
-    if (
-      typeof rollcountmax === "number"
-        ? isNaN(rollcountmax)
-        : isNaN(parseInt(rollcountmax))
-    ) {
+    if (typeof rollcountmax === "number" ? isNaN(rollcountmax) : isNaN(parseInt(rollcountmax))) {
       await message.channel.send({
         content: `<:warn_3:498277726604754946> ${language.command.roll.errors.rollcountNotNumeric}`,
       });
@@ -260,13 +237,8 @@ export default class Roll extends Command {
     // response
 
     if (rollcountmax == "1") {
-      const plaintext = language.command.roll.results.singleDice.replace(
-        "{rolltype}",
-        rolltype.toString(),
-      );
-      const embed = new EmbedBuilder()
-        .setColor(0x36393e)
-        .setFooter({ text: `@${msgauthor}` });
+      const plaintext = language.command.roll.results.singleDice.replace("{rolltype}", rolltype.toString());
+      const embed = new EmbedBuilder().setColor(0x36393e).setFooter({ text: `@${msgauthor}` });
       if (useEmotes) {
         embed.setDescription(rollresult);
       } else {
@@ -279,9 +251,7 @@ export default class Roll extends Command {
       const plaintext = language.command.roll.results.multiDice
         .replace("{rolltype}", rolltype.toString())
         .replace("{rollcountmax}", rollcountmax.toString());
-      const embed = new EmbedBuilder()
-        .setColor(0x36393e)
-        .setFooter({ text: `@${msgauthor}` });
+      const embed = new EmbedBuilder().setColor(0x36393e).setFooter({ text: `@${msgauthor}` });
       if (useEmotes) {
         embed.setDescription(rollresult);
       } else {

@@ -16,10 +16,6 @@ void (async () => {
     user: settings.DB_USER,
     password: settings.DB_PASS,
   });
-  const generator = orm.getEntityGenerator();
-  await generator.generate({
-    save: true,
-    path: `${process.cwd()}/src/entities`,
-  });
+  await orm.entityGenerator.generate({ save: true, path: `${process.cwd()}/src/entities` });
   await orm.close(true);
 })();

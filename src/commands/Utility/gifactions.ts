@@ -8,12 +8,7 @@ export default class Gifaction extends Command {
   constructor(client: Bot, category: string, name: string) {
     super(client, category, name);
   }
-  async run(
-    client: Bot,
-    message: Message,
-    _args: string[],
-    language: ILanguage,
-  ) {
+  async run(client: Bot, message: Message, _args: string[], language: ILanguage) {
     if (!message.channel.isSendable()) {
       logger.error(`channel ${message.channel.id} is not sendable`);
       return;
@@ -31,18 +26,10 @@ export default class Gifaction extends Command {
         actionsstring = `${actions
           .slice(0, -1)
           .map((action) => `\`${action}\``)
-          .join(", ")} ${language.general.and} \`${actions.slice(-1)}\``;
+          .join(", ")} ${language.general.and} \`${actions.slice(-1).join(",")}\``;
         break;
     }
-    await message.channel.send({
-      content: language.command.gifactions.response.replace(
-        "{actions}",
-        actionsstring,
-      ),
-    });
+    await message.channel.send({ content: language.command.gifactions.response.replace("{actions}", actionsstring) });
   }
-  help = {
-    show: true,
-    usage: `${this.prefix}gifaction`,
-  };
+  help = { show: true, usage: `${this.prefix}gifaction` };
 }

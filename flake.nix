@@ -23,7 +23,7 @@
       perSystem =
         { pkgs, self', ... }:
         let
-          node_ver = pkgs.nodejs_20;
+          node_ver = pkgs.nodejs_24;
         in
         {
           # Per-system attributes can be defined here. The self' and inputs'
@@ -44,7 +44,7 @@
               node_ver
               nil
               pnpm
-              nixfmt-rfc-style
+              nixfmt
             ];
           };
           packages = {
@@ -65,16 +65,17 @@
           };
           apps.default = {
             type = "app";
-            program = "${pkgs.writeScriptBin "lukasbot" ''${pkgs.lib.getExe node_ver} --enable-source-maps ${self'.packages.default}/dist/index.js''}/bin/lukasbot";
+            program = "${pkgs.writeScriptBin "lukasbot" "${pkgs.lib.getExe node_ver} --enable-source-maps ${self'.packages.default}/dist/index.js"}/bin/lukasbot";
           };
           checks = {
             # write a derivation that runs the type checker that runs on `pnpm check`. make sure the pnpm deps are installed. use stdenv.mkDerivation
             type-check =
               let
-                pnpmDeps = pkgs.pnpm.fetchDeps {
+                pnpmDeps = pkgs.fetchPnpmDeps {
                   src = ./pnpm-lock.yaml;
                   pname = "lukasbot";
                   version = "0.0.0";
+                  fetcherVersion = 4;
                   hash = "sha256-g7dGb3j8f4bHvenaPPlZtdOs8Kn5VBRXz+LzheXGijw=";
                 };
               in
@@ -87,7 +88,7 @@
                 nativeBuildInputs = [
                   node_ver
                   pkgs.pnpm
-                  pkgs.pnpm.configHook
+                  pkgs.pnpmConfigHook
                 ];
                 # include dependencies from pnpm
                 inherit pnpmDeps;

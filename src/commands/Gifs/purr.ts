@@ -6,8 +6,5 @@ export default class Purr extends SingleUserGifCommand {
     super(client, category, name);
   }
 
-  help = {
-    show: true,
-    usage: `${this.prefix}purr`,
-  };
+  help = { show: true, usage: `${this.prefix}purr` };
 }

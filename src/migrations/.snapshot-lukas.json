@@ -1,20 +1,13 @@
 {
+  "name": "public",
   "namespaces": [
     "public"
   ],
-  "name": "public",
   "tables": [
     {
+      "name": "dsachars",
+      "schema": "public",
       "columns": {
-        "prefix": {
-          "name": "prefix",
-          "type": "text",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "text"
-        },
         "avatar": {
           "name": "avatar",
           "type": "text",
@@ -22,6 +15,14 @@
           "autoincrement": false,
           "primary": false,
           "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
           "mappedType": "text"
         },
         "displayname": {
@@ -31,34 +32,70 @@
           "autoincrement": false,
           "primary": false,
           "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "text"
+        },
+        "prefix": {
+          "name": "prefix",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": true,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
           "mappedType": "text"
         }
       },
-      "name": "dsachars",
-      "schema": "public",
       "indexes": [
         {
-          "keyName": "dsachars_pkey",
           "columnNames": [
             "prefix"
           ],
           "composite": false,
+          "constraint": true,
+          "keyName": "dsachars_pkey",
           "primary": true,
           "unique": true
         }
       ],
       "checks": [],
-      "foreignKeys": {}
+      "triggers": [],
+      "foreignKeys": {},
+      "comment": null
     },
     {
+      "name": "gifdb",
+      "schema": "public",
       "columns": {
-        "url": {
-          "name": "url",
+        "actiontype": {
+          "name": "actiontype",
           "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
           "mappedType": "text"
         },
         "giftype": {
@@ -68,43 +105,70 @@
           "autoincrement": false,
           "primary": false,
           "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
           "mappedType": "text"
         },
-        "actiontype": {
-          "name": "actiontype",
+        "url": {
+          "name": "url",
           "type": "text",
           "unsigned": false,
           "autoincrement": false,
-          "primary": false,
-          "nullable": true,
+          "primary": true,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
           "mappedType": "text"
         }
       },
-      "name": "gifdb",
-      "schema": "public",
       "indexes": [
         {
-          "keyName": "gifdb_pkey",
           "columnNames": [
             "url"
           ],
           "composite": false,
+          "constraint": true,
+          "keyName": "gifdb_pkey",
           "primary": true,
           "unique": true
         }
       ],
       "checks": [],
-      "foreignKeys": {}
+      "triggers": [],
+      "foreignKeys": {},
+      "comment": null
     },
     {
+      "name": "settings",
+      "schema": "public",
       "columns": {
         "guild": {
           "name": "guild",
           "type": "text",
           "unsigned": false,
           "autoincrement": false,
-          "primary": false,
+          "primary": true,
           "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
           "mappedType": "text"
         },
         "language": {
@@ -114,79 +178,125 @@
           "autoincrement": false,
           "primary": false,
           "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
           "mappedType": "text"
         }
       },
-      "name": "settings",
-      "schema": "public",
       "indexes": [
         {
-          "keyName": "settings_pkey",
           "columnNames": [
             "guild"
           ],
           "composite": false,
+          "constraint": true,
+          "keyName": "settings_pkey",
           "primary": true,
           "unique": true
         }
       ],
       "checks": [],
-      "foreignKeys": {}
+      "triggers": [],
+      "foreignKeys": {},
+      "comment": null
     },
     {
+      "name": "userdb",
+      "schema": "public",
       "columns": {
+        "color": {
+          "name": "color",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "string"
+        },
+        "giftype": {
+          "name": "giftype",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "string"
+        },
         "id": {
           "name": "id",
           "type": "text",
           "unsigned": false,
           "autoincrement": false,
-          "primary": false,
+          "primary": true,
           "nullable": false,
-          "mappedType": "text"
-        },
-        "giftype": {
-          "name": "giftype",
-          "type": "text",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "mappedType": "text"
-        },
-        "color": {
-          "name": "color",
-          "type": "text",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
           "mappedType": "text"
         },
         "name": {
           "name": "name",
-          "type": "text",
+          "type": "varchar(255)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": true,
-          "mappedType": "text"
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "string"
         }
       },
-      "name": "userdb",
-      "schema": "public",
       "indexes": [
         {
-          "keyName": "userdb_pkey",
           "columnNames": [
             "id"
           ],
           "composite": false,
+          "constraint": true,
+          "keyName": "userdb_pkey",
           "primary": true,
           "unique": true
         }
       ],
       "checks": [],
-      "foreignKeys": {}
+      "triggers": [],
+      "foreignKeys": {},
+      "comment": null
     }
-  ]
+  ],
+  "views": [],
+  "nativeEnums": {}
 }

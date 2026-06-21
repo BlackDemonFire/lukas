@@ -23,25 +23,13 @@ export default class Info extends Command {
       .setTitle("Info")
       .addFields(
         { name: "Host", value: hostname() },
-        {
-          name: "RAM",
-          value: `${humanReadableFreemem} MB/${humanReadableTotalmem} MB (${memPercent}%)`,
-        },
+        { name: "RAM", value: `${humanReadableFreemem} MB/${humanReadableTotalmem} MB (${memPercent}%)` },
         { name: "CPU", value: `${cpuData.manufacturer} ${cpuData.brand}` },
-        {
-          name: "Bot Uptime",
-          value: new Date(1000 * pUptime()).toLocaleTimeString(),
-        },
-        {
-          name: "System Uptime",
-          value: new Date(1000 * sUptime()).toLocaleTimeString(),
-        },
+        { name: "Bot Uptime", value: new Date(1000 * pUptime()).toLocaleTimeString() },
+        { name: "System Uptime", value: new Date(1000 * sUptime()).toLocaleTimeString() },
       )
       .setColor(0xaa7777);
     await message.channel.send({ embeds: [embed] });
   }
-  help = {
-    show: true,
-    usage: `${this.prefix}info`,
-  };
+  help = { show: true, usage: `${this.prefix}info` };
 }

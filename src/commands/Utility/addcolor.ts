@@ -1,4 +1,4 @@
-import { ColorResolvable, Message, resolveColor } from "discord.js";
+import { type ColorResolvable, Message, resolveColor } from "discord.js";
 import { Bot } from "../../bot.js";
 import { Command } from "../../modules/command.js";
 import type { ILanguage as lang } from "../../types.js";
@@ -13,16 +13,14 @@ export default class Addcolor extends Command {
       logger.error(`channel ${message.channel.id} is not sendable`);
       return;
     }
-    const current_colors = new Set(
-      (await client.db.getColor(message.author)).split(";"),
-    );
+    const current_colors = new Set((await client.db.getColor(message.author)).split(";"));
 
     if (args && args.length > 0) {
       for (const color_string of args) {
         const color = color_string as ColorResolvable;
         try {
           resolveColor(color);
-        } catch (e) {
+        } catch {
           await message.channel.send(language.command.color.invalid_color);
           return;
         }
@@ -36,8 +34,5 @@ export default class Addcolor extends Command {
     await client.db.setColor(message.author, colors);
     await message.channel.send({ content: language.command.color.success });
   }
-  help = {
-    show: true,
-    usage: `${this.prefix}addcolor <color> ...[color]`,
-  };
+  help = { show: true, usage: `${this.prefix}addcolor <color> ...[color]` };
 }

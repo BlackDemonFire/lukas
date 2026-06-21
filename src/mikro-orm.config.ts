@@ -1,4 +1,4 @@
-import { Logger } from "@mikro-orm/core";
+import type { Logger } from "@mikro-orm/core";
 import { Migrator } from "@mikro-orm/migrations";
 import { PostgreSqlDriver, defineConfig } from "@mikro-orm/postgresql";
 import logger from "./modules/logger.js";
@@ -27,12 +27,10 @@ export default defineConfig({
         logger.warn(`[Database::${namespace}] ${message}`);
       },
       logQuery: (context) => {
-        logger.debug(
-          `[Database] query ${context.query} took ${context.took}ms `,
-        );
+        logger.debug(`[Database] query ${context.query} took ${context.took}ms `);
       },
       setDebugMode: (debugMode) => {
-        logger.debug(`[Database::debugMode] ${debugMode}`);
+        logger.debug(`[Database::debugMode] ${typeof debugMode === "boolean" ? debugMode : JSON.stringify(debugMode)}`);
       },
       isEnabled: (namespace) => {
         logger.debug(`[Database] ${namespace}`);
@@ -40,8 +38,5 @@ export default defineConfig({
       },
     };
   },
-  migrations: {
-    path: "dist/migrations",
-    pathTs: "src/migrations",
-  },
+  migrations: { path: "dist/migrations", pathTs: "src/migrations" },
 });

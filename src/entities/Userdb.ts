@@ -1,16 +1,13 @@
-import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
+import { defineEntity, p } from "@mikro-orm/core";
 
-@Entity()
-export class Userdb {
-  @PrimaryKey({ columnType: "text" })
-  id!: string;
-
-  @Property({ columnType: "text", nullable: true })
-  giftype?: string;
-
-  @Property({ columnType: "text", nullable: true })
-  color?: string;
-
-  @Property({ columnType: "text", nullable: true })
-  name?: string;
-}
+const UserdbSchema = defineEntity({
+  name: "Userdb",
+  properties: {
+    id: p.text().primary(),
+    giftype: p.string().nullable(),
+    color: p.string().nullable(),
+    name: p.string().nullable(),
+  },
+});
+export class Userdb extends UserdbSchema.class {}
+UserdbSchema.setClass(Userdb);

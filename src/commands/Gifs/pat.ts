@@ -6,8 +6,5 @@ export default class Pat extends MultiUserGifCommand {
     super(client, category, name);
   }
 
-  help = {
-    show: true,
-    usage: `${this.prefix}pat [user]`,
-  };
+  help = { show: true, usage: `${this.prefix}pat [user]` };
 }

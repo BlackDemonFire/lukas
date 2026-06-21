@@ -1,9 +1,5 @@
 import { wrap } from "@mikro-orm/core";
-import {
-  EntityManager,
-  MikroORM,
-  PostgreSqlDriver,
-} from "@mikro-orm/postgresql";
+import { EntityManager, MikroORM, PostgreSqlDriver } from "@mikro-orm/postgresql";
 import { type Guild, type User } from "discord.js";
 import { Dsachars } from "./entities/Dsachars.js";
 import { Gifdb } from "./entities/Gifdb.js";
@@ -24,11 +20,13 @@ export class DB {
   }
   private async runMigration() {
     logger.info("Running Database Migration");
+    const orm = this._orm;
+    if (!orm) throw new Error("Attempted to run migrations before initializing the orm.");
     try {
-      const migration = await this._orm!.getMigrator().up();
+      const migration = await orm.migrator.up();
       migration.forEach((m) => logger.debug(m.name));
       logger.info("Database Migration successful");
-    } catch (e) {
+    } catch (e: unknown) {
       logger.error("Database Migration failed");
       logger.error(e);
       process.exit(1);
@@ -77,15 +75,9 @@ export class DB {
     let data;
     if (totalCount == 0) {
       const cnt = await repo.count({ actiontype });
-      data = await repo.findOne(
-        { actiontype },
-        { offset: Math.floor(Math.random() * cnt) },
-      );
+      data = await repo.findOne({ actiontype }, { offset: Math.floor(Math.random() * cnt) });
     } else {
-      data = await repo.findOne(
-        { giftype, actiontype },
-        { offset: Math.floor(Math.random() * totalCount) },
-      );
+      data = await repo.findOne({ giftype, actiontype }, { offset: Math.floor(Math.random() * totalCount) });
     }
 
     return data?.url ?? "";
@@ -120,25 +112,20 @@ export class DB {
   }
   async ensureGuildSettings(guild: Guild, lang: string) {
     const { repo, db } = this.settingsRepository;
-    const existingSettings = await repo.findOne({
-      id: guild.id,
-    });
+    const existingSettings = await repo.findOne({ id: guild.id });
     if (existingSettings) return;
-    const settings = repo.create({
-      id: guild.id,
-      language: lang,
-    });
-    await db.persistAndFlush(settings);
+    const settings = repo.create({ id: guild.id, language: lang });
+    await db.persist(settings).flush();
   }
   async newDSAChar(prefix: string, displayname: string, avatar: string) {
     const { repo, db } = this.dsaCharRepository;
     const char = repo.create({ prefix, avatar, displayname });
-    await db.persistAndFlush(char);
+    await db.persist(char).flush();
   }
   async newGif(url: string, actiontype: string, giftype: string) {
     const { repo, db } = this.gifRepository;
     const gif = repo.create({ url, actiontype, giftype });
-    await db.persistAndFlush(gif);
+    await db.persist(gif).flush();
   }
   async removeGif(url: string) {
     const { repo } = this.gifRepository;
@@ -148,13 +135,8 @@ export class DB {
     const { repo, db } = this.userRepository;
     const existingUser = await repo.findOne({ id: user.id });
     if (existingUser) return;
-    const userDBO = repo.create({
-      id: user.id,
-      giftype: "anime",
-      color: "Random",
-      name: user.username ?? "",
-    });
-    await db.persistAndFlush(userDBO);
+    const userDBO = repo.create({ id: user.id, giftype: "anime", color: "Random", name: user.username ?? "" });
+    await db.persist(userDBO).flush();
   }
   async setColor(user: User, color: string) {
     const { repo, db } = this.userRepository;
@@ -172,9 +154,7 @@ export class DB {
   }
   async setLang(guild: Guild, lang: string) {
     const { repo, db } = this.settingsRepository;
-    const settings = await repo.findOneOrFail({
-      id: guild.id,
-    });
+    const settings = await repo.findOneOrFail({ id: guild.id });
     logger.debug(`Setting language for ${guild.name} to ${lang}`);
     wrap(settings).assign({ language: lang }, { mergeObjectProperties: true });
     await db.flush();

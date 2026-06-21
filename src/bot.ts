@@ -1,10 +1,4 @@
-import {
-  BaseInteraction,
-  Client,
-  Collection,
-  IntentsBitField,
-  Snowflake,
-} from "discord.js";
+import { BaseInteraction, Client, Collection, IntentsBitField, type Snowflake } from "discord.js";
 import { DB } from "./db.js";
 import { Command } from "./modules/command.js";
 import { FakeRandom, Random } from "./modules/random.js";
@@ -27,18 +21,12 @@ export class Bot extends Client {
   commands: Collection<string, Command> = new Collection();
   interactions: Collection<
     string,
-    (
-      client: Bot,
-      interaction: BaseInteraction,
-      args: string[],
-    ) => void | Promise<void>
+    (client: Bot, interaction: BaseInteraction, args: string[]) => void | Promise<void>
   > = new Collection();
   commandusage: Map<Snowflake, Array<number>> = new Map();
   db: DB = new DB();
   languages: Map<string, ILanguage> = new Map();
-  random: Random | FakeRandom = settings.RANDOMKEY
-    ? new Random(settings.RANDOMKEY!)
-    : new FakeRandom();
+  random: Random | FakeRandom = settings.RANDOMKEY ? new Random(settings.RANDOMKEY) : new FakeRandom();
 
   loadedEvents: string[] = [];
   loadedAll: boolean = false;

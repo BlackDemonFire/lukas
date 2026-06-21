@@ -3,11 +3,7 @@ import { Bot } from "../bot.js";
 import { activeRequests } from "../modules/dbo/gifRequest.js";
 import logger from "../modules/logger.js";
 
-export default async function run(
-  client: Bot,
-  interaction: BaseInteraction,
-  args: string[],
-) {
+export default async function run(client: Bot, interaction: BaseInteraction, args: string[]) {
   if (!interaction.isButton()) {
     logger.warn("Got non-button interaction for removegif command");
     return;
@@ -19,9 +15,7 @@ export default async function run(
   }
   if (request.accepted !== undefined) {
     await interaction.update({
-      content: `Request was **${
-        request.accepted ? "ACCEPTED" : "REJECTED"
-      }** by ${request.acceptedBy}`,
+      content: `Request was **${request.accepted ? "ACCEPTED" : "REJECTED"}** by ${request.acceptedBy}`,
       components: [],
     });
     return;
@@ -30,12 +24,8 @@ export default async function run(
     await client.db.removeGif(request.gifUrl);
     await request.message.edit("The owner accepted your request");
     await interaction.update({
-      content: `**ACCEPTED**\nGif remove request from in <#${
-        request.message.channel.id
-      }> (${
-        request.message.channel instanceof GuildChannel
-          ? request.message.channel.name
-          : "DM"
+      content: `**ACCEPTED**\nGif remove request from in <#${request.message.channel.id}> (${
+        request.message.channel instanceof GuildChannel ? request.message.channel.name : "DM"
       })\ngif: ${request.gifUrl} `,
       components: [],
     });
@@ -44,12 +34,8 @@ export default async function run(
   } else if (args[0] == "reject") {
     await request.message.edit("The owner rejected your request");
     await interaction.update({
-      content: `**REJECTED**\nGif remove request from in <#${
-        request.message.channel.id
-      }> (${
-        request.message.channel instanceof GuildChannel
-          ? request.message.channel.name
-          : "DM"
+      content: `**REJECTED**\nGif remove request from in <#${request.message.channel.id}> (${
+        request.message.channel instanceof GuildChannel ? request.message.channel.name : "DM"
       })\ngif: ${request.gifUrl}`,
       components: [],
     });

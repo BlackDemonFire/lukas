@@ -1,9 +1,4 @@
-import {
-  BaseGuildTextChannel,
-  Message,
-  PermissionFlagsBits,
-  TextChannel,
-} from "discord.js";
+import { BaseGuildTextChannel, Message, PermissionFlagsBits, TextChannel } from "discord.js";
 import { Bot } from "../../bot.js";
 import { Command } from "../../modules/command.js";
 import type { ILanguage as lang } from "../../types.js";
@@ -13,10 +8,7 @@ export default class Dsa extends Command {
   constructor(client: Bot, category: string, name: string) {
     super(client, category, name);
   }
-  help = {
-    show: true,
-    usage: `${this.prefix}dsa [character] <message>`,
-  };
+  help = { show: true, usage: `${this.prefix}dsa [character] <message>` };
   async run(client: Bot, message: Message, args: string[], language: lang) {
     if (!message.channel.isSendable()) {
       logger.error(`channel ${message.channel.id} is not sendable`);
@@ -29,10 +21,7 @@ export default class Dsa extends Command {
     if (
       !message.guild?.members.me
         ?.permissionsIn(message.channel)
-        .has([
-          PermissionFlagsBits.ManageMessages,
-          PermissionFlagsBits.ManageWebhooks,
-        ])
+        .has([PermissionFlagsBits.ManageMessages, PermissionFlagsBits.ManageWebhooks])
     ) {
       await message.channel.send(language.command.dsa.permissions);
       return;
@@ -44,9 +33,7 @@ export default class Dsa extends Command {
       sl = true;
     } else {
       await message.delete();
-      await message.author.send({
-        content: language.command.dsa.contentRequired,
-      });
+      await message.author.send({ content: language.command.dsa.contentRequired });
     }
     const clean = args[0].slice().toLowerCase();
     let count = 0;
@@ -60,7 +47,7 @@ export default class Dsa extends Command {
     const char = await client.db.getDSAChar(clean);
     if (char) {
       displayName = char.displayname ?? "unknown";
-      displayImg = char.avatar;
+      displayImg = char.avatar ?? undefined;
     } else {
       let i = 0;
       while (i < count) {
@@ -71,14 +58,10 @@ export default class Dsa extends Command {
     }
     if (sl) {
       displayName = language.command.dsa.gameMaster;
-      displayImg =
-        "https://cdn.discordapp.com/icons/790938544293019649/d0843b10f5e7dabd10ebbea93acfca28.webp";
+      displayImg = "https://cdn.discordapp.com/icons/790938544293019649/d0843b10f5e7dabd10ebbea93acfca28.webp";
     }
     if (message.channel instanceof TextChannel) {
-      const webhook = await message.channel.createWebhook({
-        name: displayName,
-        avatar: displayImg,
-      });
+      const webhook = await message.channel.createWebhook({ name: displayName, avatar: displayImg });
       if (message.attachments.size == 0) {
         await webhook.send({ content: args.join(" ") });
       } else {

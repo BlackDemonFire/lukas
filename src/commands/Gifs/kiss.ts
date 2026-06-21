@@ -6,9 +6,5 @@ export default class Kiss extends MultiUserGifCommand {
     super(client, category, name);
   }
 
-  help = {
-    show: true,
-    usage: `${this.prefix}kiss [user]`,
-    category: "Gifs",
-  };
+  help = { show: true, usage: `${this.prefix}kiss [user]`, category: "Gifs" };
 }

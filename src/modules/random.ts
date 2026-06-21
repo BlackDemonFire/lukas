@@ -27,29 +27,21 @@ export class Random {
     if (min > max) {
       [max, min] = [min, max];
     }
-    const result = await this.api.generateIntegers({
-      min: min,
-      max: max,
-      n: 1,
-    });
+    const result = await this.api.generateIntegers({ min: min, max: max, n: 1 });
     return result.random.data[0];
   }
   async choice<T>(options: ArrayLike<T>): Promise<T> {
     if (!Array.isArray(options)) return options as T;
-    if (options.length == 1) return options[0];
+    if (options.length === 1) return options[0];
     const res = await this.int(0, options.length - 1);
     return options[res];
   }
-  async ints(min: number, max: number, count: number) {
-    if (max == min) return Array(count).fill(min);
+  async ints(min: number, max: number, count: number): Promise<number[]> {
+    if (max == min) return Array.from<number>({ length: count }).fill(min);
     if (min > max) {
       [max, min] = [min, max];
     }
-    const result = await this.api.generateIntegers({
-      min: min,
-      max: max,
-      n: count,
-    });
+    const result = await this.api.generateIntegers({ min: min, max: max, n: count });
     const data: number[] = result.random.data;
     return data;
   }

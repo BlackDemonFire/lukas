@@ -6,8 +6,5 @@ export default class Hold extends MultiUserGifCommand {
     super(client, category, name);
   }
 
-  help = {
-    show: true,
-    usage: `${this.prefix}hold [user]`,
-  };
+  help = { show: true, usage: `${this.prefix}hold [user]` };
 }

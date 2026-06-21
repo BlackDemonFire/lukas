@@ -1,9 +1,4 @@
-import {
-  EmbedBuilder,
-  Message,
-  OAuth2Scopes,
-  PermissionsBitField,
-} from "discord.js";
+import { EmbedBuilder, Message, OAuth2Scopes, PermissionsBitField } from "discord.js";
 import { Bot } from "../../bot.js";
 import { Command } from "../../modules/command.js";
 import logger from "../../modules/logger.js";
@@ -28,8 +23,5 @@ export default class Link extends Command {
       .setColor(0xaa7777);
     await message.channel.send({ embeds: [embed] });
   }
-  help = {
-    show: true,
-    usage: `${this.prefix}link`,
-  };
+  help = { show: true, usage: `${this.prefix}link` };
 }

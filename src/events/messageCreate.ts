@@ -11,8 +11,7 @@ async function cmd(client: Bot, message: Message) {
   if (!commandname) commandname = "";
   const command = client.commands.get(commandname);
   if (!command) return;
-  if (!client.commandusage.has(message.author.id))
-    client.commandusage.set(message.author.id, []);
+  if (!client.commandusage.has(message.author.id)) client.commandusage.set(message.author.id, []);
   if (commandname == "ping") {
     const commandusage = client.commandusage.get(message.author.id)!;
     commandusage.push(message.createdTimestamp);
@@ -33,12 +32,10 @@ async function cmd(client: Bot, message: Message) {
 export async function event(client: Bot, message: Message) {
   try {
     if (message.author.bot) return;
-    if (message.guild)
-      await client.db.ensureGuildSettings(message.guild, settings.DEFAULTLANG);
+    if (message.guild) await client.db.ensureGuildSettings(message.guild, settings.DEFAULTLANG);
     await client.db.ensureUser(message.author);
-    if (message.content.startsWith(client.prefix))
-      return await cmd(client, message);
+    if (message.content.startsWith(client.prefix)) return await cmd(client, message);
   } catch (err) {
-    logger.error(`A critical error occured: ${err}`);
+    logger.error(`A critical error occured: `, err);
   }
 }

@@ -10,9 +10,7 @@ export async function event(client: Bot, interaction: BaseInteraction) {
     const fn = client.interactions.get(name);
 
     if (!fn) {
-      logger.warn(
-        `No function for requested interaction ${name} (called with args ${args})`,
-      );
+      logger.warn(`No function for requested interaction ${name} (called with args ${JSON.stringify(args)})`);
       return;
     }
     await fn(client, interaction, args);

@@ -1,13 +1,14 @@
 {
   esbuild,
-  nodejs_20,
-  pnpm,
+  nodejs_24,
   lib,
   stdenv,
+  pnpmConfigHook,
+  fetchPnpmDeps,
   ...
 }:
 let
-  node_ver = nodejs_20;
+  node_ver = nodejs_24;
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "lukasbot";
@@ -17,13 +18,14 @@ stdenv.mkDerivation (finalAttrs: {
   nativeBuildInputs = [
     esbuild
     node_ver
-    pnpm.configHook
+    pnpmConfigHook
   ];
 
-  pnpmDeps = pnpm.fetchDeps {
+  pnpmDeps = fetchPnpmDeps {
     inherit (finalAttrs) pname version src;
     installFlags = "--production";
-    hash = "sha256-f671A/axvoho+qnHkqlcwZS1VpeJww8XBcGjsFyFVWo=";
+    fetcherVersion = 4;
+    hash = lib.fakeHash; # "sha256-gvRfgPHbZmCU50RUqUH3Z0mth5TEqfAY4zxc2uSQpzE=";
   };
   buildPhase = ''
     runHook preBuild

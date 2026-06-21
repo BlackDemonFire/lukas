@@ -6,8 +6,5 @@ export default class Cuddle extends MultiUserGifCommand {
     super(client, category, name);
   }
 
-  help = {
-    show: true,
-    usage: `${this.prefix}cuddle [user]`,
-  };
+  help = { show: true, usage: `${this.prefix}cuddle [user]` };
 }

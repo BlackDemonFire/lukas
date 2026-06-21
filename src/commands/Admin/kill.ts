@@ -8,19 +8,14 @@ export default class Kill extends Command {
   constructor(client: Bot, category: string, name: string) {
     super(client, category, name);
   }
-  help = {
-    show: false,
-    usage: `${this.prefix}kill`,
-  };
+  help = { show: false, usage: `${this.prefix}kill` };
   async run(client: Bot, message: Message, _args: string[], language: lang) {
     if (!message.channel.isSendable()) {
       logger.error(`channel ${message.channel.id} is not sendable`);
       return;
     }
     if (!super.isOwner(message)) {
-      await message.channel.send({
-        content: language.command.kill.permissionError,
-      });
+      await message.channel.send({ content: language.command.kill.permissionError });
       return;
     }
     if (message !== null) {
@@ -28,10 +23,7 @@ export default class Kill extends Command {
       const embed = new EmbedBuilder()
         .setImage("https://i.imgflip.com/19f1vf.jpg")
         .setColor(0x36393e)
-        .setFooter({
-          text: `@${message.author.username}`,
-          iconURL: message.author.defaultAvatarURL,
-        });
+        .setFooter({ text: `@${message.author.username}`, iconURL: message.author.defaultAvatarURL });
       await message.channel.send({ content: plaintext, embeds: [embed] });
     }
     logger.info("stopping bot...");

@@ -6,8 +6,5 @@ export default class Hug extends MultiUserGifCommand {
     super(client, category, name);
   }
 
-  help = {
-    show: true,
-    usage: `${this.prefix}hug [user]`,
-  };
+  help = { show: true, usage: `${this.prefix}hug [user]` };
 }

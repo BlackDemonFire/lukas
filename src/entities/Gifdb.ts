@@ -1,13 +1,9 @@
-import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
+import { defineEntity, p } from "@mikro-orm/core";
 
-@Entity()
-export class Gifdb {
-  @PrimaryKey({ columnType: "text" })
-  url!: string;
+const GifdbSchema = defineEntity({
+  name: "Gifdb",
+  properties: { url: p.text().primary(), giftype: p.text().nullable(), actiontype: p.text().nullable() },
+});
+export class Gifdb extends GifdbSchema.class {}
 
-  @Property({ columnType: "text", nullable: true })
-  giftype?: string;
-
-  @Property({ columnType: "text", nullable: true })
-  actiontype?: string;
-}
+GifdbSchema.setClass(Gifdb);

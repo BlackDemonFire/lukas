@@ -1,4 +1,5 @@
 {
-    "typescript.tsdk": "node_modules/typescript/lib",
-    "nixEnvSelector.nixFile": "${workspaceFolder}/flake.nix"
+    "js/ts.tsdk.path": "node_modules/typescript/lib",
+    "nixEnvSelector.nixFile": "${workspaceFolder}/flake.nix",
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
 }

@@ -1,4 +1,4 @@
-import { EmbedBuilder, Message, SendableChannels } from "discord.js";
+import { EmbedBuilder, Message, type SendableChannels } from "discord.js";
 import { Bot } from "../../bot.js";
 import { Command } from "../../modules/command.js";
 import logger from "../../modules/logger.js";
@@ -8,19 +8,14 @@ export default class Ping extends Command {
   constructor(client: Bot, category: string, name: string) {
     super(client, category, name);
   }
-  help = {
-    show: true,
-    usage: `${this.prefix}ping`,
-  };
+  help = { show: true, usage: `${this.prefix}ping` };
   async run(client: Bot, message: Message, _args: string[], language: lang) {
     if (!message.channel.isSendable()) {
       logger.error(`channel ${message.channel.id} is not sendable`);
       return;
     }
     let gif;
-    const commandusage: Array<number> = client.commandusage.get(
-      message.author.id,
-    )!;
+    const commandusage: Array<number> = client.commandusage.get(message.author.id)!;
     if (commandusage.length == 3) {
       logger.debug(commandusage[2] + "|" + commandusage[0]);
       const diff = commandusage[2] - commandusage[0];
@@ -39,51 +34,31 @@ export default class Ping extends Command {
       await this.runAprilFools(message);
       return;
     }
-    const msg: Message | void = await message.channel
-      .send({ content: `${client.emojis.resolve("498280749271744512")} Ping?` })
-      .catch((e) => {
-        logger.error(e);
-      });
+    let msg: Message<boolean> | undefined = undefined;
+    try {
+      msg = await message.channel.send({ content: "<a:load_1:498280749271744512> Ping?" });
+    } catch (e) {
+      logger.error(e);
+    }
     if (!msg) return;
     const embed = new EmbedBuilder()
       .setColor(0x7289da)
-      .setDescription(
-        `${language.command.ping.apiLatency} ${Math.round(client.ws.ping)}ms.`,
-      )
-      .setAuthor({
-        name: `${language.command.ping.latency} ${
-          msg.createdTimestamp - message.createdTimestamp
-        }ms.`,
-      })
+      .setDescription(`${language.command.ping.apiLatency} ${Math.round(client.ws.ping)}ms.`)
+      .setAuthor({ name: `${language.command.ping.latency} ${msg.createdTimestamp - message.createdTimestamp}ms.` })
       .setFooter({ text: `@${message.author.username}` });
-    if (gif)
-      embed.setImage(
-        "https://cdn.discordapp.com/attachments/605382573413236758/744671452267282472/Alert.gif",
-      );
-    await msg.edit({
-      content: "<:check_4:498523284804075541> Pong!",
-      embeds: [embed],
-    });
+    if (gif) embed.setImage("https://cdn.discordapp.com/attachments/605382573413236758/744671452267282472/Alert.gif");
+    await msg.edit({ content: "<:check_4:498523284804075541> Pong!", embeds: [embed] });
   }
 
   private async runAprilFools(message: Message<boolean>) {
     const embed = new EmbedBuilder()
       .setColor(0x7289da)
       .setDescription(message.author.toString())
-      .setAuthor({
-        name: `Ping: @${
-          message.member ? message.member.displayName : message.author.username
-        }`,
-      })
+      .setAuthor({ name: `Ping: @${message.member ? message.member.displayName : message.author.username}` })
       .setFooter({
-        text: `@${
-          message.member ? message.member.displayName : message.author.username
-        }`,
+        text: `@${message.member ? message.member.displayName : message.author.username}`,
         iconURL: message.author.defaultAvatarURL,
       });
-    await (message.channel as SendableChannels).send({
-      content: message.author.toString(),
-      embeds: [embed],
-    });
+    await (message.channel as SendableChannels).send({ content: message.author.toString(), embeds: [embed] });
   }
 }

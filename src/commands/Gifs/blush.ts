@@ -6,8 +6,5 @@ export default class Blush extends SingleUserGifCommand {
     super(client, category, name);
   }
 
-  help = {
-    show: true,
-    usage: `${this.prefix}blush`,
-  };
+  help = { show: true, usage: `${this.prefix}blush` };
 }

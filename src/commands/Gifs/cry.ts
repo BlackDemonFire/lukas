@@ -6,8 +6,5 @@ export default class Cry extends SingleUserGifCommand {
     super(client, category, name);
   }
 
-  help = {
-    show: true,
-    usage: `${this.prefix}cry`,
-  };
+  help = { show: true, usage: `${this.prefix}cry` };
 }

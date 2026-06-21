@@ -1,12 +1,4 @@
-import {
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-  GuildChannel,
-  Message,
-  Team,
-  User,
-} from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, GuildChannel, Message, Team, User } from "discord.js";
 import type { Bot } from "../../bot.js";
 import { Command } from "../../modules/command.js";
 import { GifRequest, activeRequests } from "../../modules/dbo/gifRequest.js";
@@ -18,12 +10,7 @@ export default class Newgif extends Command {
     super(client, category, name);
   }
 
-  async run(
-    client: Bot,
-    message: Message,
-    args: string[],
-    language: ILanguage,
-  ) {
+  async run(client: Bot, message: Message, args: string[], language: ILanguage) {
     if (!message.channel.isSendable()) {
       logger.error(`channel ${message.channel.id} is not sendable`);
       return;
@@ -51,20 +38,11 @@ export default class Newgif extends Command {
     const requestMessage = await message.channel.send({ content: response });
     activeRequests.set(
       requestMessage.id,
-      new GifRequest(
-        requestMessage,
-        requestMessage.id,
-        message.channel.id,
-        url,
-        action,
-        type,
-      ),
+      new GifRequest(requestMessage, requestMessage.id, message.channel.id, url, action, type),
     );
     for (const admin of admins) {
       await admin.send({
-        content: `Gif check request from ${message.author.tag} in <#${
-          message.channel.id
-        }> (${
+        content: `Gif check request from ${message.author.tag} in <#${message.channel.id}> (${
           message.channel instanceof GuildChannel ? message.channel.name : "DM"
         })\ngif: ${url}\naction: ${action}\ntype: ${type}`,
         components: [
@@ -83,8 +61,5 @@ export default class Newgif extends Command {
     }
   }
 
-  help = {
-    show: true,
-    usage: `${this.prefix}newgif <url> <command> [type (defaults to anime)]`,
-  };
+  help = { show: true, usage: `${this.prefix}newgif <url> <command> [type (defaults to anime)]` };
 }

@@ -25,8 +25,6 @@ export default class Dsaadd extends Command {
     const img: string = args[0].includes("http") ? args.shift()! : "";
     const name: string = args.join(" ");
     await client.db.newDSAChar(pref, name, img);
-    await message.channel.send({
-      content: language.command.dsaadd.success.replace("{pref}", pref),
-    });
+    await message.channel.send({ content: language.command.dsaadd.success.replace("{pref}", pref) });
   }
 }

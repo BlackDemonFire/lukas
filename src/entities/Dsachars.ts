@@ -1,13 +1,10 @@
-import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
+import { defineEntity, p } from "@mikro-orm/core";
 
-@Entity()
-export class Dsachars {
-  @PrimaryKey({ columnType: "text" })
-  prefix!: string;
+const DsacharsSchema = defineEntity({
+  name: "Dsachars",
+  properties: { prefix: p.text().primary(), avatar: p.text().nullable(), displayname: p.text().nullable() },
+});
 
-  @Property({ columnType: "text", nullable: true })
-  avatar?: string;
+export class Dsachars extends DsacharsSchema.class {}
 
-  @Property({ columnType: "text", nullable: true })
-  displayname?: string;
-}
+DsacharsSchema.setClass(Dsachars);

@@ -1,12 +1,4 @@
-import {
-  ClientApplication,
-  ColorResolvable,
-  Colors,
-  EmbedBuilder,
-  Message,
-  Team,
-  User,
-} from "discord.js";
+import { ClientApplication, type ColorResolvable, Colors, EmbedBuilder, Message, Team, User } from "discord.js";
 import { Bot } from "../bot.js";
 import type { command, ILanguage } from "../types.js";
 import logger from "./logger.js";
@@ -23,13 +15,7 @@ abstract class Command implements command {
     this.category = category;
     this.name = name;
   }
-  // eslint-disable-next-line no-unused-vars
-  abstract run(
-    client: Bot,
-    message: Message,
-    args: string[],
-    language: ILanguage,
-  ): Promise<void>;
+  abstract run(client: Bot, message: Message, args: string[], language: ILanguage): Promise<void>;
   isAprilFools() {
     const date = new Date();
     const myDate = date.toLocaleDateString();
@@ -53,12 +39,7 @@ abstract class GifCommand extends Command {
   protected constructor(client: Bot, category: string, name: string) {
     super(client, category, name);
   }
-  async parseUser(
-    client: Bot,
-    message: Message,
-    args: string[],
-    language: ILanguage,
-  ) {
+  async parseUser(client: Bot, message: Message, args: string[], language: ILanguage) {
     let userB: string = "";
     const mentioned: string[] = [];
     let self: boolean = false;
@@ -75,9 +56,7 @@ abstract class GifCommand extends Command {
           if (!user) {
             name = arg;
           } else if (!name || name == "") {
-            const member = message.guild
-              ? message.guild.members.resolve(user)
-              : null;
+            const member = message.guild ? message.guild.members.resolve(user) : null;
             name = member ? member.displayName : user.username;
           }
           if (user == message.author) {
@@ -126,12 +105,7 @@ abstract class GifCommand extends Command {
     return langCommand[attrName] as unknown as string[];
   }
 
-  protected async buildAndSendEmbed(
-    gif: string,
-    responseString: string,
-    color: ColorResolvable,
-    message: Message,
-  ) {
+  protected async buildAndSendEmbed(gif: string, responseString: string, color: ColorResolvable, message: Message) {
     if (!message.channel.isSendable()) {
       throw new Error(`channel ${message.channel.id} is not sendable`);
     }
@@ -145,8 +119,8 @@ abstract class GifCommand extends Command {
 
   protected async getColor(client: Bot, author: User) {
     const rawColor = await client.db.getColor(author);
-
-    logger.debug(`available colors: ${rawColor.split(";")}`);
+    const listFmt = new Intl.ListFormat();
+    logger.debug(`available colors: ${listFmt.format(rawColor.split(";"))}`);
     return client.random.choice(rawColor.split(";"));
   }
 }
@@ -156,29 +130,16 @@ abstract class SingleUserGifCommand extends GifCommand {
     super(client, category, name);
   }
 
-  async run(
-    client: Bot,
-    message: Message,
-    _args: string[],
-    language: ILanguage,
-  ) {
-    const gif: string = await client.db.getGif(
-      this.name,
-      await client.db.getGiftype(message.author),
-    );
+  async run(client: Bot, message: Message, _args: string[], language: ILanguage) {
+    const gif: string = await client.db.getGif(this.name, await client.db.getGiftype(message.author));
     let userA: string = await client.db.getName(message.author);
     const rawColor = await this.getColor(client, message.author);
     let color: ColorResolvable;
     if (rawColor in Colors) color = rawColor as keyof typeof Colors;
     else color = "Random";
-    if (userA == "")
-      userA = message.guild
-        ? message.member!.displayName
-        : message.author.username;
+    if (userA == "") userA = message.guild ? message.member!.displayName : message.author.username;
     const responseString: string = (
-      await client.random.choice(
-        this.getGifLanguageObject(language, "singleUser"),
-      )
+      await client.random.choice(this.getGifLanguageObject(language, "singleUser"))
     ).replace(/{a}/g, userA);
     await this.buildAndSendEmbed(gif, responseString, color, message);
   }
@@ -189,43 +150,22 @@ abstract class MultiUserGifCommand extends GifCommand {
     super(client, category, name);
   }
 
-  async run(
-    client: Bot,
-    message: Message,
-    args: string[],
-    language: ILanguage,
-  ) {
-    const gif: string = await client.db.getGif(
-      this.name,
-      await client.db.getGiftype(message.author),
-    );
+  async run(client: Bot, message: Message, args: string[], language: ILanguage) {
+    const gif: string = await client.db.getGif(this.name, await client.db.getGiftype(message.author));
     let userA: string = await client.db.getName(message.author);
     const rawColor = await this.getColor(client, message.author);
     const color: ColorResolvable = rawColor as ColorResolvable;
 
-    if (userA == "")
-      userA = message.guild
-        ? message.member!.displayName
-        : message.author.username;
-    const userB: string = await super.parseUser(
-      client,
-      message,
-      args,
-      language,
-    );
+    if (userA == "") userA = message.guild ? message.member!.displayName : message.author.username;
+    const userB: string = await super.parseUser(client, message, args, language);
     let responseString: string;
     if (userB == "") {
-      responseString = (
-        await client.random.choice(
-          this.getGifLanguageObject(language, "singleUser"),
-        )
-      ).replace(/{a}/g, userA);
+      responseString = (await client.random.choice(this.getGifLanguageObject(language, "singleUser"))).replace(
+        /{a}/g,
+        userA,
+      );
     } else {
-      responseString = (
-        await client.random.choice(
-          this.getGifLanguageObject(language, "multiUser"),
-        )
-      )
+      responseString = (await client.random.choice(this.getGifLanguageObject(language, "multiUser")))
         .replace(/{a}/g, userA)
         .replace(/{b}/g, userB);
     }
