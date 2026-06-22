@@ -5,8 +5,6 @@ import { start } from "./startclient.js";
 
 const client: Bot = start();
 
-void client.login(settings.TOKEN);
-
 async function shutdown() {
   await client.destroy();
   process.exit(0);
@@ -19,3 +17,5 @@ process.on("SIGINT", shutdown);
 process.on("uncaughtException", (ex) => {
   logger.error("Uncaught exception", ex);
 });
+
+await client.login(settings.TOKEN);
