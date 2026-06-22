@@ -16,4 +16,6 @@ async function shutdown() {
 process.on("SIGTERM", shutdown);
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 process.on("SIGINT", shutdown);
-process.on("uncaughtException", logger.error.bind(logger));
+process.on("uncaughtException", (ex) => {
+  logger.error("Uncaught exception", ex);
+});
