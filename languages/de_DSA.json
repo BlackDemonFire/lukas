@@ -77,6 +77,14 @@
       "noSuchLanguage": "Die angefragte Sprache ist nicht verfügbar. Folgende Sprachen sind verfügbar: {languages}.",
       "success": "Die Sprache wurde zu {lang} geändert."
     },
+    "autoroll": {
+      "description": "Aktiviere/deaktiviere automatisches würfeln für diesen Discord Server",
+      "permissionError": "Nur Administratoren dürfen diese Einstellung ändern.",
+      "invalidArg": "Die gewählte Option ist nicht verfügbar. Folgende Optionen sind verfügbar: \"j\"/\"n\".",
+      "success": "Die Einstellung wurde zu {active} geändert.",
+      "active": "aktiv",
+      "inactive": "inaktiv"
+    },
     "kiss": {
       "description": "Jemanden küssen",
       "singleUser": ["Soll ich dich küssen {a} 🥺"],

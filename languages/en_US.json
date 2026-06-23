@@ -77,6 +77,14 @@
       "noSuchLanguage": "The requested Language is not available. Available languages are {languages}.",
       "success": "Changed the language for this guild to {lang}"
     },
+    "autoroll": {
+      "description": "Enable/disable automatic dice-rolls for the guild",
+      "permissionError": "Only Administrators are allowed to change this setting.",
+      "invalidArg": "The requested option is unavailable. Available options are: \"y\"/\"n\".",
+      "success": "Changed the setting to {active}.",
+      "active": "active",
+      "inactive": "inactive"
+    },
     "kiss": {
       "description": "Kiss a User",
       "singleUser": ["I will kiss you {a} 🥺"],

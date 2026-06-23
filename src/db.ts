@@ -105,6 +105,11 @@ export class DB {
     const data = await repo.findOne({ id: guild.id });
     return data?.language ?? "";
   }
+  async getAutorollEnabled(guild: Guild): Promise<boolean> {
+    const { repo } = this.settingsRepository;
+    const data = await repo.findOne({ id: guild.id });
+    return data?.autorollEnabled ?? false;
+  }
   async getName(user: User): Promise<string> {
     const { repo } = this.userRepository;
     const data = await repo.findOne({ id: user.id });
@@ -157,6 +162,13 @@ export class DB {
     const settings = await repo.findOneOrFail({ id: guild.id });
     logger.debug(`Setting language for ${guild.name} to ${lang}`);
     wrap(settings).assign({ language: lang }, { mergeObjectProperties: true });
+    await db.flush();
+  }
+  async setAutorollEnabled(guild: Guild, enabled: boolean) {
+    const { repo, db } = this.settingsRepository;
+    const settings = await repo.findOneOrFail({ id: guild.id });
+    logger.debug(`Setting Autoroll for ${guild.name} to ${enabled}`);
+    wrap(settings).assign({ autorollEnabled: enabled }, { mergeObjectProperties: true });
     await db.flush();
   }
   async setName(user: User, name: string) {

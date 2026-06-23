@@ -39,6 +39,14 @@ interface ILangCommand {
   new: { description: string; getPrefix: string; getAvatar: string; getName: string; success: string };
   name: { description: string; success: string };
   lang: { description: string; success: string; noSuchLanguage: string; permissionError: string };
+  autoroll: {
+    description: string;
+    success: string;
+    invalidArg: string;
+    permissionError: string;
+    active: string;
+    inactive: string;
+  };
   kiss: { description: string; singleUser: string[]; multiUser: string[] };
   kill: { description: string; success: string; permissionError: string };
   hug: { description: string; singleUser: string[]; multiUser: string[] };

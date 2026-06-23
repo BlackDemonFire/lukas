@@ -154,6 +154,23 @@
       "name": "settings",
       "schema": "public",
       "columns": {
+        "autoroll_enabled": {
+          "name": "autoroll_enabled",
+          "type": "boolean",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": "false",
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "boolean"
+        },
         "guild": {
           "name": "guild",
           "type": "text",

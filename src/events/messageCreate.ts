@@ -2,7 +2,8 @@ import { Message } from "discord.js";
 import { Bot } from "../bot.js";
 import logger from "../modules/logger.js";
 import settings from "../modules/settings.js";
-import type { ILanguage as lang } from "../types.js";
+import type { ILanguage as ILanguage } from "../types.js";
+import { executeRollIfEnabled } from "../modules/rollHandler.js";
 
 async function cmd(client: Bot, message: Message) {
   const args = message.content.slice(client.prefix.length).trim().split(" ");
@@ -19,7 +20,7 @@ async function cmd(client: Bot, message: Message) {
   } else {
     client.commandusage.set(message.author.id, []);
   }
-  let language: lang;
+  let language: ILanguage;
   if (message.guild) {
     language = client.languages.get(await client.db.getLang(message.guild))!;
   } else {
@@ -35,6 +36,7 @@ export async function event(client: Bot, message: Message) {
     if (message.guild) await client.db.ensureGuildSettings(message.guild, settings.DEFAULTLANG);
     await client.db.ensureUser(message.author);
     if (message.content.startsWith(client.prefix)) return await cmd(client, message);
+    await executeRollIfEnabled(client, message);
   } catch (err) {
     logger.error(`A critical error occured: `, err);
   }
