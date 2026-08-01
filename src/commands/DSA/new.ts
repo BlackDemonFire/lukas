@@ -43,7 +43,7 @@ export default class New extends Command {
       }
       switch (i) {
         case 1:
-          pref = msg.content.toLowerCase().split(" ")[0];
+          pref = msg.content.toLowerCase().split(" ")[0]!;
           await msg.channel.send({ content: language.command.new.getAvatar });
           if (!pref.startsWith("$")) pref = `$${pref}`;
           break;

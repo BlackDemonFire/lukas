@@ -48,7 +48,7 @@ abstract class GifCommand extends Command {
         let name: string = "";
         const ping = arg.match(/<@!?(\d+)>/);
         if (ping) {
-          const user = await client.users.fetch(ping[1]).catch((e) => {
+          const user = await client.users.fetch(ping[1]!).catch((e) => {
             logger.error(e);
             return null;
           });
@@ -71,7 +71,7 @@ abstract class GifCommand extends Command {
       if (userB == "" && !self) {
         switch (mentioned.length) {
           case 1:
-            userB = mentioned[0];
+            userB = mentioned[0]!;
             break;
           case 2:
             userB = mentioned.join(` ${language.general.and} `);

@@ -8,42 +8,20 @@
         "roll": {
           "type": "object",
           "properties": {
-            "description": {
-              "type": "string"
-            },
+            "description": { "type": "string" },
             "errors": {
               "type": "object",
               "properties": {
-                "tooManyArgs": {
-                  "type": "string"
-                },
-                "doubleDiceType": {
-                  "type": "string"
-                },
-                "doubleRollCount": {
-                  "type": "string"
-                },
-                "schroedingersArgument": {
-                  "type": "string"
-                },
-                "noDiceType": {
-                  "type": "string"
-                },
-                "noSides": {
-                  "type": "string"
-                },
-                "rolltypeUndefined": {
-                  "type": "string"
-                },
-                "tooManyDice": {
-                  "type": "string"
-                },
-                "rollcountNotNumeric": {
-                  "type": "string"
-                },
-                "rolltypeNotNumeric": {
-                  "type": "string"
-                }
+                "tooManyArgs": { "type": "string" },
+                "doubleDiceType": { "type": "string" },
+                "doubleRollCount": { "type": "string" },
+                "schroedingersArgument": { "type": "string" },
+                "noDiceType": { "type": "string" },
+                "noSides": { "type": "string" },
+                "rolltypeUndefined": { "type": "string" },
+                "tooManyDice": { "type": "string" },
+                "rollcountNotNumeric": { "type": "string" },
+                "rolltypeNotNumeric": { "type": "string" }
               },
               "required": [
                 "tooManyArgs",
@@ -63,22 +41,11 @@
               "properties": {
                 "noDice": {
                   "type": "object",
-                  "properties": {
-                    "plaintext": {
-                      "type": "string"
-                    },
-                    "embed": {
-                      "type": "string"
-                    }
-                  },
+                  "properties": { "plaintext": { "type": "string" }, "embed": { "type": "string" } },
                   "required": ["plaintext", "embed"]
                 },
-                "singleDice": {
-                  "type": "string"
-                },
-                "multiDice": {
-                  "type": "string"
-                }
+                "singleDice": { "type": "string" },
+                "multiDice": { "type": "string" }
               },
               "required": ["noDice", "singleDice", "multiDice"]
             }
@@ -88,280 +55,143 @@
         "restart": {
           "type": "object",
           "properties": {
-            "description": {
-              "type": "string"
-            },
-            "start": {
-              "type": "string"
-            },
-            "success": {
-              "type": "string"
-            },
-            "error": {
-              "type": "string"
-            }
+            "description": { "type": "string" },
+            "start": { "type": "string" },
+            "success": { "type": "string" },
+            "error": { "type": "string" }
           },
           "required": ["description", "start", "success", "error"]
         },
         "purr": {
           "type": "object",
           "properties": {
-            "description": {
-              "type": "string"
-            },
-            "singleUser": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
+            "description": { "type": "string" },
+            "singleUser": { "type": "array", "items": { "type": "string" } }
           },
           "required": ["description", "singleUser"]
         },
         "ping": {
           "type": "object",
           "properties": {
-            "description": {
-              "type": "string"
-            },
-            "apiLatency": {
-              "type": "string"
-            },
-            "latency": {
-              "type": "string"
-            }
+            "description": { "type": "string" },
+            "apiLatency": { "type": "string" },
+            "latency": { "type": "string" }
           },
           "required": ["description", "apiLatency", "latency"]
         },
         "pat": {
           "type": "object",
           "properties": {
-            "description": {
-              "type": "string"
-            },
-            "singleUser": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "multiUser": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
+            "description": { "type": "string" },
+            "singleUser": { "type": "array", "items": { "type": "string" } },
+            "multiUser": { "type": "array", "items": { "type": "string" } }
           },
           "required": ["description", "singleUser", "multiUser"]
         },
         "newgif": {
           "type": "object",
           "properties": {
-            "description": {
-              "type": "string"
-            },
-            "success": {
-              "type": "string"
-            },
-            "wrongArgs": {
-              "type": "string"
-            },
-            "checking": {
-              "type": "string"
-            }
+            "description": { "type": "string" },
+            "success": { "type": "string" },
+            "wrongArgs": { "type": "string" },
+            "checking": { "type": "string" }
           },
           "required": ["description", "success", "wrongArgs", "checking"]
         },
         "removegif": {
           "type": "object",
           "properties": {
-            "description": {
-              "type": "string"
-            },
-            "success": {
-              "type": "string"
-            },
-            "wrongArgs": {
-              "type": "string"
-            },
-            "checking": {
-              "type": "string"
-            }
+            "description": { "type": "string" },
+            "success": { "type": "string" },
+            "wrongArgs": { "type": "string" },
+            "checking": { "type": "string" }
           },
           "required": ["description", "success", "wrongArgs", "checking"]
         },
         "new": {
           "type": "object",
           "properties": {
-            "description": {
-              "type": "string"
-            },
-            "getPrefix": {
-              "type": "string"
-            },
-            "getAvatar": {
-              "type": "string"
-            },
-            "getName": {
-              "type": "string"
-            },
-            "success": {
-              "type": "string"
-            }
+            "description": { "type": "string" },
+            "getPrefix": { "type": "string" },
+            "getAvatar": { "type": "string" },
+            "getName": { "type": "string" },
+            "success": { "type": "string" }
           },
-          "required": [
-            "description",
-            "getPrefix",
-            "getAvatar",
-            "getName",
-            "success"
-          ]
+          "required": ["description", "getPrefix", "getAvatar", "getName", "success"]
         },
         "name": {
           "type": "object",
-          "properties": {
-            "description": {
-              "type": "string"
-            },
-            "success": {
-              "type": "string"
-            }
-          },
+          "properties": { "description": { "type": "string" }, "success": { "type": "string" } },
           "required": ["description", "success"]
         },
         "lang": {
           "type": "object",
           "properties": {
-            "description": {
-              "type": "string"
-            },
-            "permissionError": {
-              "type": "string"
-            },
-            "noSuchLanguage": {
-              "type": "string"
-            },
-            "success": {
-              "type": "string"
-            }
+            "description": { "type": "string" },
+            "permissionError": { "type": "string" },
+            "noSuchLanguage": { "type": "string" },
+            "success": { "type": "string" }
           },
-          "required": [
-            "description",
-            "permissionError",
-            "noSuchLanguage",
-            "success"
-          ]
+          "required": ["description", "permissionError", "noSuchLanguage", "success"]
+        },
+
+        "autoroll": {
+          "type": "object",
+          "properties": {
+            "description": { "type": "string" },
+            "permissionError": { "type": "string" },
+            "invalidArg": { "type": "string" },
+            "success": { "type": "string" },
+            "active": { "type": "string" },
+            "inactive": { "type": "string" }
+          },
+          "required": ["description", "permissionError", "invalidArg", "success", "active", "inactive"]
         },
         "kiss": {
           "type": "object",
           "properties": {
-            "description": {
-              "type": "string"
-            },
-            "singleUser": {
-              "type": "array",
-              "items": [
-                {
-                  "type": "string"
-                }
-              ]
-            },
-            "multiUser": {
-              "type": "array",
-              "items": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "string"
-                }
-              ]
-            }
+            "description": { "type": "string" },
+            "singleUser": { "type": "array", "items": [{ "type": "string" }] },
+            "multiUser": { "type": "array", "items": [{ "type": "string" }, { "type": "string" }] }
           },
           "required": ["description", "singleUser", "multiUser"]
         },
         "kill": {
           "type": "object",
-          "properties": {
-            "description": {
-              "type": "string"
-            },
-            "success": {
-              "type": "string"
-            }
-          },
+          "properties": { "description": { "type": "string" }, "success": { "type": "string" } },
           "required": ["description", "success"]
         },
         "info": {
           "type": "object",
-          "properties": {
-            "description": {
-              "type": "string"
-            }
-          },
+          "properties": { "description": { "type": "string" } },
           "required": ["description"]
         },
         "hug": {
           "type": "object",
           "properties": {
-            "description": {
-              "type": "string"
-            },
-            "singleUser": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "multiUser": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
+            "description": { "type": "string" },
+            "singleUser": { "type": "array", "items": { "type": "string" } },
+            "multiUser": { "type": "array", "items": { "type": "string" } }
           },
           "required": ["description", "singleUser", "multiUser"]
         },
         "hold": {
           "type": "object",
           "properties": {
-            "description": {
-              "type": "string"
-            },
-            "singleUser": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "multiUser": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
+            "description": { "type": "string" },
+            "singleUser": { "type": "array", "items": { "type": "string" } },
+            "multiUser": { "type": "array", "items": { "type": "string" } }
           },
           "required": ["description", "singleUser", "multiUser"]
         },
         "help": {
           "type": "object",
           "properties": {
-            "description": {
-              "type": "string"
-            },
-            "commandNotFound": {
-              "type": "string"
-            },
+            "description": { "type": "string" },
+            "commandNotFound": { "type": "string" },
             "usage": {
               "type": "object",
-              "properties": {
-                "Usage": {
-                  "type": "string"
-                },
-                "args": {
-                  "type": "string"
-                }
-              },
+              "properties": { "Usage": { "type": "string" }, "args": { "type": "string" } },
               "required": ["Usage", "args"]
             }
           },
@@ -369,186 +199,94 @@
         },
         "giftype": {
           "type": "object",
-          "properties": {
-            "description": {
-              "type": "string"
-            },
-            "availableTypes": {
-              "type": "string"
-            }
-          },
+          "properties": { "description": { "type": "string" }, "availableTypes": { "type": "string" } },
           "required": ["description", "availableTypes"]
         },
         "gifactions": {
           "type": "object",
-          "properties": {
-            "description": {
-              "type": "string"
-            },
-            "response": {
-              "type": "string"
-            }
-          },
+          "properties": { "description": { "type": "string" }, "response": { "type": "string" } },
           "required": ["description", "response"]
         },
         "eval": {
           "type": "object",
-          "properties": {
-            "description": {
-              "type": "string"
-            },
-            "permissionError": {
-              "type": "string"
-            }
-          },
+          "properties": { "description": { "type": "string" }, "permissionError": { "type": "string" } },
           "required": ["description", "permissionError"]
         },
         "dsarm": {
           "type": "object",
           "properties": {
-            "description": {
-              "type": "string"
-            },
-            "noSuchChar": {
-              "type": "string"
-            },
-            "success": {
-              "type": "string"
-            }
+            "description": { "type": "string" },
+            "noSuchChar": { "type": "string" },
+            "success": { "type": "string" }
           },
           "required": ["description", "noSuchChar", "success"]
         },
         "dsaadd": {
           "type": "object",
           "properties": {
-            "description": {
-              "type": "string"
-            },
-            "args": {
-              "type": "string"
-            },
-            "success": {
-              "type": "string"
-            }
+            "description": { "type": "string" },
+            "args": { "type": "string" },
+            "success": { "type": "string" }
           },
           "required": ["description", "args", "success"]
         },
         "dsa": {
           "type": "object",
           "properties": {
-            "description": {
-              "type": "string"
-            },
-            "gameMaster": {
-              "type": "string"
-            },
-            "permissions": {
-              "type": "string"
-            },
-            "contentRequired": {
-              "type": "string"
-            }
+            "description": { "type": "string" },
+            "gameMaster": { "type": "string" },
+            "permissions": { "type": "string" },
+            "contentRequired": { "type": "string" }
           },
-          "required": [
-            "description",
-            "gameMaster",
-            "permissions",
-            "contentRequired"
-          ]
+          "required": ["description", "gameMaster", "permissions", "contentRequired"]
         },
         "cuddle": {
           "type": "object",
           "properties": {
-            "description": {
-              "type": "string"
-            },
-            "singleUser": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "multiUser": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
+            "description": { "type": "string" },
+            "singleUser": { "type": "array", "items": { "type": "string" } },
+            "multiUser": { "type": "array", "items": { "type": "string" } }
           },
           "required": ["description", "singleUser", "multiUser"]
         },
         "cry": {
           "type": "object",
           "properties": {
-            "description": {
-              "type": "string"
-            },
-            "singleUser": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
+            "description": { "type": "string" },
+            "singleUser": { "type": "array", "items": { "type": "string" } }
           },
           "required": ["description", "singleUser"]
         },
         "color": {
           "type": "object",
           "properties": {
-            "description": {
-              "type": "string"
-            },
-            "success": {
-              "type": "string"
-            },
-            "invalid_color": {
-              "type": "string"
-            },
-            "show_colors": {
-              "type": "string"
-            }
+            "description": { "type": "string" },
+            "success": { "type": "string" },
+            "invalid_color": { "type": "string" },
+            "show_colors": { "type": "string" }
           },
           "required": ["description", "success", "invalid_color"]
         },
         "addcolor": {
           "type": "object",
-          "properties": {
-            "description": {
-              "type": "string"
-            }
-          },
+          "properties": { "description": { "type": "string" } },
           "required": ["description"]
         },
         "removecolor": {
           "type": "object",
-          "properties": {
-            "description": {
-              "type": "string"
-            }
-          },
+          "properties": { "description": { "type": "string" } },
           "required": ["description"]
         },
         "setcolor": {
           "type": "object",
-          "properties": {
-            "description": {
-              "type": "string"
-            }
-          },
+          "properties": { "description": { "type": "string" } },
           "required": ["description"]
         },
         "blush": {
           "type": "object",
           "properties": {
-            "description": {
-              "type": "string"
-            },
-            "singleUser": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
+            "description": { "type": "string" },
+            "singleUser": { "type": "array", "items": { "type": "string" } }
           },
           "required": ["description", "singleUser"]
         }
@@ -584,19 +322,25 @@
     },
     "general": {
       "type": "object",
+      "properties": { "timeout": { "type": "string" }, "and": { "type": "string" }, "guildOnly": { "type": "string" } },
+      "required": ["timeout", "and", "guildOnly"]
+    },
+    "dragonborn": {
+      "type": "object",
       "properties": {
-        "timeout": {
-          "type": "string"
-        },
-        "and": {
-          "type": "string"
-        },
-        "guildOnly": {
-          "type": "string"
+        "dragonbornRoll": {
+          "properties": {
+            "success": { "type": "string" },
+            "critSuccess": { "type": "string" },
+            "critFailure": { "type": "string" },
+            "failed": { "type": "string" },
+            "invalidArg": { "type": "string" }
+          },
+          "required": ["success", "failed", "invalidArg", "critSuccess", "critFailure"]
         }
       },
-      "required": ["timeout", "and", "guildOnly"]
+      "required": ["dragonbornRoll"]
     }
   },
-  "required": ["command", "general"]
+  "required": ["command", "general", "dragonborn"]
 }

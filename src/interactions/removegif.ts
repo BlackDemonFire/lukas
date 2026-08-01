@@ -8,7 +8,7 @@ export default async function run(client: Bot, interaction: BaseInteraction, arg
     logger.warn("Got non-button interaction for removegif command");
     return;
   }
-  const request = activeRequests.get(args[1]);
+  const request = args[1] ? activeRequests.get(args[1]) : undefined;
   if (!request) {
     await interaction.update("Unable to find request");
     return;

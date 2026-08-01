@@ -17,7 +17,7 @@ export default class Gifaction extends Command {
     let actionsstring: string = "";
     switch (actions.length) {
       case 1:
-        actionsstring = actions[0];
+        actionsstring = actions[0]!;
         break;
       case 2:
         actionsstring = actions.join(` ${language.general.and} `);

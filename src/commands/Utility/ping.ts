@@ -18,7 +18,7 @@ export default class Ping extends Command {
     const commandusage: Array<number> = client.commandusage.get(message.author.id)!;
     if (commandusage.length == 3) {
       logger.debug(commandusage[2] + "|" + commandusage[0]);
-      const diff = commandusage[2] - commandusage[0];
+      const diff = commandusage[2]! - commandusage[0]!;
       logger.debug(diff);
       if (diff < 600000) {
         gif = true;

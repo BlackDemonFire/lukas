@@ -25,7 +25,7 @@ export function start() {
       .map(async (file: string) => {
         if (!file.endsWith(".js")) return;
         const event = (await import(`./events/${file}`)) as { event: (...args: unknown[]) => void };
-        const eventName = file.split(".")[0];
+        const eventName = file.split(".")[0]!;
         logger.debug(`Loading event ${eventName}`);
 
         client.on(eventName, event.event.bind(null, client));
@@ -47,7 +47,7 @@ export function start() {
         logger.error(`Interaction file ${file} does not export a handler function`);
         return;
       }
-      const interactionName = file.split(".")[0];
+      const interactionName = file.split(".")[0]!;
       logger.debug(`Loading interaction ${interactionName}`);
       client.interactions.set(
         interactionName,
@@ -67,7 +67,7 @@ export function start() {
       .filter((file) => file.endsWith(".js"))
       .map(async (file: string) => {
         const cmd: unknown = await import(`../${file}`);
-        const commandName = file.split("/").at(-1)!.split(".")[0];
+        const commandName = file.split("/").at(-1)!.split(".")[0]!;
         const category = file.split("/").at(-2);
         if (typeof cmd !== "object" || !cmd || !("default" in cmd)) {
           logger.error(`Command file ${file} did not provide a default export.`);
@@ -97,7 +97,7 @@ export function start() {
       .forEach((file: string) => {
         if (!file.endsWith(".json")) return;
         const lang = JSON.parse(readFileSync(`./languages/${file}`, "utf-8")) as ILanguage;
-        const langName = file.split(".")[0];
+        const langName = file.split(".")[0]!;
         logger.debug(`Registering language ${langName}`);
         client.languages.set(langName, lang);
         logger.debug(`Registered language ${langName}`);

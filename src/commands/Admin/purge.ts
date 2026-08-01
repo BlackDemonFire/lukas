@@ -30,7 +30,7 @@ export default class Purge extends Command {
     if (!(message.channel instanceof TextChannel)) return;
     let amount: number | undefined = undefined;
     try {
-      amount = parseInt(args[0]);
+      amount = parseInt(args[0] ?? "");
     } catch (e) {
       await message.channel.send({ content: language.command.purge.error.notNumeric });
       logger.error(e);

@@ -17,13 +17,13 @@ jobs:
 
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v14
+        uses: DeterminateSystems/nix-installer-action@v22
 
       - name: Setup Nix cache
-        uses: DeterminateSystems/magic-nix-cache-action@v8
+        uses: DeterminateSystems/magic-nix-cache-action@v14
 
 
       - name: Build Docker image
@@ -36,7 +36,7 @@ jobs:
           echo "path=$(readlink -f result)" >> "$GITHUB_OUTPUT"
 
       - name: Upload image
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: container-${{ matrix.arch }}
           path: ${{ steps.build.outputs.path }}
@@ -58,7 +58,7 @@ jobs:
     if: github.event_name == 'push'
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
        
       - name: Determine image name
         run: |
@@ -67,12 +67,12 @@ jobs:
           REPOSITORY: '${{ github.repository }}'
 
       - name: Download images
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: images
 
       - name: Login to registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ env.USERNAME }}

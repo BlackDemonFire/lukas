@@ -19,9 +19,9 @@ export default class Newgif extends Command {
       await message.channel.send(language.command.newgif.wrongArgs);
       return;
     }
-    const url: string = args[0];
-    const action: string = args[1].toLowerCase();
-    const type: string = args[2].toLowerCase();
+    const url: string = args[0]!;
+    const action: string = args[1]!.toLowerCase();
+    const type: string = args[2]!.toLowerCase();
     if (this.isOwner(message)) {
       await client.db.newGif(url, action, type);
       await message.channel.send(language.command.newgif.success);

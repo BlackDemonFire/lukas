@@ -17,9 +17,9 @@ export default class Roll extends Command {
     const msgauthor: string = message.author.username;
     // register args and variables
 
-    let rollarga: string = args[0];
-    let rollargb: string = args[1];
-    const rollargerror: string = args[2];
+    let rollarga: string = args[0]!;
+    let rollargb: string = args[1]!;
+    const rollargerror: string = args[2]!;
     let rolltype: number = 0;
     let dicetype = "wx";
     let rollargs;
@@ -31,12 +31,12 @@ export default class Roll extends Command {
       if (rollarga[0] !== "w" && rollarga[0] !== "d") {
         if (rollarga.includes("w")) {
           rollargs = rollarga.split("w");
-          rollarga = rollargs[0];
+          rollarga = rollargs[0]!;
           rollargb = `w${rollargs[1]}`;
           args[1] = rollargb;
         } else if (rollarga.includes("d")) {
           rollargs = rollarga.split("d");
-          rollarga = rollargs[0];
+          rollarga = rollargs[0]!;
           rollargb = `w${rollargs[1]}`;
           args[1] = rollargb;
         }

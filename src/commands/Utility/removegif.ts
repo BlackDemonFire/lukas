@@ -19,7 +19,7 @@ export default class Newgif extends Command {
       await message.channel.send(language.command.removegif.wrongArgs);
       return;
     }
-    const url: string = args[0];
+    const url: string = args[0]!;
     if (this.isOwner(message)) {
       await client.db.removeGif(url);
       await message.channel.send(language.command.removegif.success);

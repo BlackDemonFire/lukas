@@ -32,7 +32,7 @@ export default class Lang extends Command {
       const langs = Array.from(client.languages.keys());
       switch (langs.length) {
         case 1:
-          languages = langs[0];
+          languages = langs[0]!;
           break;
         case 2:
           languages = langs.join(` ${language.general.and} `);

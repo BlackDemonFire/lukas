@@ -156,5 +156,14 @@
     "timeout": "Du hast zu lange benötigt.",
     "and": "und",
     "guildOnly": "Dieser Befehl ist nicht in DMs ausführbar"
+  },
+  "dragonborn": {
+    "dragonbornRoll": {
+      "critFailure": "DÄMON! (ein kritischer Fehlschlag...)",
+      "critSuccess": "DRACHE! (ein kritischer Erfolg)",
+      "failed": "Der Wurf ist fehlgeschlagen: ({dice})",
+      "invalidArg": "Diese Probe ist ein automatischer Erfolg.",
+      "success": "Du hast den Wurf geschafft! ({dice})"
+    }
   }
 }

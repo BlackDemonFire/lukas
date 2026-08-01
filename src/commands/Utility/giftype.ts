@@ -17,7 +17,7 @@ export default class Giftype extends Command {
     let typesstring = "";
     switch (types.length) {
       case 1:
-        typesstring = types[0];
+        typesstring = types[0]!;
         break;
       case 2:
         typesstring = types.join(` ${language.general.and} `);
@@ -26,7 +26,7 @@ export default class Giftype extends Command {
         break;
     }
 
-    const giftype: string = args.length == 0 ? "" : args[0].toLowerCase();
+    const giftype: string = args.length === 0 ? "" : args[0]!.toLowerCase();
     if (args.length == 0 || !types.includes(giftype)) {
       await message.channel.send({ content: language.command.giftype.availableTypes.replace("{types}", typesstring) });
       return;

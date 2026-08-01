@@ -63,11 +63,15 @@ interface ILangCommand {
   color: { show_colors: string; description: string; success: string; invalid_color: string };
   blush: { description: string; singleUser: string[] };
 }
+interface ILangDragonborn {
+  dragonbornRoll: { success: string; failed: string; invalidArg: string; critSuccess: string; critFailure: string };
+}
 
 export interface ILanguage {
   command: ILangCommand;
   general: ILangGeneral;
   permissions: ILangPermissions;
+  dragonborn: ILangDragonborn;
 }
 export interface command {
   run: (client: Bot, message: Message, args: string[], language: ILanguage) => unknown;

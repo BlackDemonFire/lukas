@@ -190,5 +190,8 @@
     "timeout": "You took too long.",
     "and": "and",
     "guildOnly": "This command can only be used on a server."
+  },
+  "dragonborn": {
+    "dragonbornRoll": { "critFailure": "", "critSuccess": "", "failed": "", "invalidArg": "", "success": "" }
   }
 }

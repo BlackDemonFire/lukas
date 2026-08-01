@@ -34,13 +34,14 @@ export default class Dsa extends Command {
     } else {
       await message.delete();
       await message.author.send({ content: language.command.dsa.contentRequired });
+      return;
     }
-    const clean = args[0].slice().toLowerCase();
+    const clean = args[0]!.slice().toLowerCase();
     let count = 0;
     let npc: string = "";
     let displayName: string;
     let displayImg: string | undefined = undefined;
-    while (args[0].indexOf("$") == 0) {
+    while (args[0]!.indexOf("$") == 0) {
       npc = npc + args.shift();
       count = count + 1;
     }

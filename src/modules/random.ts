@@ -5,9 +5,9 @@ export class FakeRandom {
   }
   choice<T>(options: ArrayLike<T>): T {
     if (!Array.isArray(options)) return options as T;
-    if (options.length == 1) return options[0];
+    if (options.length == 1) return options[0]!;
     const res = this.int(0, options.length - 1);
-    return options[res];
+    return options[res]!;
   }
   ints(min: number, max: number, count: number) {
     const result: number[] = [];
@@ -28,13 +28,13 @@ export class Random {
       [max, min] = [min, max];
     }
     const result = await this.api.generateIntegers({ min: min, max: max, n: 1 });
-    return result.random.data[0];
+    return result.random.data[0]!;
   }
   async choice<T>(options: ArrayLike<T>): Promise<T> {
     if (!Array.isArray(options)) return options as T;
-    if (options.length === 1) return options[0];
+    if (options.length === 1) return options[0]!;
     const res = await this.int(0, options.length - 1);
-    return options[res];
+    return options[res]!;
   }
   async ints(min: number, max: number, count: number): Promise<number[]> {
     if (max == min) return Array.from<number>({ length: count }).fill(min);

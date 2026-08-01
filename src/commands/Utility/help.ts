@@ -42,11 +42,11 @@ export default class Help extends Command {
         if (!categories[category]) {
           categories[category] = [cmd.name];
         } else {
-          categories[cmd.category].push(cmd.name);
+          categories[cmd.category]!.push(cmd.name);
         }
       });
       for (const category in categories) {
-        embed.addFields({ name: category, value: categories[category].join(", ") });
+        embed.addFields({ name: category, value: categories[category]!.join(", ") });
       }
       embed.setTitle("Help");
     }

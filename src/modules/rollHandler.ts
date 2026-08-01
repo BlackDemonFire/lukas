@@ -1,8 +1,10 @@
 import { EmbedBuilder, type Message } from "discord.js";
 import type { Bot } from "../bot.js";
 import logger from "./logger.js";
+import type { ILanguage } from "../types.js";
 
 const rollArgRegex = /^(\d)*(?:d|w)(\d+)$/;
+const dragonBaneArgRegex = /^db(\d+)(?:(\-|\+)(\d+))?$/;
 
 /**
  *
@@ -19,8 +21,23 @@ export async function executeRollIfEnabled(client: Bot, message: Message<boolean
     logger.debug("[autoroll]: autoroll disabled");
     return false;
   }
+  const language = client.languages.get(await client.db.getLang(message.guild))!;
   const args = message.content.toLowerCase().split(" ");
   if (!args.length) return false;
+  if (args.length === 1) {
+    const dragonBaneMatch = args[0]!.match(dragonBaneArgRegex);
+    if (dragonBaneMatch) {
+      await runDragonBaneRoll(
+        client,
+        message,
+        language,
+        Number.parseInt(dragonBaneMatch[1]!),
+        Number.parseInt(dragonBaneMatch[3] || "0"),
+        dragonBaneMatch[2] as "-" | "+",
+      );
+      return true;
+    }
+  }
   if (!args.every((a) => rollArgRegex.test(a))) {
     logger.debug("[autoroll]: not all args are roll-args");
     logger.debug(JSON.stringify(args));
@@ -28,10 +45,9 @@ export async function executeRollIfEnabled(client: Bot, message: Message<boolean
   }
   const dice: { count: number; max: number }[] = args.map((arg) => {
     const [count, max] = arg.split(/(?:w|d)/);
-    return { count: Number.parseInt(count || "1", 10), max: Number.parseInt(max, 10) };
+    return { count: Number.parseInt(count || "1", 10), max: Number.parseInt(max!, 10) };
   });
   let result = "";
-  const language = client.languages.get(await client.db.getLang(message.guild))!;
 
   if (dice.some((d) => d.max === 0)) {
     await message.channel.send({ content: `<:warn_3:498277726604754946> ${language.command.roll.errors.noSides}` });
@@ -66,7 +82,7 @@ export async function executeRollIfEnabled(client: Bot, message: Message<boolean
   }
   logger.debug("executed dice: " + JSON.stringify(nums));
   if (diceCount === 1) {
-    const plaintext = language.command.roll.results.singleDice.replace("{rolltype}", dice[0].max.toString());
+    const plaintext = language.command.roll.results.singleDice.replace("{rolltype}", dice[0]!.max.toString());
     const embed = new EmbedBuilder().setColor(0x36393e).setFooter({ text: `@${msgauthor}` });
     // includes an emote
     if (result.includes("<")) {
@@ -91,6 +107,45 @@ export async function executeRollIfEnabled(client: Bot, message: Message<boolean
     await message.channel.send({ content: plaintext, embeds: [embed] });
     return true;
   }
+}
+
+async function runDragonBaneRoll(
+  client: Bot,
+  message: Message<true>,
+  lang: ILanguage,
+  toNotExceed: number,
+  extraRolls = 0,
+  sign: "-" | "+" = "-",
+) {
+  if (toNotExceed > 19) {
+    await message.channel.send({ content: lang.dragonborn.dragonbornRoll.invalidArg });
+    return;
+  }
+  const rolls = await client.random.ints(1, 20, extraRolls + 1);
+  const rollToEvaluate = sign === "-" ? rolls.toSorted((a, b) => b - a) : rolls.toSorted((a, b) => a - b);
+  if (rollToEvaluate[0] === 20) {
+    await message.channel.send({ content: lang.dragonborn.dragonbornRoll.critFailure });
+    return;
+  }
+  if (rollToEvaluate[0]! > toNotExceed) {
+    await message.channel.send({
+      content: lang.dragonborn.dragonbornRoll.failed.replace(
+        "{dice}",
+        new Intl.ListFormat().format(rollToEvaluate.map((e) => e.toString())),
+      ),
+    });
+    return;
+  }
+  if (rollToEvaluate[0] === 1) {
+    await message.channel.send({ content: lang.dragonborn.dragonbornRoll.critSuccess });
+    return;
+  }
+  await message.channel.send({
+    content: lang.dragonborn.dragonbornRoll.success.replace(
+      "{dice}",
+      new Intl.ListFormat().format(rollToEvaluate.map((e) => e.toString())),
+    ),
+  });
 }
 
 /**

@@ -35,18 +35,11 @@
       "apiLatency": "Die API Latenz beträgt",
       "latency": "Die Latenz beträgt"
     },
-    "purr": {
-      "description": "Purr",
-      "singleUser": ["{a} schnurrt~ Nya Nya~", "{a} schnurrt"]
-    },
+    "purr": { "description": "Purr", "singleUser": ["{a} schnurrt~ Nya Nya~", "{a} schnurrt"] },
     "pat": {
       "description": "Jemanden streicheln",
       "singleUser": ["Möchtest du gestreichelt werden {a}?"],
-      "multiUser": [
-        "{a} streichelt {b}",
-        "{a} streichelt {b}. Cuuute!",
-        "{a} streichelt {b}. Süß 🥺"
-      ]
+      "multiUser": ["{a} streichelt {b}", "{a} streichelt {b}. Cuuute!", "{a} streichelt {b}. Süß 🥺"]
     },
     "newgif": {
       "description": "Fügt ein neues Gif zur Datenbank hinzu",
@@ -90,19 +83,11 @@
       "singleUser": ["Soll ich dich küssen {a} 🥺"],
       "multiUser": ["{a} küsst {b}", "{a} küsst {b} 🥺"]
     },
-    "kill": {
-      "description": "Fährt den Bot herunter",
-      "success": "Bot fährt herunter."
-    },
-    "info": {
-      "description": "Erfahre Systeminformationen vom Bot"
-    },
+    "kill": { "description": "Fährt den Bot herunter", "success": "Bot fährt herunter." },
+    "info": { "description": "Erfahre Systeminformationen vom Bot" },
     "hug": {
       "description": "Jemanden umarmen",
-      "singleUser": [
-        "Soll ich dich umarmen {a}? 🥺",
-        "Brauchst du eine Umarmung {a}?"
-      ],
+      "singleUser": ["Soll ich dich umarmen {a}? 🥺", "Brauchst du eine Umarmung {a}?"],
       "multiUser": [
         "{a} umarmt {b}",
         "{a} gibt {b} eine feste Umarmung.",
@@ -111,19 +96,13 @@
     },
     "hold": {
       "description": "Mit jemandem Händchen halten",
-      "singleUser": [
-        "Ich werde deine Hand halten, {a} 🥺",
-        "Soll ich deine Hand halten, {a}?"
-      ],
+      "singleUser": ["Ich werde deine Hand halten, {a} 🥺", "Soll ich deine Hand halten, {a}?"],
       "multiUser": ["{a} hält mit {b} Händchen 😊"]
     },
     "help": {
       "description": "Hilfe für Befehle",
       "commandNotFound": "Der Befehl {cmd} wurde nicht gefunden.",
-      "usage": {
-        "Usage": "Nutzung",
-        "args": "[optional], <notwendig>"
-      }
+      "usage": { "Usage": "Nutzung", "args": "[optional], <notwendig>" }
     },
     "giftype": {
       "description": "Ändere deinen Gif Typen",
@@ -155,43 +134,36 @@
     },
     "cuddle": {
       "description": "Jemanden kuscheln",
-      "singleUser": [
-        "Soll ich mit dir kuscheln {a}? 🥺",
-        "Brauchst du jemanden zum kuscheln {a}?"
-      ],
+      "singleUser": ["Soll ich mit dir kuscheln {a}? 🥺", "Brauchst du jemanden zum kuscheln {a}?"],
       "multiUser": ["{a} kuschelt mit {b}", "{a} kuschelt mit {b} - cute"]
     },
-    "cry": {
-      "description": "Weinen",
-      "singleUser": ["{a} weint...", "Brauchst du eine Umarmung {a}?"]
-    },
+    "cry": { "description": "Weinen", "singleUser": ["{a} weint...", "Brauchst du eine Umarmung {a}?"] },
     "color": {
       "description": "Zeigt an, welche Farben du aktuell verwendest",
       "success": "Deine Farbe wurde geändert.",
       "invalid_color": "Diese Farbe gibt es nicht.",
       "show_colors": "Deine gewählten Fraben sind: {c}"
     },
-    "addcolor": {
-      "description": "Fügt weitere Farben deiner Embed Farben hinzu"
-    },
-    "removecolor": {
-      "description": "Löscht Farben aus deinen Embed Farben"
-    },
-    "setcolor": {
-      "description": "Setzt deine Embedfarben auf die angegebenen Farben"
-    },
+    "addcolor": { "description": "Fügt weitere Farben deiner Embed Farben hinzu" },
+    "removecolor": { "description": "Löscht Farben aus deinen Embed Farben" },
+    "setcolor": { "description": "Setzt deine Embedfarben auf die angegebenen Farben" },
     "blush": {
       "description": "Blush",
-      "singleUser": [
-        "{a} wird rot",
-        "{a}s Gesicht ist rot.",
-        "{a} wird rot. So cute >w<"
-      ]
+      "singleUser": ["{a} wird rot", "{a}s Gesicht ist rot.", "{a} wird rot. So cute >w<"]
     }
   },
   "general": {
     "timeout": "Du hast zu lange benötigt.",
     "and": "und",
     "guildOnly": "Dieser Befehl ist nicht in DMs ausführbar"
+  },
+  "dragonborn": {
+    "dragonbornRoll": {
+      "critFailure": "DÄMON! (ein kritischer Fehlschlag...)",
+      "critSuccess": "DRACHE! (ein kritischer Erfolg)",
+      "failed": "Der Wurf ist fehlgeschlagen: ({dice})",
+      "invalidArg": "Diese Probe ist ein automatischer Erfolg.",
+      "success": "Du hast den Wurf geschafft! ({dice})"
+    }
   }
 }
