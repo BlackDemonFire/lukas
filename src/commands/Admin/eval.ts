@@ -1,16 +1,18 @@
+import type { Bot } from "@/bot.js";
+import { Command } from "@/modules/command.js";
+import logger from "@/modules/logger.js";
+import { splitMessage } from "@/modules/splitMessage.js";
+import type { ILanguage } from "@/types";
 import { Message, type SendableChannels } from "discord.js";
-import { inspect } from "util";
-import { Bot } from "../../bot.js";
-import { Command } from "../../modules/command.js";
-import logger from "../../modules/logger.js";
-import { splitMessage } from "../../modules/splitMessage.js";
-import type { ILanguage } from "../../types.js";
+import { inspect } from "node:util";
 
 export default class Eval extends Command {
-  constructor(client: Bot, category: string, name: string) {
-    super(client, category, name);
-  }
+  readonly name = "eval";
   help = { show: false, usage: `${this.prefix}eval <code>` };
+
+  constructor(client: Bot) {
+    super(client, "Admin");
+  }
   async run(_client: Bot, message: Message, args: string[], language: ILanguage) {
     if (!message.channel.isSendable()) {
       logger.error(`channel ${message.channel.id} is not sendable`);

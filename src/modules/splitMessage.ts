@@ -45,7 +45,7 @@ export function splitMessage(
     while (char.length > 0 && splitText.some((elem) => elem.length > maxLength)) {
       const currentChar = char.shift();
       if (currentChar instanceof RegExp) {
-        splitText = splitText.flatMap((chunk) => chunk.match(currentChar)!);
+        splitText = splitText.flatMap((chunk) => currentChar.exec(chunk)!);
       } else {
         splitText = splitText.flatMap((chunk) => chunk.split(currentChar!));
       }
@@ -63,5 +63,5 @@ export function splitMessage(
     }
     msg += (msg && msg !== prepend ? char.toString() : "") + chunk;
   }
-  return messages.concat(msg).filter((m) => m);
+  return messages.concat(msg).filter(Boolean);
 }

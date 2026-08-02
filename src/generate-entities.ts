@@ -4,18 +4,16 @@ import settings from "./modules/settings.js";
 // This script will generate entities from the database. - Development only!
 // build with `pnpm run build` and run with `node -r 'dotenv/config' dist/generate-entities.js`
 
-void (async () => {
-  const orm = await MikroORM.init<PostgreSqlDriver>({
-    discovery: {
-      // we need to disable validation for no entities
-      warnWhenNoEntities: false,
-    },
-    dbName: settings.DB_NAME,
-    host: settings.DB_HOST,
-    port: settings.DB_PORT,
-    user: settings.DB_USER,
-    password: settings.DB_PASS,
-  });
-  await orm.entityGenerator.generate({ save: true, path: `${process.cwd()}/src/entities` });
-  await orm.close(true);
-})();
+const orm = await MikroORM.init<PostgreSqlDriver>({
+  discovery: {
+    // we need to disable validation for no entities
+    warnWhenNoEntities: false,
+  },
+  dbName: settings.DB_NAME,
+  host: settings.DB_HOST,
+  port: settings.DB_PORT,
+  user: settings.DB_USER,
+  password: settings.DB_PASS,
+});
+await orm.entityGenerator.generate({ save: true, path: `${process.cwd()}/src/entities` });
+await orm.close(true);

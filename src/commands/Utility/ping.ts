@@ -1,15 +1,16 @@
+import { Bot } from "@/bot.js";
+import { Command } from "@/modules/command.js";
+import logger from "@/modules/logger.js";
+import type { ILanguage } from "@/types.js";
 import { EmbedBuilder, Message, type SendableChannels } from "discord.js";
-import { Bot } from "../../bot.js";
-import { Command } from "../../modules/command.js";
-import logger from "../../modules/logger.js";
-import type { ILanguage as lang } from "../../types.js";
 
 export default class Ping extends Command {
-  constructor(client: Bot, category: string, name: string) {
-    super(client, category, name);
+  readonly name = "ping";
+  constructor(client: Bot) {
+    super(client, "Utility");
   }
   help = { show: true, usage: `${this.prefix}ping` };
-  async run(client: Bot, message: Message, _args: string[], language: lang) {
+  async run(client: Bot, message: Message, _args: string[], language: ILanguage) {
     if (!message.channel.isSendable()) {
       logger.error(`channel ${message.channel.id} is not sendable`);
       return;

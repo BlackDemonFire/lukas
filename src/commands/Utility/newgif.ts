@@ -1,13 +1,14 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, GuildChannel, Message, Team, User } from "discord.js";
-import type { Bot } from "../../bot.js";
-import { Command } from "../../modules/command.js";
-import { GifRequest, activeRequests } from "../../modules/dbo/gifRequest.js";
-import type { ILanguage } from "../../types.js";
-import logger from "../../modules/logger.js";
+import type { Bot } from "@/bot.js";
+import { Command } from "@/modules/command.js";
+import { GifRequest, activeRequests } from "@/modules/dbo/gifRequest.js";
+import type { ILanguage } from "@/types.js";
+import logger from "@/modules/logger.js";
 
 export default class Newgif extends Command {
-  constructor(client: Bot, category: string, name: string) {
-    super(client, category, name);
+  readonly name = "newgif";
+  constructor(client: Bot) {
+    super(client, "Utility");
   }
 
   async run(client: Bot, message: Message, args: string[], language: ILanguage) {
@@ -15,7 +16,7 @@ export default class Newgif extends Command {
       logger.error(`channel ${message.channel.id} is not sendable`);
       return;
     }
-    if (!args || args.length !== 3) {
+    if (args?.length !== 3) {
       await message.channel.send(language.command.newgif.wrongArgs);
       return;
     }

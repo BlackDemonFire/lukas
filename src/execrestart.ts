@@ -12,10 +12,10 @@ export async function restart(oldclient: Bot, restartmsg: Message | null, newtex
 
   // Alten client Entfernen
 
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  // oxlint-disable-next-line @typescript-eslint/no-misused-promises
   newclient.once("ready", async () => {
     for (const key of Object.keys(require.cache)) {
-      if (key.indexOf("node_modules") == -1) {
+      if (!key.includes("node_modules")) {
         delete require.cache[key];
       }
     }

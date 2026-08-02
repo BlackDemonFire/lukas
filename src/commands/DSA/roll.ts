@@ -1,15 +1,18 @@
+import { Bot } from "@/bot.js";
+import { Command } from "@/modules/command.js";
+import logger from "@/modules/logger.js";
+import type { ILanguage } from "@/types.js";
 import { EmbedBuilder, Message } from "discord.js";
-import { Bot } from "../../bot.js";
-import { Command } from "../../modules/command.js";
-import type { ILanguage as lang } from "../../types.js";
-import logger from "../../modules/logger.js";
+
+const startsWithWDRegex = /^[wd]/;
 
 export default class Roll extends Command {
-  constructor(client: Bot, category: string, name: string) {
-    super(client, category, name);
-  }
+  readonly name = "roll";
   help = { show: true, usage: `${this.prefix}roll [args]` };
-  async run(client: Bot, message: Message, args: string[], language: lang) {
+  constructor(client: Bot) {
+    super(client, "DSA");
+  }
+  async run(client: Bot, message: Message, args: string[], language: ILanguage) {
     if (!message.channel.isSendable()) {
       logger.error(`channel ${message.channel.id} is not sendable`);
       return;
@@ -28,7 +31,7 @@ export default class Roll extends Command {
     if (args[1]) rollargb = rollargb.toLowerCase();
 
     if (!args[1] && args[0]) {
-      if (rollarga[0] !== "w" && rollarga[0] !== "d") {
+      if (!startsWithWDRegex.test(rollarga)) {
         if (rollarga.includes("w")) {
           rollargs = rollarga.split("w");
           rollarga = rollargs[0]!;
@@ -61,7 +64,7 @@ export default class Roll extends Command {
     }
 
     // two arguments
-    const checkregex: RegExp = /w|d/;
+    const checkregex: RegExp = /[wd]/;
 
     if (args[0] && args[1]) {
       if (checkregex.test(rollarga) && checkregex.test(rollargb)) {
@@ -77,10 +80,10 @@ export default class Roll extends Command {
         return;
       }
       // process two arguments
-      if (rollarga.indexOf("w") == 0 || rollarga.indexOf("d") == 0) {
+      if (startsWithWDRegex.test(rollarga)) {
         dicetype = rollarga;
         rollcountmax = rollargb;
-      } else if (rollargb.indexOf("w") == 0 || rollargb.indexOf("d") == 0) {
+      } else if (startsWithWDRegex.test(rollargb)) {
         dicetype = rollargb;
         rollcountmax = rollarga;
       } else {
@@ -96,11 +99,7 @@ export default class Roll extends Command {
     if (args[0] && !args[1]) {
       detectedOnlyOneArg = true;
 
-      if (rollarga.indexOf("w") == 0) {
-        dicetype = rollarga;
-        rollcountmax = "1";
-        detectedDiceType = true;
-      } else if (rollarga.indexOf("d") == 0) {
+      if (startsWithWDRegex.test(rollarga)) {
         dicetype = rollarga;
         rollcountmax = "1";
         detectedDiceType = true;
@@ -135,14 +134,14 @@ export default class Roll extends Command {
       return;
     }
     if (rolltype == 0) {
-      dicetype = dicetype.substr(1);
-      if (typeof dicetype === "number" ? isNaN(dicetype) : isNaN(parseInt(dicetype))) {
+      dicetype = dicetype.substring(1);
+      if (typeof dicetype === "number" ? Number.isNaN(dicetype) : Number.isNaN(Number.parseInt(dicetype))) {
         await message.channel.send({
           content: `<:warn_3:498277726604754946> ${language.command.roll.errors.rolltypeNotNumeric}`,
         });
         return;
       }
-      rolltype = parseInt(dicetype);
+      rolltype = Number.parseInt(dicetype);
       gotStringReadyToConvert = true;
     }
 
@@ -165,7 +164,7 @@ export default class Roll extends Command {
       await message.channel.send({ content: `*${plaintext}*`, embeds: [embed] });
       return;
     }
-    if (typeof rollcountmax === "number" ? isNaN(rollcountmax) : isNaN(parseInt(rollcountmax))) {
+    if (typeof rollcountmax === "number" ? Number.isNaN(rollcountmax) : Number.isNaN(Number.parseInt(rollcountmax))) {
       await message.channel.send({
         content: `<:warn_3:498277726604754946> ${language.command.roll.errors.rollcountNotNumeric}`,
       });
@@ -174,7 +173,7 @@ export default class Roll extends Command {
     // roll the dice and display the result
     let rollresult: string = "";
     let useEmotes: boolean = false;
-    let rollcount: number = parseInt(rollcountmax, 10);
+    let rollcount: number = Number.parseInt(rollcountmax, 10);
     if (rollcount < 1) rollcount = 1;
     if (rollcount % 1 !== 0) rollcount = Math.round(rollcount);
     // is the response too long?
@@ -219,7 +218,6 @@ export default class Roll extends Command {
             rollresult += "<:dice9:601730229337063425> ";
             break;
         }
-        //		}
       } else {
         // separated numbers
         useEmotes = false;
@@ -230,9 +228,7 @@ export default class Roll extends Command {
           rollresult += " | ";
         }
       }
-      // else
     });
-    // forEach(num)
 
     // response
 
@@ -247,19 +243,18 @@ export default class Roll extends Command {
 
       await message.channel.send({ content: plaintext, embeds: [embed] });
       return;
-    } else {
-      const plaintext = language.command.roll.results.multiDice
-        .replace("{rolltype}", rolltype.toString())
-        .replace("{rollcountmax}", rollcountmax.toString());
-      const embed = new EmbedBuilder().setColor(0x36393e).setFooter({ text: `@${msgauthor}` });
-      if (useEmotes) {
-        embed.setDescription(rollresult);
-      } else {
-        embed.setAuthor({ name: rollresult });
-      }
-
-      await message.channel.send({ content: plaintext, embeds: [embed] });
-      return;
     }
+
+    const plaintext = language.command.roll.results.multiDice
+      .replace("{rolltype}", rolltype.toString())
+      .replace("{rollcountmax}", rollcountmax.toString());
+    const embed = new EmbedBuilder().setColor(0x36393e).setFooter({ text: `@${msgauthor}` });
+    if (useEmotes) {
+      embed.setDescription(rollresult);
+    } else {
+      embed.setAuthor({ name: rollresult });
+    }
+
+    await message.channel.send({ content: plaintext, embeds: [embed] });
   }
 }

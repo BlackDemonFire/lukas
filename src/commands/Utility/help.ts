@@ -1,21 +1,22 @@
+import type { Bot } from "@/bot.js";
+import { Command } from "@/modules/command.js";
+import logger from "@/modules/logger.js";
+import type { ILanguage } from "@/types.js";
 import { EmbedBuilder, Message } from "discord.js";
-import type { Bot } from "../../bot.js";
-import { Command } from "../../modules/command.js";
-import type { ILanguage } from "../../types.js";
-import logger from "../../modules/logger.js";
 
 export default class Help extends Command {
-  constructor(client: Bot, category: string, name: string) {
-    super(client, category, name);
-  }
+  readonly name = "help";
   help = { show: true, usage: `${this.prefix}help [command]` };
+  constructor(client: Bot) {
+    super(client, "Utility");
+  }
   async run(client: Bot, message: Message, args: string[], language: ILanguage) {
     if (!message.channel.isSendable()) {
       logger.error(`channel ${message.channel.id} is not sendable`);
       return;
     }
     const embed = new EmbedBuilder();
-    if (args && args[0]) {
+    if (args?.[0]) {
       const cmd = args[0].replace(client.prefix, "").toLowerCase();
       const command = client.commands.get(cmd);
       if (command) {

@@ -30,23 +30,12 @@
       "success": "This artifact has a new astral structure now.",
       "error": "The crystal broke down."
     },
-    "purr": {
-      "description": "Purr",
-      "singleUser": ["{a} is purring~ Nya Nya~", "{a} is purring"]
-    },
-    "ping": {
-      "description": "Get the bot's latency",
-      "apiLatency": "API Latency is",
-      "latency": "Latency is"
-    },
+    "purr": { "description": "Purr", "singleUser": ["{a} is purring~ Nya Nya~", "{a} is purring"] },
+    "ping": { "description": "Get the bot's latency", "apiLatency": "API Latency is", "latency": "Latency is" },
     "pat": {
       "description": "Pat a User",
       "singleUser": ["Do you need pats {a}?"],
-      "multiUser": [
-        "{a} pats {b}",
-        "{a} pats {b}. Cute!",
-        "{a} gives {b} headpats"
-      ]
+      "multiUser": ["{a} pats {b}", "{a} pats {b}. Cute!", "{a} gives {b} headpats"]
     },
     "newgif": {
       "description": "Add a new gif to the database",
@@ -90,37 +79,22 @@
       "singleUser": ["I will kiss you {a} 🥺"],
       "multiUser": ["{a} kisses {b}", "{a} kisses {b}s lips 🥺"]
     },
-    "kill": {
-      "success": "Committing suicide...",
-      "description": "Stop the bot"
-    },
-    "info": {
-      "description": "Get System info for the bot"
-    },
+    "kill": { "success": "Committing suicide...", "description": "Stop the bot" },
+    "info": { "description": "Get System info for the bot" },
     "hug": {
       "description": "Hug a User",
       "singleUser": ["I will hug you {a} 🥺", "Do you need a hug {a}?"],
-      "multiUser": [
-        "{a} hugs {b}",
-        "{a} hugs {b}. Squeeze hard but not too hard",
-        "{a} hugs {b} tightly"
-      ]
+      "multiUser": ["{a} hugs {b}", "{a} hugs {b}. Squeeze hard but not too hard", "{a} hugs {b} tightly"]
     },
     "hold": {
       "description": "Hold someones hand",
-      "singleUser": [
-        "I'll hold your hand {a} 🥺",
-        "Do you want me to hold your hand, {a}?"
-      ],
+      "singleUser": ["I'll hold your hand {a} 🥺", "Do you want me to hold your hand, {a}?"],
       "multiUser": ["{a} holds {b}'s hand. Hot!"]
     },
     "help": {
       "description": "displays help (for a command)",
       "commandNotFound": "command {cmd} not found.",
-      "usage": {
-        "Usage": "Usage",
-        "args": "[optional], <required>"
-      }
+      "usage": { "Usage": "Usage", "args": "[optional], <required>" }
     },
     "giftype": {
       "description": "Change your gif type",
@@ -152,38 +126,22 @@
     },
     "cuddle": {
       "description": "Cuddle a User",
-      "singleUser": [
-        "I will cuddle you {a} 🥺",
-        "Do you need somebody to cuddle you?"
-      ],
+      "singleUser": ["I will cuddle you {a} 🥺", "Do you need somebody to cuddle you?"],
       "multiUser": ["{a} cuddles {b}", "{a} cuddles {b} - adorable"]
     },
-    "cry": {
-      "description": "Cry",
-      "singleUser": ["{a} is crying...", "Do you need a hug, {a}?"]
-    },
+    "cry": { "description": "Cry", "singleUser": ["{a} is crying...", "Do you need a hug, {a}?"] },
     "color": {
       "description": "Shows what colors you currently use",
       "success": "Your color was changed.",
       "invalid_color": "I don't know such a color.",
       "show_colors": "Your chosen colors are: {c}"
     },
-    "addcolor": {
-      "description": "Adds colors to your embed colors"
-    },
-    "removecolor": {
-      "description": "Removes colors from your embed colors"
-    },
-    "setcolor": {
-      "description": "Sets your embed colors to the given colors"
-    },
+    "addcolor": { "description": "Adds colors to your embed colors" },
+    "removecolor": { "description": "Removes colors from your embed colors" },
+    "setcolor": { "description": "Sets your embed colors to the given colors" },
     "blush": {
       "description": "Blush",
-      "singleUser": [
-        "{a} is blushing",
-        "{a}'s face is red.",
-        "{a} is blushing~ So cute >w<"
-      ]
+      "singleUser": ["{a} is blushing", "{a}'s face is red.", "{a} is blushing~ So cute >w<"]
     }
   },
   "general": {

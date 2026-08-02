@@ -1,14 +1,15 @@
+import type { Bot } from "@/bot.js";
+import { Command } from "@/modules/command.js";
+import logger from "@/modules/logger.js";
 import { EmbedBuilder, Message } from "discord.js";
 import { freemem, hostname, uptime as sUptime, totalmem } from "node:os";
 import { uptime as pUptime } from "node:process";
 import { cpu } from "systeminformation";
-import type { Bot } from "../../bot.js";
-import { Command } from "../../modules/command.js";
-import logger from "../../modules/logger.js";
 
 export default class Info extends Command {
-  constructor(client: Bot, category: string, name: string) {
-    super(client, category, name);
+  readonly name = "info";
+  constructor(client: Bot) {
+    super(client, "Utility");
   }
   async run(_client: Bot, message: Message) {
     if (!message.channel.isSendable()) {

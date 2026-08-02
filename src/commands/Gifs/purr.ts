@@ -1,10 +1,10 @@
-import { Bot } from "../../bot.js";
-import { SingleUserGifCommand } from "../../modules/command.js";
+import { Bot } from "@/bot.js";
+import { SingleUserGifCommand } from "@/modules/command.js";
 
 export default class Purr extends SingleUserGifCommand {
-  constructor(client: Bot, category: string, name: string) {
-    super(client, category, name);
-  }
-
+  readonly name = "purr";
   help = { show: true, usage: `${this.prefix}purr` };
+  constructor(client: Bot) {
+    super(client, "Gifs");
+  }
 }

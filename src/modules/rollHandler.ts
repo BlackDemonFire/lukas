@@ -1,10 +1,10 @@
+import type { Bot } from "@/bot.js";
+import type { ILanguage } from "@/types.js";
 import { EmbedBuilder, type Message } from "discord.js";
-import type { Bot } from "../bot.js";
 import logger from "./logger.js";
-import type { ILanguage } from "../types.js";
 
-const rollArgRegex = /^(\d)*(?:d|w)(\d+)$/;
-const dragonBaneArgRegex = /^db(\d+)(?:(\-|\+)(\d+))?$/;
+const rollArgRegex = /^(\d)*(?:[dw])(\d+)$/;
+const dragonBaneArgRegex = /^db(\d+)(?:([-+])(\d+))?$/;
 
 /**
  *
@@ -25,7 +25,7 @@ export async function executeRollIfEnabled(client: Bot, message: Message<boolean
   const args = message.content.toLowerCase().split(" ");
   if (!args.length) return false;
   if (args.length === 1) {
-    const dragonBaneMatch = args[0]!.match(dragonBaneArgRegex);
+    const dragonBaneMatch = dragonBaneArgRegex.exec(args[0]!);
     if (dragonBaneMatch) {
       await runDragonBaneRoll(
         client,
@@ -44,7 +44,7 @@ export async function executeRollIfEnabled(client: Bot, message: Message<boolean
     return false;
   }
   const dice: { count: number; max: number }[] = args.map((arg) => {
-    const [count, max] = arg.split(/(?:w|d)/);
+    const [count, max] = arg.split(/(?:[wd])/);
     return { count: Number.parseInt(count || "1", 10), max: Number.parseInt(max!, 10) };
   });
   let result = "";

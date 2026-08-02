@@ -73,7 +73,8 @@ export interface ILanguage {
   permissions: ILangPermissions;
   dragonborn: ILangDragonborn;
 }
-export interface command {
+export interface ICommand {
   run: (client: Bot, message: Message, args: string[], language: ILanguage) => unknown;
   help: { show: boolean; usage: string };
+  get name(): string;
 }

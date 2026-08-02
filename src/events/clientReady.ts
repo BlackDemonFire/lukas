@@ -1,6 +1,6 @@
 import { Team, User } from "discord.js";
-import { Bot } from "../bot.js";
-import logger from "../modules/logger.js";
+import { Bot } from "@/bot.js";
+import logger from "@/modules/logger.js";
 
 export async function event(client: Bot) {
   logger.info(`I'm Ready on ${client.guilds.cache.size} Servers serving ${client.channels.cache.size} Channels`);

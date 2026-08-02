@@ -1,6 +1,6 @@
 import { BaseInteraction } from "discord.js";
-import { Bot } from "../bot.js";
-import logger from "../modules/logger.js";
+import { Bot } from "@/bot.js";
+import logger from "@/modules/logger.js";
 
 export async function event(client: Bot, interaction: BaseInteraction) {
   if (interaction.isMessageComponent()) {

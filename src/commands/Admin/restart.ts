@@ -1,17 +1,18 @@
+import { Bot } from "@/bot.js";
+import { restart } from "@/execrestart.js";
+import { Command } from "@/modules/command.js";
+import logger from "@/modules/logger.js";
+import type { ILanguage } from "@/types.js";
 import { EmbedBuilder, Message } from "discord.js";
 import { inspect } from "util";
-import { Bot } from "../../bot.js";
-import { restart } from "../../execrestart.js";
-import { Command } from "../../modules/command.js";
-import logger from "../../modules/logger.js";
-import type { ILanguage as lang } from "../../types.js";
 
 export default class Restart extends Command {
-  constructor(client: Bot, category: string, name: string) {
-    super(client, category, name);
-  }
+  readonly name = "restart";
   help = { show: false, usage: `${this.prefix}restart` };
-  async run(client: Bot, message: Message, _args: string[], language: lang) {
+  constructor(client: Bot) {
+    super(client, "Admin");
+  }
+  async run(client: Bot, message: Message, _args: string[], language: ILanguage) {
     let msg = null;
 
     if (!message.channel.isSendable()) {

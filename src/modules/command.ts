@@ -1,19 +1,19 @@
 import { ClientApplication, type ColorResolvable, Colors, EmbedBuilder, Message, Team, User } from "discord.js";
-import { Bot } from "../bot.js";
-import type { command, ILanguage } from "../types.js";
+import { Bot } from "@/bot.js";
+import type { ICommand, ILanguage } from "@/types.js";
 import logger from "./logger.js";
 
-abstract class Command implements command {
+abstract class Command implements ICommand {
   protected prefix: string;
-  abstract help: command["help"];
-  private client: Bot;
+  abstract help: ICommand["help"];
+  private readonly client: Bot;
   public readonly category: string;
-  public readonly name: string;
-  protected constructor(client: Bot, category: string, name: string) {
+  static readonly name: string;
+  abstract name: string;
+  protected constructor(client: Bot, category: string) {
     this.prefix = client.prefix;
     this.client = client;
     this.category = category;
-    this.name = name;
   }
   abstract run(client: Bot, message: Message, args: string[], language: ILanguage): Promise<void>;
   isAprilFools() {
@@ -35,36 +35,23 @@ abstract class Command implements command {
   }
 }
 
+const mentionRegex = new RegExp(/<@!?(\d+)>/);
 abstract class GifCommand extends Command {
-  protected constructor(client: Bot, category: string, name: string) {
-    super(client, category, name);
+  protected constructor(client: Bot, category: string) {
+    super(client, category);
   }
   async parseUser(client: Bot, message: Message, args: string[], language: ILanguage) {
     let userB: string = "";
     const mentioned: string[] = [];
     let self: boolean = false;
     if (args && args.length > 0) {
-      for (const arg of args) {
-        let name: string = "";
-        const ping = arg.match(/<@!?(\d+)>/);
+      for (const arg of args.filter((a) => a && a !== "")) {
+        const ping = mentionRegex.exec(arg);
         if (ping) {
-          const user = await client.users.fetch(ping[1]!).catch((e) => {
-            logger.error(e);
-            return null;
-          });
-          if (user) name = await client.db.getName(user);
-          if (!user) {
-            name = arg;
-          } else if (!name || name == "") {
-            const member = message.guild ? message.guild.members.resolve(user) : null;
-            name = member ? member.displayName : user.username;
-          }
-          if (user == message.author) {
-            userB = "";
-            self = true;
-          }
+          let name: string | undefined;
+          ({ name, self } = await this.resolveMentionedUser(client, ping, arg, message, self));
           mentioned.push(name);
-        } else if (arg && arg !== "") {
+        } else {
           mentioned.push(arg);
         }
       }
@@ -86,11 +73,40 @@ abstract class GifCommand extends Command {
             break;
         }
       }
-    } else {
-      userB = "";
     }
-    if (userB.length > 1792) userB = userB.substring(0, 1792) + "...";
-    return userB;
+    return this.trimUser(userB);
+  }
+  private async resolveMentionedUser(
+    client: Bot,
+    ping: RegExpExecArray,
+    arg: string,
+    message: Message<boolean>,
+    self: boolean,
+  ) {
+    let name: string = "";
+    const user = await client.users.fetch(ping[1]!).catch((e) => {
+      logger.error(e);
+      return null;
+    });
+    if (user) name = await client.db.getName(user);
+    if (!user) {
+      name = arg;
+    } else if (!name || name == "") {
+      const member = message.guild ? message.guild.members.resolve(user) : null;
+      name = member ? member.displayName : user.username;
+    }
+    if (user == message.author) {
+      self = true;
+    }
+    return { name, self };
+  }
+
+  protected trimUser(message: string): string {
+    const LIMIT = 1792;
+    if (message.length > LIMIT) {
+      return message.substring(0, LIMIT) + "...";
+    }
+    return message;
   }
 
   protected getGifLanguageObject(language: ILanguage, attr: string) {
@@ -101,8 +117,7 @@ abstract class GifCommand extends Command {
 
     type AttrKey = keyof typeof langCommand;
     const attrName = attr as AttrKey;
-    // Unknown cast is necessary, as technically the result could be a `string` which cannot be cast directly to a `string[]`
-    return langCommand[attrName] as unknown as string[];
+    return langCommand[attrName];
   }
 
   protected async buildAndSendEmbed(gif: string, responseString: string, color: ColorResolvable, message: Message) {
@@ -126,8 +141,8 @@ abstract class GifCommand extends Command {
 }
 
 abstract class SingleUserGifCommand extends GifCommand {
-  protected constructor(client: Bot, category: string, name: string) {
-    super(client, category, name);
+  protected constructor(client: Bot, category: string) {
+    super(client, category);
   }
 
   async run(client: Bot, message: Message, _args: string[], language: ILanguage) {
@@ -140,14 +155,14 @@ abstract class SingleUserGifCommand extends GifCommand {
     if (userA == "") userA = message.guild ? message.member!.displayName : message.author.username;
     const responseString: string = (
       await client.random.choice(this.getGifLanguageObject(language, "singleUser"))
-    ).replace(/{a}/g, userA);
+    ).replaceAll("{a}", userA);
     await this.buildAndSendEmbed(gif, responseString, color, message);
   }
 }
 
 abstract class MultiUserGifCommand extends GifCommand {
-  protected constructor(client: Bot, category: string, name: string) {
-    super(client, category, name);
+  protected constructor(client: Bot, category: string) {
+    super(client, category);
   }
 
   async run(client: Bot, message: Message, args: string[], language: ILanguage) {
@@ -160,14 +175,14 @@ abstract class MultiUserGifCommand extends GifCommand {
     const userB: string = await super.parseUser(client, message, args, language);
     let responseString: string;
     if (userB == "") {
-      responseString = (await client.random.choice(this.getGifLanguageObject(language, "singleUser"))).replace(
-        /{a}/g,
+      responseString = (await client.random.choice(this.getGifLanguageObject(language, "singleUser"))).replaceAll(
+        "{a}",
         userA,
       );
     } else {
       responseString = (await client.random.choice(this.getGifLanguageObject(language, "multiUser")))
-        .replace(/{a}/g, userA)
-        .replace(/{b}/g, userB);
+        .replaceAll("{a}", userA)
+        .replaceAll("{b}", userB);
     }
     await this.buildAndSendEmbed(gif, responseString, color, message);
   }

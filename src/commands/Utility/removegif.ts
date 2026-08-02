@@ -1,13 +1,16 @@
+import { Bot } from "@/bot.js";
+import { Command } from "@/modules/command.js";
+import { GifRequest, activeRequests } from "@/modules/dbo/gifRequest.js";
+import logger from "@/modules/logger.js";
+import type { ILanguage } from "@/types.js";
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, GuildChannel, Message, Team, User } from "discord.js";
-import { Bot } from "../../bot.js";
-import { Command } from "../../modules/command.js";
-import { GifRequest, activeRequests } from "../../modules/dbo/gifRequest.js";
-import type { ILanguage } from "../../types.js";
-import logger from "../../modules/logger.js";
 
-export default class Newgif extends Command {
-  constructor(client: Bot, category: string, name: string) {
-    super(client, category, name);
+export default class Removegif extends Command {
+  readonly name = "removegif";
+  help = { show: true, usage: `${this.prefix}removegif <url>` };
+
+  constructor(client: Bot) {
+    super(client, "Utility");
   }
 
   async run(client: Bot, message: Message, args: string[], language: ILanguage) {
@@ -15,7 +18,7 @@ export default class Newgif extends Command {
       logger.error(`channel ${message.channel.id} is not sendable`);
       return;
     }
-    if (!args || args.length !== 1) {
+    if (args?.length !== 1) {
       await message.channel.send(language.command.removegif.wrongArgs);
       return;
     }
@@ -58,6 +61,4 @@ export default class Newgif extends Command {
       });
     }
   }
-
-  help = { show: true, usage: `${this.prefix}removegif <url>` };
 }

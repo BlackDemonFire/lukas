@@ -1,15 +1,16 @@
+import { Bot } from "@/bot.js";
+import { Command } from "@/modules/command.js";
+import logger from "@/modules/logger.js";
+import type { ILanguage } from "@/types.js";
 import { GuildChannel, Message, PermissionFlagsBits, TextChannel } from "discord.js";
-import { Bot } from "../../bot.js";
-import { Command } from "../../modules/command.js";
-import logger from "../../modules/logger.js";
-import type { ILanguage as lang } from "../../types.js";
 
 export default class Purge extends Command {
-  constructor(client: Bot, category: string, name: string) {
-    super(client, category, name);
-  }
+  readonly name = "purge";
   help = { show: false, usage: `${this.prefix}purge <amount>` };
-  async run(_client: Bot, message: Message, args: string[], language: lang) {
+  constructor(client: Bot) {
+    super(client, "Admin");
+  }
+  async run(_client: Bot, message: Message, args: string[], language: ILanguage) {
     if (!message.channel.isSendable()) {
       logger.error(`channel ${message.channel.id} is not sendable`);
       return;

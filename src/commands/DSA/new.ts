@@ -1,15 +1,16 @@
+import { Bot } from "@/bot.js";
+import { Command } from "@/modules/command.js";
+import logger from "@/modules/logger.js";
+import type { ILanguage } from "@/types.js";
 import { DMChannel, Message, MessageCollector, type SendableChannels, TextChannel } from "discord.js";
-import logger from "../../modules/logger.js";
-import { Bot } from "../../bot.js";
-import { Command } from "../../modules/command.js";
-import type { ILanguage as lang } from "../../types.js";
 
 export default class New extends Command {
-  constructor(client: Bot, category: string, name: string) {
-    super(client, category, name);
-  }
+  readonly name = "new";
   help = { show: true, usage: `${this.prefix}new` };
-  async run(client: Bot, message: Message, _args: string[], language: lang) {
+  constructor(client: Bot) {
+    super(client, "DSA");
+  }
+  async run(client: Bot, message: Message, _args: string[], language: ILanguage) {
     if (!message.channel.isSendable()) {
       logger.error(`channel ${message.channel.id} is not sendable`);
       return;
@@ -23,14 +24,14 @@ export default class New extends Command {
       filter: (m: Message) => m.author.id === message.author.id,
       time: 50000,
     });
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    // oxlint-disable-next-line @typescript-eslint/no-misused-promises
     collector.on("end", async (msgs) => {
       if (msgs.size == 0) {
         await (message.channel as SendableChannels).send({ content: language.general.timeout });
         return;
       }
     });
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    // oxlint-disable-next-line @typescript-eslint/no-misused-promises
     collector.on("collect", async (msg) => {
       if (!msg.channel.isSendable()) {
         logger.error(`channel ${msg.channel.id} is not sendable`);

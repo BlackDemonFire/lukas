@@ -8,20 +8,25 @@
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-vite-plus.url = "github:ryoppippi/nix-vite-plus";
   };
 
   outputs =
-    inputs@{ flake-parts, ... }:
+    inputs@{ flake-parts, nix-vite-plus, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       imports = [ inputs.treefmt-nix.flakeModule ];
       systems = [
         "x86_64-linux"
         "aarch64-linux"
         "aarch64-darwin"
-        "x86_64-darwin"
       ];
       perSystem =
-        { pkgs, self', ... }:
+        {
+          pkgs,
+          self',
+          system,
+          ...
+        }:
         let
           node_ver = pkgs.nodejs_24;
         in
@@ -32,7 +37,6 @@
           treefmt = {
             projectRootFile = "flake.nix";
             programs = {
-              prettier.enable = true;
               nixfmt.enable = true;
               deadnix.enable = true;
               statix.enable = true;
@@ -45,10 +49,13 @@
               nil
               pnpm
               nixfmt
+              nix-vite-plus.packages.${system}.vp
             ];
           };
           packages = {
-            default = pkgs.callPackage ./package.nix { };
+            default = pkgs.callPackage ./package.nix {
+              inherit (nix-vite-plus.packages.${system}) vp;
+            };
             docker = pkgs.dockerTools.buildLayeredImage {
               name = "BlackDemonFire/lukas";
               tag = "latest";
@@ -57,7 +64,7 @@
                 entrypoint = [
                   "${pkgs.lib.getExe node_ver}"
                   "--enable-source-maps"
-                  "${self'.packages.default}/dist/index.js"
+                  "${self'.packages.default}/dist/index.mjs"
                 ];
                 WorkingDir = self'.packages.default;
                 Env = [
@@ -79,7 +86,7 @@
                   pname = "lukasbot";
                   version = "0.0.0";
                   fetcherVersion = 4;
-                  hash = "sha256-g7dGb3j8f4bHvenaPPlZtdOs8Kn5VBRXz+LzheXGijw=";
+                  hash = "sha256-lI7srhZDXczq2zd3zlh72j8LbW+78CtLYq2fbPZlync=";
                 };
               in
               pkgs.stdenv.mkDerivation (_finalAttrs: {
@@ -100,7 +107,7 @@
                   pnpm install
                 '';
                 checkPhase = ''
-                  pnpm check
+                  pnpm type-check
                 '';
                 # don't yell about not producing an output path for a check
                 installPhase = ''
@@ -141,7 +148,7 @@
                 after = [ "network.target" ];
                 wantedBy = [ "multi-user.target" ];
                 serviceConfig = {
-                  ExecStart = "${pkgs.nodejs_20}/bin/node ${self.packages.default}/dist/index.js";
+                  ExecStart = "${pkgs.nodejs_24}/bin/node ${self.packages.default}/dist/index.js";
                   Restart = "always";
                   EnvFile = cfg.envFile;
                 };

@@ -1,15 +1,16 @@
+import { Bot } from "@/bot.js";
+import { Command } from "@/modules/command.js";
+import logger from "@/modules/logger.js";
+import type { ILanguage } from "@/types.js";
 import { EmbedBuilder, Message } from "discord.js";
-import { Bot } from "../../bot.js";
-import { Command } from "../../modules/command.js";
-import logger from "../../modules/logger.js";
-import type { ILanguage as lang } from "../../types.js";
 
 export default class Kill extends Command {
-  constructor(client: Bot, category: string, name: string) {
-    super(client, category, name);
-  }
   help = { show: false, usage: `${this.prefix}kill` };
-  async run(client: Bot, message: Message, _args: string[], language: lang) {
+  readonly name = "kill";
+  constructor(client: Bot) {
+    super(client, "Admin");
+  }
+  async run(client: Bot, message: Message, _args: string[], language: ILanguage) {
     if (!message.channel.isSendable()) {
       logger.error(`channel ${message.channel.id} is not sendable`);
       return;

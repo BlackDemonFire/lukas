@@ -14,7 +14,7 @@ const settingsSchema = z.object({
   DB_USER: z.string(),
   DB_PASS: z.string(),
   DB_PORT: z.preprocess(
-    (p) => (typeof p === "string" ? parseInt(p) : p),
+    (p) => (typeof p === "string" ? Number.parseInt(p) : p),
     z.number().int().min(1024).max(65535).default(5432),
   ),
 });

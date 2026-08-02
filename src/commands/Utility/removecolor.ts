@@ -1,12 +1,13 @@
+import { Bot } from "@/bot.js";
+import { Command } from "@/modules/command.js";
+import logger from "@/modules/logger.js";
+import type { ILanguage } from "@/types.js";
 import { type ColorResolvable, Message, resolveColor } from "discord.js";
-import { Bot } from "../../bot.js";
-import { Command } from "../../modules/command.js";
-import type { ILanguage } from "../../types.js";
-import logger from "../../modules/logger.js";
 
 export default class Removecolor extends Command {
-  constructor(client: Bot, category: string, name: string) {
-    super(client, category, name);
+  readonly name = "removecolor";
+  constructor(client: Bot) {
+    super(client, "Utility");
   }
   async run(client: Bot, message: Message, args: string[], language: ILanguage) {
     if (!message.channel.isSendable()) {

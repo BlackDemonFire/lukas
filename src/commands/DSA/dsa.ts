@@ -1,15 +1,16 @@
+import { Bot } from "@/bot.js";
+import { Command } from "@/modules/command.js";
+import logger from "@/modules/logger.js";
+import type { ILanguage } from "@/types.js";
 import { BaseGuildTextChannel, Message, PermissionFlagsBits, TextChannel } from "discord.js";
-import { Bot } from "../../bot.js";
-import { Command } from "../../modules/command.js";
-import type { ILanguage as lang } from "../../types.js";
-import logger from "../../modules/logger.js";
 
 export default class Dsa extends Command {
-  constructor(client: Bot, category: string, name: string) {
-    super(client, category, name);
-  }
+  readonly name = "dsa";
   help = { show: true, usage: `${this.prefix}dsa [character] <message>` };
-  async run(client: Bot, message: Message, args: string[], language: lang) {
+  constructor(client: Bot) {
+    super(client, "DSA");
+  }
+  async run(client: Bot, message: Message, args: string[], language: ILanguage) {
     if (!message.channel.isSendable()) {
       logger.error(`channel ${message.channel.id} is not sendable`);
       return;

@@ -1,12 +1,13 @@
+import { Bot } from "@/bot.js";
+import { Command } from "@/modules/command.js";
+import logger from "@/modules/logger.js";
+import type { ILanguage } from "@/types.js";
 import { Message } from "discord.js";
-import { Bot } from "../../bot.js";
-import { Command } from "../../modules/command.js";
-import type { ILanguage } from "../../types.js";
-import logger from "../../modules/logger.js";
 
 export default class Gifaction extends Command {
-  constructor(client: Bot, category: string, name: string) {
-    super(client, category, name);
+  readonly name = "gifactions";
+  constructor(client: Bot) {
+    super(client, "Utility");
   }
   async run(client: Bot, message: Message, _args: string[], language: ILanguage) {
     if (!message.channel.isSendable()) {

@@ -1,7 +1,7 @@
 import { BaseInteraction, GuildChannel } from "discord.js";
-import { Bot } from "../bot.js";
-import { activeRequests } from "../modules/dbo/gifRequest.js";
-import logger from "../modules/logger.js";
+import { Bot } from "@/bot.js";
+import { activeRequests } from "@/modules/dbo/gifRequest.js";
+import logger from "@/modules/logger.js";
 
 export default async function run(client: Bot, interaction: BaseInteraction, args: string[]) {
   if (!interaction.isButton()) {

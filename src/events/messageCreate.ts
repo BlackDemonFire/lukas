@@ -1,9 +1,9 @@
+import { Bot } from "@/bot.js";
+import logger from "@/modules/logger.js";
+import { executeRollIfEnabled } from "@/modules/rollHandler.js";
+import settings from "@/modules/settings.js";
+import type { ILanguage } from "@/types.js";
 import { Message } from "discord.js";
-import { Bot } from "../bot.js";
-import logger from "../modules/logger.js";
-import settings from "../modules/settings.js";
-import type { ILanguage as ILanguage } from "../types.js";
-import { executeRollIfEnabled } from "../modules/rollHandler.js";
 
 async function cmd(client: Bot, message: Message) {
   const args = message.content.slice(client.prefix.length).trim().split(" ");

@@ -1,14 +1,16 @@
+import { Bot } from "@/bot.js";
+import { Command } from "@/modules/command.js";
+import logger from "@/modules/logger.js";
+import type { ILanguage } from "@/types.js";
 import { Message, PermissionFlagsBits } from "discord.js";
-import { Bot } from "../../bot.js";
-import { Command } from "../../modules/command.js";
-import type { ILanguage as lang } from "../../types.js";
-import logger from "../../modules/logger.js";
 
 export default class AutoRoll extends Command {
-  constructor(client: Bot, category: string, name: string) {
-    super(client, category, name);
+  readonly name = "autoroll";
+  help = { show: true, usage: `${this.prefix}autoroll <y/n>` };
+  constructor(client: Bot) {
+    super(client, "Settings");
   }
-  async run(client: Bot, message: Message, args: string[], language: lang) {
+  async run(client: Bot, message: Message, args: string[], language: ILanguage) {
     if (!message.channel.isSendable()) {
       logger.error(`channel ${message.channel.id} is not sendable`);
       return;
@@ -44,5 +46,4 @@ export default class AutoRoll extends Command {
       ),
     });
   }
-  help = { show: true, usage: `${this.prefix}autoroll <y/n>` };
 }
