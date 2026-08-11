@@ -15,7 +15,7 @@
     "@opentelemetry/sdk-trace-base": "^2.10.0",
     "@opentelemetry/sdk-trace-node": "^2.10.0",
     "@opentelemetry/sdk-trace-web": "^2.10.0",
-    "discord-api-types": "^0.38.52",
+    "discord-api-types": "^0.38.53",
     "discord.js": "^14.27.0",
     "dotenv": "^17.4.2",
     "effect": "4.0.0-beta.102",
