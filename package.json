@@ -20,7 +20,7 @@
     "@mikro-orm/cli": "^7.1.9",
     "@total-typescript/ts-reset": "^0.6.1",
     "@types/node": "^24.13.3",
-    "@types/pg": "^8.20.3",
+    "@types/pg": "^8.21.0",
     "@types/recursive-readdir": "^2.2.4",
     "vite": "npm:@voidzero-dev/vite-plus-core@0.2.7",
     "vite-plus": "catalog:"
