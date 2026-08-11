@@ -28,12 +28,7 @@ export const AutoRollCommand = declareCommand({
       yield* sendMessage(channel, { content: msg });
       return;
     }
-    if (
-      !(
-        message.member!.permissions.has(PermissionFlagsBits.Administrator) ||
-        (yield* isOwner(message.author))
-      )
-    ) {
+    if (!(message.member!.permissions.has(PermissionFlagsBits.Administrator) || (yield* isOwner(message.author)))) {
       const permissionError = yield* i18n.t(message.guildId, "command.autoroll.permissionError");
       yield* sendMessage(message.channel, { content: permissionError });
       return;
@@ -56,13 +51,8 @@ export const AutoRollCommand = declareCommand({
     }
     const settingsRepo = yield* SettingsRepository;
     yield* settingsRepo.setAutorollEnabled(message.guild, parsed);
-    const activePart = yield* i18n.t(
-      message.guildId,
-      parsed ? "command.autoroll.active" : "command.autoroll.inactive",
-    );
-    const successMsg = yield* i18n.t(message.guildId, "command.autoroll.success", {
-      active: activePart,
-    });
+    const activePart = yield* i18n.t(message.guildId, parsed ? "command.autoroll.active" : "command.autoroll.inactive");
+    const successMsg = yield* i18n.t(message.guildId, "command.autoroll.success", { active: activePart });
     yield* sendMessage(message.channel, { content: successMsg });
   }),
 });

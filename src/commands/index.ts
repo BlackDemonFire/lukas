@@ -6,13 +6,7 @@ import { GifCommands } from "./Gifs/index.js";
 import { SettingsCommands } from "./Settings/index.js";
 import { UtilityCommands } from "./Utility/index.js";
 
-const commandList = [
-  ...AdminCommands,
-  ...DSACommands,
-  ...GifCommands,
-  ...SettingsCommands,
-  ...UtilityCommands,
-];
+const commandList = [...AdminCommands, ...DSACommands, ...GifCommands, ...SettingsCommands, ...UtilityCommands];
 
 const commands = new Map<string, (typeof commandList)[number]>();
 for (const command of commandList) {

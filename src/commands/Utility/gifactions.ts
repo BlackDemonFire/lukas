@@ -39,9 +39,7 @@ export const GifactionsCommand = declareCommand({
           .join(", ")} ${and} \`${actions.slice(-1).join(",")}\``;
         break;
     }
-    const msg = yield* i18n.t(message.guildId, "command.gifactions.response", {
-      actions: actionsstring,
-    });
+    const msg = yield* i18n.t(message.guildId, "command.gifactions.response", { actions: actionsstring });
     yield* sendMessage(channel, { content: msg });
   }),
 });

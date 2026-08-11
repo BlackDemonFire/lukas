@@ -11,11 +11,7 @@ export const DiscordLive = Layer.effect(
     const config = yield* AppConfig;
     const bus = yield* EventBus;
     const client = new Client({
-      intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.MessageContent,
-      ],
+      intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
     });
 
     client.on("messageCreate", (msg) => {

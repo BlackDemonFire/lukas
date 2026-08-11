@@ -40,9 +40,7 @@ export const GiftypeCommand = declareCommand({
 
     const giftype: string = args.length === 0 ? "" : args[0]!.toLowerCase();
     if (args.length == 0 || !types.includes(giftype)) {
-      const msg = yield* i18n.t(message.guildId, "command.giftype.availableTypes", {
-        types: typesstring,
-      });
+      const msg = yield* i18n.t(message.guildId, "command.giftype.availableTypes", { types: typesstring });
       yield* sendMessage(channel, { content: msg });
       return;
     }

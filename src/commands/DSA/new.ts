@@ -70,10 +70,7 @@ export const NewCommand = declareCommand({
               {
                 const name = msg.content;
                 collector.stop();
-                const successMsg = yield* i18n.t(message.guildId, "command.new.success", {
-                  name,
-                  pref,
-                });
+                const successMsg = yield* i18n.t(message.guildId, "command.new.success", { name, pref });
                 yield* sendMessage(channel, { content: successMsg });
                 const dsaCharRepo = yield* DsaCharRepository;
                 yield* dsaCharRepo.createCharacter(pref, name, av);

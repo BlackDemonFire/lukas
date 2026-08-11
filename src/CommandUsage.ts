@@ -3,11 +3,7 @@ import { Clock, Context, Duration, Effect, Layer, Ref } from "effect";
 type UsageMap = Map<string, readonly number[]>;
 
 interface ICommandUsage {
-  recordAndTest: (
-    key: string,
-    limit: number,
-    window: Duration.Duration,
-  ) => Effect.Effect<boolean, never, never>;
+  recordAndTest: (key: string, limit: number, window: Duration.Duration) => Effect.Effect<boolean, never, never>;
 }
 export class CommandUsage extends Context.Service<CommandUsage, ICommandUsage>()("CommandUsage") {}
 

@@ -9,19 +9,14 @@ import {
 } from "discord.js";
 import { Effect } from "effect";
 
-const run = Effect.fn("NewgifInteractionCommand.run")(function* (
-  interaction: BaseInteraction,
-  args: string[],
-) {
+const run = Effect.fn("NewgifInteractionCommand.run")(function* (interaction: BaseInteraction, args: string[]) {
   if (!interaction.isButton()) {
     yield* Effect.logWarning("Got non-button interaction for newgif command");
     return;
   }
   const request = args[1] ? activeRequests.get(args[1]) : undefined;
   if (!request) {
-    yield* Effect.tryPromise<InteractionResponse, DiscordAPIError>(() =>
-      interaction.update("Unable to find request"),
-    );
+    yield* Effect.tryPromise<InteractionResponse, DiscordAPIError>(() => interaction.update("Unable to find request"));
     return;
   }
   if (request.accepted !== undefined) {
@@ -50,9 +45,7 @@ const run = Effect.fn("NewgifInteractionCommand.run")(function* (
     request.accepted = true;
     request.acceptedBy = interaction.user.username;
   } else if (args[0] == "reject") {
-    yield* Effect.tryPromise<Message, DiscordAPIError>(() =>
-      request.message.edit("The owner rejected your request"),
-    );
+    yield* Effect.tryPromise<Message, DiscordAPIError>(() => request.message.edit("The owner rejected your request"));
     yield* Effect.tryPromise<InteractionResponse, DiscordAPIError>(() =>
       interaction.update({
         content: `**REJECTED**\nGif check request from in <#${request.message.channel.id}> (${

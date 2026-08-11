@@ -7,10 +7,7 @@ export class InteractionMap extends Context.Service<
   {
     readonly map: ReadonlyMap<
       string,
-      (
-        interaction: BaseInteraction<CacheType>,
-        args: string[],
-      ) => Effect.Effect<void, DiscordAPIError, GifRepository>
+      (interaction: BaseInteraction<CacheType>, args: string[]) => Effect.Effect<void, DiscordAPIError, GifRepository>
     >;
   }
 >()("InteractionMap") {}

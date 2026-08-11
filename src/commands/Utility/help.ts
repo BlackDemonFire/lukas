@@ -41,9 +41,7 @@ export const HelpCommand = declareCommand({
             { name: usage, value: yield* i18n.t(message.guildId, "command.help.usage.args") },
           );
       } else {
-        const cnf = yield* i18n.t(message.guildId, "command.help.commandNotFound", {
-          cmd: args[0],
-        });
+        const cnf = yield* i18n.t(message.guildId, "command.help.commandNotFound", { cmd: args[0] });
         embed.setDescription(cnf);
       }
     } else {

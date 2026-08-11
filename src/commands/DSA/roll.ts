@@ -79,10 +79,7 @@ export const RollCommand = declareCommand({
         return;
       }
       if (!checkregex.test(rollarga) && !checkregex.test(rollargb)) {
-        const doubleRollCount = yield* i18n.t(
-          message.guildId,
-          "command.roll.errors.doubleRollCount",
-        );
+        const doubleRollCount = yield* i18n.t(message.guildId, "command.roll.errors.doubleRollCount");
         yield* sendMessage(channel, { content: `${WARN_EMOJI} ${doubleRollCount}` });
         return;
       }
@@ -94,10 +91,7 @@ export const RollCommand = declareCommand({
         dicetype = rollargb;
         rollcountmax = rollarga;
       } else {
-        const schroedingersArgument = yield* i18n.t(
-          message.guildId,
-          "command.roll.errors.schroedingersArgument",
-        );
+        const schroedingersArgument = yield* i18n.t(message.guildId, "command.roll.errors.schroedingersArgument");
         yield* sendMessage(channel, { content: `${WARN_EMOJI} ${schroedingersArgument}` });
         return;
       }
@@ -144,15 +138,8 @@ export const RollCommand = declareCommand({
     }
     if (rolltype == 0) {
       dicetype = dicetype.substring(1);
-      if (
-        typeof dicetype === "number"
-          ? Number.isNaN(dicetype)
-          : Number.isNaN(Number.parseInt(dicetype))
-      ) {
-        const rolltypeNotNumeric = yield* i18n.t(
-          message.guildId,
-          "command.roll.errors.rolltypeNotNumeric",
-        );
+      if (typeof dicetype === "number" ? Number.isNaN(dicetype) : Number.isNaN(Number.parseInt(dicetype))) {
+        const rolltypeNotNumeric = yield* i18n.t(message.guildId, "command.roll.errors.rolltypeNotNumeric");
         yield* sendMessage(channel, { content: `${WARN_EMOJI} ${rolltypeNotNumeric}` });
         return;
       }
@@ -161,10 +148,7 @@ export const RollCommand = declareCommand({
     }
 
     if (rolltype == 0) {
-      const rolltypeUndefined = yield* i18n.t(
-        message.guildId,
-        "command.roll.errors.rolltypeUndefined",
-      );
+      const rolltypeUndefined = yield* i18n.t(message.guildId, "command.roll.errors.rolltypeUndefined");
       yield* sendMessage(channel, {
         content: `${WARN_EMOJI} ${rolltypeUndefined} \
                 gotDefault = ${gotDefault}\
@@ -175,9 +159,7 @@ export const RollCommand = declareCommand({
       return;
     }
     if (rollcountmax == "0") {
-      const plaintext = yield* i18n.t(message.guildId, "command.roll.results.noDice.plaintext", {
-        msgauthor,
-      });
+      const plaintext = yield* i18n.t(message.guildId, "command.roll.results.noDice.plaintext", { msgauthor });
       const embedDescription = yield* i18n.t(message.guildId, "command.roll.results.noDice.embed");
       const embed = new EmbedBuilder()
         .setColor(0x36393e)
@@ -186,15 +168,8 @@ export const RollCommand = declareCommand({
       yield* sendMessage(channel, { content: `*${plaintext}*`, embeds: [embed] });
       return;
     }
-    if (
-      typeof rollcountmax === "number"
-        ? Number.isNaN(rollcountmax)
-        : Number.isNaN(Number.parseInt(rollcountmax))
-    ) {
-      const rollcountNotNumeric = yield* i18n.t(
-        message.guildId,
-        "command.roll.errors.rollcountNotNumeric",
-      );
+    if (typeof rollcountmax === "number" ? Number.isNaN(rollcountmax) : Number.isNaN(Number.parseInt(rollcountmax))) {
+      const rollcountNotNumeric = yield* i18n.t(message.guildId, "command.roll.errors.rollcountNotNumeric");
       yield* sendMessage(channel, { content: `${WARN_EMOJI} ${rollcountNotNumeric}` });
       return;
     }
@@ -261,9 +236,7 @@ export const RollCommand = declareCommand({
     // response
 
     if (rollcountmax == "1") {
-      const plaintext = yield* i18n.t(message.guildId, "command.roll.results.singleDice", {
-        rolltype,
-      });
+      const plaintext = yield* i18n.t(message.guildId, "command.roll.results.singleDice", { rolltype });
       const embed = new EmbedBuilder().setColor(0x36393e).setFooter({ text: `@${msgauthor}` });
       if (useEmotes) {
         embed.setDescription(rollresult);

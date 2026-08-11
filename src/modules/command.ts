@@ -5,15 +5,7 @@ import { I18nService } from "@/i18n/I18n.js";
 import type { MessageKey } from "@/i18n/types.js";
 import { GifRepository } from "@/repositories/GifRepository.js";
 import { UserRepository } from "@/repositories/UserRepository.js";
-import {
-  type ColorResolvable,
-  Colors,
-  DiscordAPIError,
-  EmbedBuilder,
-  Message,
-  Team,
-  User,
-} from "discord.js";
+import { type ColorResolvable, Colors, DiscordAPIError, EmbedBuilder, Message, Team, User } from "discord.js";
 import { DateTime, Effect, Option, pipe } from "effect";
 import { LukasRandom } from "./random.js";
 
@@ -62,9 +54,7 @@ export const parseUser = Effect.fn("parseUser")(function* (message: Message, arg
           onNone: () => Effect.succeed(arg),
         });
         if (!name || name == "") {
-          const member = message.guild
-            ? message.guild.members.resolve(maybeUser.valueOrUndefined!)
-            : null;
+          const member = message.guild ? message.guild.members.resolve(maybeUser.valueOrUndefined!) : null;
           name = member ? member.displayName : maybeUser.valueOrUndefined!.username;
         }
         if (maybeUser.valueOrUndefined == message.author) {
@@ -119,11 +109,7 @@ const buildAndSendEmbed = Effect.fnUntraced(function* (
   if (!channel.isSendable()) {
     return yield* new ChannelNotSendableError({ channelId: message.channel.id });
   }
-  const embed = new EmbedBuilder()
-    .setImage(gif)
-    .setAuthor({ name })
-    .setDescription(responseString)
-    .setColor(color);
+  const embed = new EmbedBuilder().setImage(gif).setAuthor({ name }).setDescription(responseString).setColor(color);
   yield* sendMessage(channel, { embeds: [embed] });
 });
 
@@ -143,17 +129,14 @@ const runSingleUserGifCommand = Effect.fn("SingleUserGifCommand.run")(function* 
   else color = "Random";
   if (userA == "") userA = message.guild ? message.member!.displayName : message.author.username;
   const i18n = yield* I18nService;
-  const responseString: string = yield* i18n.t(message.guildId, `command.${name}.singleUser`, {
-    a: userA,
-  });
+  const responseString: string = yield* i18n.t(message.guildId, `command.${name}.singleUser`, { a: userA });
   yield* buildAndSendEmbed(gif, responseString, color, message, name);
 });
 
 const runMultiUserGifCommand = Effect.fn("MultiUserGifCommand.run")(function* (
   message: Message,
   args: string[],
-  name: MiddlePart<MessageKey, `command.`, ".singleUser"> &
-    MiddlePart<MessageKey, `command.`, ".multiUser">,
+  name: MiddlePart<MessageKey, `command.`, ".singleUser"> & MiddlePart<MessageKey, `command.`, ".multiUser">,
 ) {
   const userRepo = yield* UserRepository;
   const gifType = yield* userRepo.getGifType(message.author);
@@ -171,10 +154,7 @@ const runMultiUserGifCommand = Effect.fn("MultiUserGifCommand.run")(function* (
     const huhu = yield* i18n.t(message.guildId, `command.${name}.singleUser`, { a: userA });
     responseString = huhu;
   } else {
-    responseString = yield* i18n.t(message.guildId, `command.${name}.multiUser`, {
-      a: userA,
-      b: userB,
-    });
+    responseString = yield* i18n.t(message.guildId, `command.${name}.multiUser`, { a: userA, b: userB });
   }
   yield* buildAndSendEmbed(gif, responseString, color, message, name);
 });

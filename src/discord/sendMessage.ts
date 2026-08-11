@@ -2,7 +2,4 @@ import type { DiscordAPIError, Message, MessageCreateOptions, SendableChannels }
 import { Effect } from "effect";
 
 export const sendMessage = (channel: SendableChannels, params: MessageCreateOptions) =>
-  Effect.withSpan(
-    "Discord.sendMessage",
-    {},
-  )(Effect.tryPromise<Message, DiscordAPIError>(() => channel.send(params)));
+  Effect.withSpan("Discord.sendMessage", {})(Effect.tryPromise<Message, DiscordAPIError>(() => channel.send(params)));
