@@ -281,8 +281,8 @@ importers:
         specifier: 0.35.0
         version: 0.35.0
       '@mikro-orm/cli':
-        specifier: ^7.1.9
-        version: 7.1.9
+        specifier: ^7.1.11
+        version: 7.1.11
       '@total-typescript/ts-reset':
         specifier: ^0.6.1
         version: 0.6.1
@@ -593,10 +593,19 @@ packages:
   '@jridgewell/sourcemap-codec@1.5.5':
     resolution: {integrity: sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==}
 
-  '@mikro-orm/cli@7.1.9':
-    resolution: {integrity: sha512-hCStEgJ+phKGrLE0O6tKzSCqc8D4c9ERaL0i+d5ybKtMpXh+eUKFK6G1GnTAfEXlZFeWA0N1HpsOpKkl+38YXA==}
+  '@mikro-orm/cli@7.1.11':
+    resolution: {integrity: sha512-agfFr2r9VOlnm+fZtkfcZkRVTRYNWB7tzd2HOvvnsI1kAjKbZE2Wd9Wqh/E9N2wxitF0bCttUl5rOkC1CJUDTg==}
     engines: {node: '>= 22.17.0'}
     hasBin: true
+
+  '@mikro-orm/core@7.1.11':
+    resolution: {integrity: sha512-LjxeVx7PYIVqFW4WDwjOYSHa7RygEGK1RJhjUC5ldY1xbvhOgntwrKJSxfJjBxGx6G3CL55jX6xT2HjU1WdyaQ==}
+    engines: {node: '>= 22.17.0'}
+    peerDependencies:
+      dataloader: 2.2.3
+    peerDependenciesMeta:
+      dataloader:
+        optional: true
 
   '@mikro-orm/core@7.1.9':
     resolution: {integrity: sha512-kvkZuSNtihyASgv3Ax66MyJTZjetd8VyUXKBd8eUUiZaw6Modkbmgzsh7N051K4mbBFYliBCU7/OBfp4TgRxpQ==}
@@ -1816,8 +1825,8 @@ packages:
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
 
-  mikro-orm@7.1.9:
-    resolution: {integrity: sha512-tfMVBa86anJTmxt4KahMjKpXYIUWRl7nRoh2q88ZUmvDzY7kWfyI5Q4aTBlvarv/WJnQj2K2slV8rOAa7Q8aIg==}
+  mikro-orm@7.1.11:
+    resolution: {integrity: sha512-Lr9ihIoTAnEKpVF4fcLeyHDQwGHJmBGVuvcPhTGm5WdO8+JFQpEE5Ba6oUNLIz/uDr06fkeBmwf8MMGEbcAOuA==}
     engines: {node: '>= 22.17.0'}
 
   mime@4.1.0:
@@ -2423,13 +2432,15 @@ snapshots:
 
   '@jridgewell/sourcemap-codec@1.5.5': {}
 
-  '@mikro-orm/cli@7.1.9':
+  '@mikro-orm/cli@7.1.11':
     dependencies:
-      '@mikro-orm/core': 7.1.9
-      mikro-orm: 7.1.9
+      '@mikro-orm/core': 7.1.11
+      mikro-orm: 7.1.11
       yargs: 17.7.2
     transitivePeerDependencies:
       - dataloader
+
+  '@mikro-orm/core@7.1.11': {}
 
   '@mikro-orm/core@7.1.9': {}
 
@@ -3274,7 +3285,7 @@ snapshots:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  mikro-orm@7.1.9: {}
+  mikro-orm@7.1.11: {}
 
   mime@4.1.0: {}
 
