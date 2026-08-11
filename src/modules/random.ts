@@ -1,48 +1,77 @@
+import { Context, Effect, Layer, Option, pipe, Random, Redacted } from "effect";
+import type { NoSuchElementError } from "effect/Cause";
 import RandomOrg from "random-org";
-export class FakeRandom {
+import { AppConfig } from "./settings.js";
+
+export interface IRandom {
+  int: (min: number, max: number) => Effect.Effect<number>;
+  ints: (min: number, max: number, count: number) => Effect.Effect<number[]>;
+  choice: <T>(options: ArrayLike<T>) => Effect.Effect<T, NoSuchElementError>;
+}
+class FakeRandom implements IRandom {
   int(min: number, max: number) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    return Random.nextIntBetween(min, max);
   }
-  choice<T>(options: ArrayLike<T>): T {
-    if (!Array.isArray(options)) return options as T;
-    if (options.length == 1) return options[0]!;
-    const res = this.int(0, options.length - 1);
-    return options[res]!;
+  choice<T>(options: ArrayLike<T>) {
+    if (!Array.isArray(options)) return Effect.succeed(options as T);
+    if (options.length === 1) return Effect.succeed(options[0]!);
+    return Random.choice(options as T[]);
   }
   ints(min: number, max: number, count: number) {
-    const result: number[] = [];
-    for (let i = 0; i < count; i++) {
-      result.push(this.int(min, max));
-    }
-    return result;
+    return Effect.gen(function* () {
+      const res = [];
+      for (let i = 0; i < count; i++) {
+        res.push(yield* Random.nextIntBetween(min, max));
+      }
+      return res;
+    });
   }
 }
-export class Random {
+class RandomOrgRandom implements IRandom {
   api;
   constructor(apiKey: string) {
     this.api = new RandomOrg({ apiKey });
   }
-  async int(min: number, max: number) {
-    if (max == min) return min;
+  int(min: number, max: number) {
+    if (max === min) return Effect.succeed(min);
     if (min > max) {
       [max, min] = [min, max];
     }
-    const result = await this.api.generateIntegers({ min: min, max: max, n: 1 });
-    return result.random.data[0]!;
+    return pipe(
+      Effect.promise(() => this.api.generateIntegers({ min: min, max: max, n: 1 })),
+      Effect.map((d) => d.random.data[0]!),
+    );
   }
-  async choice<T>(options: ArrayLike<T>): Promise<T> {
-    if (!Array.isArray(options)) return options as T;
-    if (options.length === 1) return options[0]!;
-    const res = await this.int(0, options.length - 1);
-    return options[res]!;
+  choice<T>(options: ArrayLike<T>) {
+    if (!Array.isArray(options)) return Effect.succeed(options as T);
+    if (options.length === 1) return Effect.succeed(options[0]!);
+    return pipe(
+      this.int(0, options.length - 1),
+      Effect.map((e) => options[e]!),
+    );
   }
-  async ints(min: number, max: number, count: number): Promise<number[]> {
-    if (max == min) return Array.from<number>({ length: count }).fill(min);
+  ints(min: number, max: number, count: number) {
+    if (max == min) return Effect.succeed(Array.from<number>({ length: count }).fill(min));
     if (min > max) {
       [max, min] = [min, max];
     }
-    const result = await this.api.generateIntegers({ min: min, max: max, n: count });
-    const data: number[] = result.random.data;
-    return data;
+    return pipe(
+      Effect.promise(() => this.api.generateIntegers({ min: min, max: max, n: count })),
+      Effect.map((r) => r.random.data),
+    );
   }
 }
+export const LukasRandom = Context.Service<IRandom>("LukasRandom");
+export const LukasRandomLive = Layer.effect(
+  LukasRandom,
+  Effect.gen(function* () {
+    const cfg = yield* AppConfig;
+    yield* Effect.logInfo(
+      "Running with" + Option.isSome(cfg.RANDOMKEY) ? "Random.org randomness" : "Pseudo randomness",
+    );
+    return Option.match(cfg.RANDOMKEY, {
+      onNone: () => new FakeRandom(),
+      onSome: (key) => new RandomOrgRandom(Redacted.value(key)),
+    });
+  }),
+);

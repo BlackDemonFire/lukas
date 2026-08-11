@@ -70,11 +70,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1785567438,
-        "narHash": "sha256-fXaAzUuFaqHcOiJjCDmz9c0rS5tbEPGHH7oBWaJqtoc=",
+        "lastModified": 1785912940,
+        "narHash": "sha256-PhoxeWN+MaL2qTDy/YxwR/Qhj12iCp/cK7fECfI+34o=",
         "owner": "ryoppippi",
         "repo": "nix-vite-plus",
-        "rev": "bfd49d9b2e0d3efb81b8edb560486cc7ca31291c",
+        "rev": "323c9a6baa7f340d5b3e33f096e8464807d6dc88",
         "type": "github"
       },
       "original": {

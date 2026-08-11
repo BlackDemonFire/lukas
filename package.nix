@@ -29,7 +29,7 @@ stdenv.mkDerivation (finalAttrs: {
     inherit (finalAttrs) pname version src;
     installFlags = "--production";
     fetcherVersion = 4;
-    hash = "sha256-lI7srhZDXczq2zd3zlh72j8LbW+78CtLYq2fbPZlync=";
+    hash = "sha256-h7yBdNfLDCq5MmeAMwzeLB9Jq9LXvEfNGJNaqif9fPE=";
   };
   buildPhase = ''
     runHook preBuild
@@ -40,7 +40,7 @@ stdenv.mkDerivation (finalAttrs: {
   installPhase = ''
     runHook preInstall
     mkdir -p $out
-    cp -r dist package.json node_modules languages $out
+    cp -r dist package.json node_modules $out
     runHook postInstall
   '';
 })

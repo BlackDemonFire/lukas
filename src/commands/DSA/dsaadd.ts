@@ -1,31 +1,38 @@
-import { Bot } from "@/bot.js";
-import { Command } from "@/modules/command.js";
-import logger from "@/modules/logger.js";
-import type { ILanguage } from "@/types.js";
+import { sendMessage } from "@/discord/sendMessage";
+import { ChannelNotSendableError } from "@/errors/ChannelNotSendable";
+import { I18nService } from "@/i18n/I18n";
+import { AppConfig } from "@/modules/settings";
+import { DsaCharRepository } from "@/repositories/DsaCharRepository";
+import { declareCommand } from "@/types";
 import { Message } from "discord.js";
+import { Effect } from "effect";
 
-export default class Dsaadd extends Command {
-  readonly name = "dsaadd";
-  help = {
-    show: true,
-    usage: `${this.prefix}dsaadd <character> [avatar - if it doesn't start with \`http\`, it will be ignored.] <displayed name>`,
-  };
-  constructor(client: Bot) {
-    super(client, "DSA");
-  }
-  async run(client: Bot, message: Message, args: string[], language: ILanguage) {
-    if (!message.channel.isSendable()) {
-      logger.error(`channel ${message.channel.id} is not sendable`);
-      return;
+export const DsaAddCommand = declareCommand({
+  usage: Effect.gen(function* () {
+    const settings = yield* AppConfig;
+    return `${settings.prefix}dsaadd <character> [avatar - if it doesn't start with \`http\`, it will be ignored.] <displayed name>`;
+  }),
+  category: "DSA",
+  name: "dsaadd",
+  summary: "command.dsaadd.description",
+  run: Effect.fn("DsaaddCommand.run")(function* (message: Message, args: string[]) {
+    const channel = message.channel;
+    if (!channel.isSendable()) {
+      yield* Effect.logError(`channel ${message.channel.id} is not sendable`);
+      return yield* new ChannelNotSendableError({ channelId: message.channelId });
     }
+    const i18n = yield* I18nService;
     if (!args || args.length <= 3) {
-      await message.channel.send(language.command.dsaadd.args);
+      const msg = yield* i18n.t(message.guildId, "command.dsaadd.args");
+      yield* sendMessage(channel, { content: msg });
       return;
     }
     const pref: string = args.shift()!.slice().toLowerCase();
     const img: string = args[0]?.includes("http") ? args.shift()! : "";
     const name: string = args.join(" ");
-    await client.db.newDSAChar(pref, name, img);
-    await message.channel.send({ content: language.command.dsaadd.success.replace("{pref}", pref) });
-  }
-}
+    const dsaCharRepo = yield* DsaCharRepository;
+    yield* dsaCharRepo.createCharacter(pref, name, img);
+    const msg = yield* i18n.t(message.guildId, "command.dsaadd.success", { pref });
+    yield* sendMessage(channel, { content: msg });
+  }),
+});

@@ -1,36 +1,33 @@
-import type { Bot } from "@/bot.js";
-import type { ILanguage } from "@/types.js";
+import { sendMessage } from "@/discord/sendMessage";
+import { I18nService } from "@/i18n/I18n";
+import { SettingsRepository } from "@/repositories/SettingsRepository";
 import { EmbedBuilder, type Message } from "discord.js";
-import logger from "./logger.js";
+import { Effect } from "effect";
+import { LukasRandom } from "./random";
 
 const rollArgRegex = /^(\d)*(?:[dw])(\d+)$/;
 const dragonBaneArgRegex = /^db(\d+)(?:([-+])(\d+))?$/;
 
 /**
  *
- * @param client Bot instance
  * @param message The message to check/roll for
  * @returns true if a dice-roll was executed.
  */
-export async function executeRollIfEnabled(client: Bot, message: Message<boolean>): Promise<boolean> {
-  if (!message.inGuild()) {
-    logger.debug("[autoroll]: not in guild");
+export const executeRollIfEnabled = Effect.fn("ExecuteRollIfEnabled")(function* (message: Message<true>) {
+  const settingsRepo = yield* SettingsRepository;
+  const autoRollEnabled = yield* settingsRepo.getAutorollEnabled(message.guild);
+  yield* Effect.annotateCurrentSpan("enabled", autoRollEnabled);
+  if (!autoRollEnabled) {
+    yield* Effect.logDebug("[autoroll]: autoroll disabled");
     return false;
   }
-  if (!(await client.db.getAutorollEnabled(message.guild))) {
-    logger.debug("[autoroll]: autoroll disabled");
-    return false;
-  }
-  const language = client.languages.get(await client.db.getLang(message.guild))!;
   const args = message.content.toLowerCase().split(" ");
   if (!args.length) return false;
   if (args.length === 1) {
     const dragonBaneMatch = dragonBaneArgRegex.exec(args[0]!);
     if (dragonBaneMatch) {
-      await runDragonBaneRoll(
-        client,
+      yield* runDragonBaneRoll(
         message,
-        language,
         Number.parseInt(dragonBaneMatch[1]!),
         Number.parseInt(dragonBaneMatch[3] || "0"),
         dragonBaneMatch[2] as "-" | "+",
@@ -39,114 +36,100 @@ export async function executeRollIfEnabled(client: Bot, message: Message<boolean
     }
   }
   if (!args.every((a) => rollArgRegex.test(a))) {
-    logger.debug("[autoroll]: not all args are roll-args");
-    logger.debug(JSON.stringify(args));
+    yield* Effect.logDebug("[autoroll]: not all args are roll-args", args);
     return false;
   }
   const dice: { count: number; max: number }[] = args.map((arg) => {
     const [count, max] = arg.split(/(?:[wd])/);
     return { count: Number.parseInt(count || "1", 10), max: Number.parseInt(max!, 10) };
   });
-  let result = "";
-
+  if (dice.length > 10) {
+    // TODO: i18n message
+    yield* sendMessage(message.channel, { content: "Das Maximum an Würfen ist 10." });
+    return true;
+  }
+  const i18n = yield* I18nService;
   if (dice.some((d) => d.max === 0)) {
-    await message.channel.send({ content: `<:warn_3:498277726604754946> ${language.command.roll.errors.noSides}` });
+    const msg = yield* i18n.t(message.guildId, "command.roll.errors.noSides");
+    yield* sendMessage(message.channel, { content: `<:warn_3:498277726604754946> ${msg}` });
     return true;
   }
   const diceCount = dice.reduce((a, b) => a + b.count, 0);
   const msgauthor: string = message.author.username;
   if (diceCount === 0) {
-    const plaintext = language.command.roll.results.noDice.plaintext.replace("{msgauthor}", msgauthor);
+    const plaintext = yield* i18n.t(message.guildId, "command.roll.results.noDice.plaintext", { msgauthor });
+    const embedText = yield* i18n.t(message.guildId, "command.roll.results.noDice.embed");
     const embed = new EmbedBuilder()
       .setColor(0x36393e)
-      .setDescription(`<:info_1:498285998346731530> ${language.command.roll.results.noDice.embed}`)
+      .setDescription(`<:info_1:498285998346731530> ${embedText}`)
       .setFooter({ text: `@${msgauthor}` });
-    await message.channel.send({ content: `*${plaintext}*`, embeds: [embed] });
+    yield* sendMessage(message.channel, { content: `*${plaintext}*`, embeds: [embed] });
     return true;
   }
   if (diceCount > 70) {
-    await message.channel.send({ content: `<:warn_3:498277726604754946> ${language.command.roll.errors.tooManyDice}` });
+    const msg = yield* i18n.t(message.guildId, "command.roll.errors.tooManyDice");
+    yield* sendMessage(message.channel, { content: `<:warn_3:498277726604754946> ${msg}` });
     return true;
   }
   let nums: number[] = [];
-  logger.debug("executing dice: " + JSON.stringify(dice));
-  logger.debug("message content: " + message.content);
+  yield* Effect.logDebug("executing dice: ", dice);
+  yield* Effect.logDebug("message content: ", message.content);
+  const random = yield* LukasRandom;
+  const embeds = [];
   for (const { count, max } of dice) {
-    const results = await client.random.ints(1, max, count);
+    const results = yield* random.ints(1, max, count);
     nums = nums.concat(results);
+    const embed = new EmbedBuilder().setColor(0x36393e).setFooter({ text: `@${msgauthor}` });
     if (max < 10) {
-      result += results.map(diceToEmoji).join("") + " ";
+      embed.setDescription(results.map(diceToEmoji).join(""));
     } else {
-      result += results.map((d) => d.toString()).join(" ") + " ";
+      embed.setDescription(results.map((d) => d.toString()).join(" "));
     }
+    const title = yield* count === 1
+      ? i18n.t(message.guildId, "command.roll.results.singleDice", { rolltype: dice[0]!.max })
+      : i18n.t(message.guildId, "command.roll.results.multiDice", { rolltype: max, rollcountmax: count });
+    embed.setTitle(title);
+    embeds.push(embed);
   }
-  logger.debug("executed dice: " + JSON.stringify(nums));
-  if (diceCount === 1) {
-    const plaintext = language.command.roll.results.singleDice.replace("{rolltype}", dice[0]!.max.toString());
-    const embed = new EmbedBuilder().setColor(0x36393e).setFooter({ text: `@${msgauthor}` });
-    // includes an emote
-    if (result.includes("<")) {
-      embed.setDescription(result);
-    } else {
-      embed.setAuthor({ name: result });
-    }
+  yield* Effect.logDebug("executed dice: ", nums);
 
-    await message.channel.send({ content: plaintext, embeds: [embed] });
-    return true;
-  } else {
-    const plaintext = language.command.roll.results.multiDice
-      .replace("{rolltype}", Math.max(...dice.map((d) => d.max)).toString())
-      .replace("{rollcountmax}", diceCount.toString());
-    const embed = new EmbedBuilder().setColor(0x36393e).setFooter({ text: `@${msgauthor}` });
-    if (result.includes("<")) {
-      embed.setDescription(result);
-    } else {
-      embed.setAuthor({ name: result });
-    }
+  yield* sendMessage(message.channel, { embeds });
+  return true;
+});
 
-    await message.channel.send({ content: plaintext, embeds: [embed] });
-    return true;
-  }
-}
-
-async function runDragonBaneRoll(
-  client: Bot,
+const runDragonBaneRoll = Effect.fn("DragonBaneRoll.run")(function* (
   message: Message<true>,
-  lang: ILanguage,
   toNotExceed: number,
-  extraRolls = 0,
+  extraRolls: number = 0,
   sign: "-" | "+" = "-",
 ) {
+  const i18n = yield* I18nService;
   if (toNotExceed > 19) {
-    await message.channel.send({ content: lang.dragonborn.dragonbornRoll.invalidArg });
+    const msg = yield* i18n.t(message.guildId, "dragonborn.dragonbornRoll.invalidArg");
+    yield* sendMessage(message.channel, { content: msg });
     return;
   }
-  const rolls = await client.random.ints(1, 20, extraRolls + 1);
+  const random = yield* LukasRandom;
+  const rolls = yield* random.ints(1, 20, extraRolls + 1);
   const rollToEvaluate = sign === "-" ? rolls.toSorted((a, b) => b - a) : rolls.toSorted((a, b) => a - b);
   if (rollToEvaluate[0] === 20) {
-    await message.channel.send({ content: lang.dragonborn.dragonbornRoll.critFailure });
+    const msg = yield* i18n.t(message.guildId, "dragonborn.dragonbornRoll.critFailure");
+    yield* sendMessage(message.channel, { content: msg });
     return;
   }
   if (rollToEvaluate[0]! > toNotExceed) {
-    await message.channel.send({
-      content: lang.dragonborn.dragonbornRoll.failed.replace(
-        "{dice}",
-        new Intl.ListFormat().format(rollToEvaluate.map((e) => e.toString())),
-      ),
-    });
+    const msg = yield* i18n.t(message.guildId, "dragonborn.dragonbornRoll.failed", { dice: rollToEvaluate });
+    yield* sendMessage(message.channel, { content: msg });
     return;
   }
   if (rollToEvaluate[0] === 1) {
-    await message.channel.send({ content: lang.dragonborn.dragonbornRoll.critSuccess });
+    const msg = yield* i18n.t(message.guildId, "dragonborn.dragonbornRoll.critSuccess");
+    yield* sendMessage(message.channel, { content: msg });
     return;
   }
-  await message.channel.send({
-    content: lang.dragonborn.dragonbornRoll.success.replace(
-      "{dice}",
-      new Intl.ListFormat().format(rollToEvaluate.map((e) => e.toString())),
-    ),
-  });
-}
+  const msg = yield* i18n.t(message.guildId, "dragonborn.dragonbornRoll.success", { dice: rollToEvaluate });
+  yield* sendMessage(message.channel, { content: msg });
+});
 
 /**
  *

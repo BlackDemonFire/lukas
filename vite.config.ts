@@ -11,7 +11,6 @@ export default defineConfig({
       "no-array-constructor": "error",
       "no-unused-expressions": "error",
       "no-unused-vars": "error",
-      "no-console": "warn",
       "no-empty-function": "error",
       "no-inline-comments": "error",
       "no-lonely-if": "error",

@@ -1,27 +1,38 @@
-import { Bot } from "@/bot.js";
-import { Command } from "@/modules/command.js";
-import logger from "@/modules/logger.js";
-import type { ILanguage } from "@/types.js";
+import { sendMessage } from "@/discord/sendMessage";
+import { ChannelNotSendableError } from "@/errors/ChannelNotSendable";
+import { I18nService } from "@/i18n/I18n";
+import { AppConfig } from "@/modules/settings";
+import { GifRepository } from "@/repositories/GifRepository";
+import { UserRepository } from "@/repositories/UserRepository";
+import { declareCommand } from "@/types.js";
 import { Message } from "discord.js";
+import { Effect } from "effect";
 
-export default class Giftype extends Command {
-  readonly name = "giftype";
-  constructor(client: Bot) {
-    super(client, "Utility");
-  }
-  async run(client: Bot, message: Message, args: string[], language: ILanguage) {
-    if (!message.channel.isSendable()) {
-      logger.error(`channel ${message.channel.id} is not sendable`);
-      return;
+export const GiftypeCommand = declareCommand({
+  name: "giftype",
+  category: "Utility",
+  summary: "command.giftype.description",
+  usage: Effect.gen(function* () {
+    const cfg = yield* AppConfig;
+    return cfg.prefix + "giftype <type>";
+  }),
+  run: Effect.fn("GiftypeCommand.run")(function* (message: Message, args: string[]) {
+    const { channel } = message;
+    if (!channel.isSendable()) {
+      yield* Effect.logError(`channel ${message.channel.id} is not sendable`);
+      return yield* new ChannelNotSendableError({ channelId: message.channelId });
     }
-    const types = await client.db.getGiftypes();
+    const gifRepo = yield* GifRepository;
+    const types = yield* gifRepo.getGifTypes;
     let typesstring = "";
+    const i18n = yield* I18nService;
+    const and = yield* i18n.t(message.guildId, "general.and");
     switch (types.length) {
       case 1:
         typesstring = types[0]!;
         break;
       case 2:
-        typesstring = types.join(` ${language.general.and} `);
+        typesstring = types.join(` ${and} `);
         break;
       default:
         break;
@@ -29,10 +40,13 @@ export default class Giftype extends Command {
 
     const giftype: string = args.length === 0 ? "" : args[0]!.toLowerCase();
     if (args.length == 0 || !types.includes(giftype)) {
-      await message.channel.send({ content: language.command.giftype.availableTypes.replace("{types}", typesstring) });
+      const msg = yield* i18n.t(message.guildId, "command.giftype.availableTypes", {
+        types: typesstring,
+      });
+      yield* sendMessage(channel, { content: msg });
       return;
     }
-    await client.db.setGiftype(message.author, giftype);
-  }
-  help = { show: true, usage: `${this.prefix}giftype <type>` };
-}
+    const userRepo = yield* UserRepository;
+    yield* userRepo.setGifType(message.author, giftype);
+  }),
+});

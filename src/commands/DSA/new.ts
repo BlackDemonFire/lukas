@@ -1,72 +1,87 @@
-import { Bot } from "@/bot.js";
-import { Command } from "@/modules/command.js";
-import logger from "@/modules/logger.js";
-import type { ILanguage } from "@/types.js";
-import { DMChannel, Message, MessageCollector, type SendableChannels, TextChannel } from "discord.js";
+import { sendMessage } from "@/discord/sendMessage";
+import { ChannelNotSendableError } from "@/errors/ChannelNotSendable";
+import { I18nService } from "@/i18n/I18n";
+import { AppConfig } from "@/modules/settings";
+import { DsaCharRepository } from "@/repositories/DsaCharRepository";
+import { declareCommand } from "@/types.js";
+import { Message, MessageCollector } from "discord.js";
+import { Effect } from "effect";
 
-export default class New extends Command {
-  readonly name = "new";
-  help = { show: true, usage: `${this.prefix}new` };
-  constructor(client: Bot) {
-    super(client, "DSA");
-  }
-  async run(client: Bot, message: Message, _args: string[], language: ILanguage) {
-    if (!message.channel.isSendable()) {
-      logger.error(`channel ${message.channel.id} is not sendable`);
-      return;
+export const NewCommand = declareCommand({
+  name: "new",
+  summary: "command.new.description",
+  category: "DSA",
+  usage: Effect.gen(function* () {
+    const settings = yield* AppConfig;
+    return `${settings.prefix}new`;
+  }),
+  run: Effect.fn("NewCommand.run")(function* (message: Message, _args: string[]) {
+    const { channel } = message;
+    if (!channel.isSendable()) {
+      yield* Effect.logError(`channel ${message.channel.id} is not sendable`);
+      return yield* new ChannelNotSendableError({ channelId: message.channelId });
     }
     let i = 0;
     let av: string;
     let pref: string;
-    await message.channel.send({ content: language.command.new.getPrefix });
-    if (!(message.channel instanceof DMChannel || message.channel instanceof TextChannel)) return;
-    const collector = new MessageCollector(message.channel, {
+    const i18n = yield* I18nService;
+    const getPrefix = yield* i18n.t(message.guildId, "command.new.getPrefix");
+    yield* sendMessage(channel, { content: getPrefix });
+    const collector = new MessageCollector(channel, {
       filter: (m: Message) => m.author.id === message.author.id,
       time: 50000,
     });
-    // oxlint-disable-next-line @typescript-eslint/no-misused-promises
-    collector.on("end", async (msgs) => {
-      if (msgs.size == 0) {
-        await (message.channel as SendableChannels).send({ content: language.general.timeout });
-        return;
-      }
-    });
-    // oxlint-disable-next-line @typescript-eslint/no-misused-promises
-    collector.on("collect", async (msg) => {
-      if (!msg.channel.isSendable()) {
-        logger.error(`channel ${msg.channel.id} is not sendable`);
-        return;
-      }
-      if (i > 2) {
-        collector.stop();
-      } else {
-        i = i + 1;
-      }
-      switch (i) {
-        case 1:
-          pref = msg.content.toLowerCase().split(" ")[0]!;
-          await msg.channel.send({ content: language.command.new.getAvatar });
-          if (!pref.startsWith("$")) pref = `$${pref}`;
-          break;
-        case 2:
-          if (msg.content === "n") {
-            av = "";
-          } else {
-            av = msg.content;
+    const timeoutMsg = yield* i18n.t(message.guildId, "general.timeout");
+    const effectContext = yield* Effect.context<DsaCharRepository>();
+    collector.on("end", (msgs) =>
+      Effect.runForkWith(effectContext)(
+        Effect.gen(function* () {
+          if (msgs.size == 0) {
+            yield* sendMessage(channel, { content: timeoutMsg });
           }
-          await msg.channel.send({ content: language.command.new.getName });
-          break;
-        case 3:
-          {
-            const name = msg.content;
+        }),
+      ),
+    );
+
+    collector.on("collect", (msg) =>
+      Effect.runForkWith(effectContext)(
+        Effect.gen(function* () {
+          if (i > 2) {
             collector.stop();
-            await msg.channel.send({
-              content: language.command.new.success.replace("{name}", name).replace("{pref}", pref),
-            });
-            await client.db.newDSAChar(pref, name, av);
+          } else {
+            i += 1;
           }
-          break;
-      }
-    });
-  }
-}
+          switch (i) {
+            case 1: {
+              pref = msg.content.toLowerCase().split(" ")[0]!;
+              const getAvatarMessage = yield* i18n.t(msg.guildId, "command.new.getAvatar");
+              yield* sendMessage(channel, { content: getAvatarMessage });
+              if (!pref.startsWith("$")) pref = `$${pref}`;
+              break;
+            }
+            case 2: {
+              av = msg.content === "n" ? "" : msg.content;
+
+              const getNameMsg = yield* i18n.t(msg.guildId, "command.new.getName");
+              yield* sendMessage(channel, { content: getNameMsg });
+              break;
+            }
+            case 3:
+              {
+                const name = msg.content;
+                collector.stop();
+                const successMsg = yield* i18n.t(message.guildId, "command.new.success", {
+                  name,
+                  pref,
+                });
+                yield* sendMessage(channel, { content: successMsg });
+                const dsaCharRepo = yield* DsaCharRepository;
+                yield* dsaCharRepo.createCharacter(pref, name, av);
+              }
+              break;
+          }
+        }),
+      ),
+    );
+  }),
+});

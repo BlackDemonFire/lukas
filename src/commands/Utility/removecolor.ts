@@ -1,43 +1,56 @@
-import { Bot } from "@/bot.js";
-import { Command } from "@/modules/command.js";
-import logger from "@/modules/logger.js";
-import type { ILanguage } from "@/types.js";
-import { type ColorResolvable, Message, resolveColor } from "discord.js";
+import { sendMessage } from "@/discord/sendMessage";
+import { ChannelNotSendableError } from "@/errors/ChannelNotSendable";
+import { I18nService } from "@/i18n/I18n";
+import { AppConfig } from "@/modules/settings";
+import { UserRepository } from "@/repositories/UserRepository";
+import { declareCommand } from "@/types.js";
+import { type ColorResolvable, DiscordjsRangeError, DiscordjsTypeError, Message, resolveColor } from "discord.js";
+import { Effect } from "effect";
 
-export default class Removecolor extends Command {
-  readonly name = "removecolor";
-  constructor(client: Bot) {
-    super(client, "Utility");
-  }
-  async run(client: Bot, message: Message, args: string[], language: ILanguage) {
-    if (!message.channel.isSendable()) {
-      logger.error(`channel ${message.channel.id} is not sendable`);
-      return;
+export const RemoveColorCommand = declareCommand({
+  name: "removecolor",
+  category: "Utility",
+  run: Effect.fn("RemoveColorCommand.run")(function* (message: Message, args: string[]) {
+    const { channel } = message;
+    if (!channel.isSendable()) {
+      yield* Effect.logError(`channel ${message.channel.id} is not sendable`);
+      return yield* new ChannelNotSendableError({ channelId: message.channelId });
     }
-    const current_colors = new Set((await client.db.getColor(message.author)).split(";"));
+    const userRepo = yield* UserRepository;
 
+    const dbColor = yield* userRepo.getColor(message.author);
+    const current_colors = new Set(dbColor.split(";"));
+    const i18n = yield* I18nService;
     if (args && args.length > 0) {
       for (const color_string of args) {
-        const color = color_string as ColorResolvable;
-        try {
-          resolveColor(color);
-        } catch {
-          await message.channel.send(language.command.color.invalid_color);
-          return;
-        }
-        logger.debug([...current_colors].join(" "));
-        logger.debug(color_string);
-        logger.debug(color_string in current_colors);
+        const color = color_string as Exclude<ColorResolvable, number | readonly [number, number, number]>;
+        yield* Effect.try<number, DiscordjsTypeError | DiscordjsRangeError>(() => resolveColor(color)).pipe(
+          Effect.tapError(() =>
+            Effect.gen(function* () {
+              const msg = yield* i18n.t(message.guildId, "command.color.invalid_color");
+              yield* sendMessage(channel, { content: msg });
+            }),
+          ),
+        );
+        yield* Effect.logDebug([...current_colors].join(" "));
+        yield* Effect.logDebug(color_string);
+        yield* Effect.logDebug(color_string in current_colors);
         const found = current_colors.delete(color_string);
-        logger.debug(`Color ${color.toString()} was ${found ? "" : "not"} removed`);
+        yield* Effect.logDebug(`Color ${color.toString()} was ${found ? "" : "not"} removed`);
       }
     } else {
-      await message.channel.send(language.command.color.invalid_color);
+      const msg = yield* i18n.t(message.guildId, "command.color.invalid_color");
+      yield* sendMessage(channel, { content: msg });
       return;
     }
     const colors = [...current_colors].join(";");
-    await client.db.setColor(message.author, colors);
-    await message.channel.send({ content: language.command.color.success });
-  }
-  help = { show: true, usage: `${this.prefix}removecolor <color> ...[color]` };
-}
+    yield* userRepo.setColor(message.author, colors);
+    const msg = yield* i18n.t(message.guildId, "command.color.success");
+    yield* sendMessage(channel, { content: msg });
+  }),
+  summary: "command.removecolor.description",
+  usage: Effect.gen(function* () {
+    const settings = yield* AppConfig;
+    return `${settings.prefix}removecolor <color> ...[color]`;
+  }),
+});

@@ -1,37 +1,48 @@
-import { Bot } from "@/bot.js";
-import { Command } from "@/modules/command.js";
-import logger from "@/modules/logger.js";
-import type { ILanguage } from "@/types.js";
-import { type ColorResolvable, Message, resolveColor } from "discord.js";
+import { sendMessage } from "@/discord/sendMessage";
+import { ChannelNotSendableError } from "@/errors/ChannelNotSendable";
+import { I18nService } from "@/i18n/I18n";
+import { AppConfig } from "@/modules/settings";
+import { UserRepository } from "@/repositories/UserRepository";
+import { declareCommand } from "@/types.js";
+import { type ColorResolvable, DiscordjsRangeError, DiscordjsTypeError, Message, resolveColor } from "discord.js";
+import { Effect } from "effect";
 
-export default class Setcolor extends Command {
-  readonly name = "setcolor";
-  constructor(client: Bot) {
-    super(client, "Utility");
-  }
-  async run(client: Bot, message: Message, args: string[], language: ILanguage) {
-    if (!message.channel.isSendable()) {
-      logger.error(`channel ${message.channel.id} is not sendable`);
-      return;
+export const SetcolorCommand = declareCommand({
+  name: "setcolor",
+  category: "Utility",
+  run: Effect.fn("SetcolorCommand.run")(function* (message: Message, args: string[]) {
+    const channel = message.channel;
+    if (!channel.isSendable()) {
+      yield* Effect.logError(`channel ${channel.id} is not sendable`);
+      return yield* new ChannelNotSendableError({ channelId: message.channelId });
     }
     let colors: string = "";
+    const i18n = yield* I18nService;
     if (args && args.length > 0) {
       for (const color_string of args) {
         const color = color_string as ColorResolvable;
-        try {
-          resolveColor(color);
-        } catch {
-          await message.channel.send(language.command.color.invalid_color);
-          return;
-        }
+        yield* Effect.try<number, DiscordjsRangeError | DiscordjsTypeError>(() => resolveColor(color)).pipe(
+          Effect.tapError(() =>
+            Effect.gen(function* () {
+              const msg = yield* i18n.t(message.guildId, "command.color.invalid_color");
+              yield* sendMessage(channel, { content: msg });
+            }),
+          ),
+        );
         colors += `;${color.toString()}`;
       }
       colors = colors.substring(1);
     } else {
       colors = "Random";
     }
-    await client.db.setColor(message.author, colors);
-    await message.channel.send({ content: language.command.color.success });
-  }
-  help = { show: true, usage: `${this.prefix}setcolor [color]` };
-}
+    const userRepo = yield* UserRepository;
+    yield* userRepo.setColor(message.author, colors);
+    const content = yield* i18n.t(message.guildId, "command.color.success");
+    yield* sendMessage(channel, { content });
+  }),
+  summary: "command.setcolor.description",
+  usage: Effect.gen(function* () {
+    const cfg = yield* AppConfig;
+    return cfg.prefix + "setcolor [color]";
+  }),
+});

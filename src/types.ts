@@ -1,80 +1,19 @@
 import { Message } from "discord.js";
-import { Bot } from "./bot.js";
+import { Effect } from "effect";
+import type { ConfigError } from "effect/Config";
+import type { MessageKey } from "./i18n/types";
 
-interface ILangPermissions {
-  ADMINISTRATOR: string;
-  MANAGE_MESSAGES: string;
-}
-interface ILangGeneral {
-  timeout: string;
-  and: string;
-  guildOnly: string;
-  userPermissionError: string;
-  botPermissionError: string;
-}
-interface ILangCommand {
-  roll: {
-    description: string;
-    errors: {
-      tooManyArgs: string;
-      doubleDiceType: string;
-      doubleRollCount: string;
-      schroedingersArgument: string;
-      noDiceType: string;
-      noSides: string;
-      rolltypeUndefined: string;
-      tooManyDice: string;
-      rollcountNotNumeric: string;
-      rolltypeNotNumeric: string;
-    };
-    results: { noDice: { plaintext: string; embed: string }; singleDice: string; multiDice: string };
-  };
-  restart: { description: string; start: string; success: string; error: string };
-  purr: { description: string; singleUser: string[] };
-  purge: { description: string; error: { notNumeric: string } };
-  ping: { description: string; apiLatency: string; latency: string };
-  pat: { description: string; singleUser: string[]; multiUser: string[] };
-  newgif: { description: string; wrongArgs: string; checking: string; success: string };
-  removegif: { description: string; wrongArgs: string; checking: string; success: string };
-  new: { description: string; getPrefix: string; getAvatar: string; getName: string; success: string };
-  name: { description: string; success: string };
-  lang: { description: string; success: string; noSuchLanguage: string; permissionError: string };
-  autoroll: {
-    description: string;
-    success: string;
-    invalidArg: string;
-    permissionError: string;
-    active: string;
-    inactive: string;
-  };
-  kiss: { description: string; singleUser: string[]; multiUser: string[] };
-  kill: { description: string; success: string; permissionError: string };
-  hug: { description: string; singleUser: string[]; multiUser: string[] };
-  hold: { description: string; singleUser: string[]; multiUser: string[] };
-  help: { description: string; commandNotFound: string; usage: { Usage: string; args: string } };
-  giftype: { description: string; availableTypes: string };
-  gifactions: { description: string; response: string };
-  eval: { description: string; permissionError: string };
-  dsarm: { description: string; args: string; noSuchChar: string; success: string };
-  dsaadd: { description: string; args: string; success: string };
-  dsa: { description: string; contentRequired: string; gameMaster: string; permissions: string };
-  cuddle: { description: string; singleUser: string[]; multiUser: string[] };
-  cry: { description: string; singleUser: string[] };
-  color: { show_colors: string; description: string; success: string; invalid_color: string };
-  blush: { description: string; singleUser: string[] };
-}
-interface ILangDragonborn {
-  dragonbornRoll: { success: string; failed: string; invalidArg: string; critSuccess: string; critFailure: string };
+export interface ICommand<out MetaE = ConfigError, out MetaR = never, out ExecE = never, out ExecR = never> {
+  run: (message: Message<boolean>, args: string[]) => Effect.Effect<void, ExecE, ExecR>;
+  readonly name: string;
+  readonly summary: MessageKey;
+  readonly usage: Effect.Effect<string, MetaE, MetaR>;
+  readonly category: string;
+  readonly hidden?: boolean;
 }
 
-export interface ILanguage {
-  command: ILangCommand;
-  general: ILangGeneral;
-  permissions: ILangPermissions;
-  dragonborn: ILangDragonborn;
-}
-export interface ICommand {
-  run: (client: Bot, message: Message, args: string[], language: ILanguage) => unknown;
-  help: { show: boolean; usage: string };
-  get name(): string;
+export function declareCommand<MetaE, MetaR, ExecE, ExecR>(
+  command: ICommand<MetaE, MetaR, ExecE, ExecR>,
+): ICommand<MetaE, MetaR, ExecE, ExecR> {
+  return command;
 }

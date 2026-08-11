@@ -1,5 +1,5 @@
-import type { Command } from "@/modules/command.js";
-import AutoRollCommand from "./autoroll.js";
-import LangCommand from "./lang.js";
+import type { ICommand } from "@/types.js";
+import { AutoRollCommand } from "./autoroll.js";
+import { LangCommand } from "./lang.js";
 
-export const SettingsCommands: (typeof Command)[] = [AutoRollCommand, LangCommand];
+export const SettingsCommands = [AutoRollCommand, LangCommand] satisfies ICommand<unknown, unknown, unknown, unknown>[];

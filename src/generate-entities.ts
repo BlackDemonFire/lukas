@@ -1,19 +1,24 @@
 import { MikroORM, PostgreSqlDriver } from "@mikro-orm/postgresql";
-import settings from "./modules/settings.js";
+import AppConfig from "./modules/settings.js";
+import { Effect, Redacted } from "effect";
+import { NodeRuntime } from "@effect/platform-node";
 
 // This script will generate entities from the database. - Development only!
 // build with `pnpm run build` and run with `node -r 'dotenv/config' dist/generate-entities.js`
 
-const orm = await MikroORM.init<PostgreSqlDriver>({
-  discovery: {
-    // we need to disable validation for no entities
-    warnWhenNoEntities: false,
-  },
-  dbName: settings.DB_NAME,
-  host: settings.DB_HOST,
-  port: settings.DB_PORT,
-  user: settings.DB_USER,
-  password: settings.DB_PASS,
-});
-await orm.entityGenerator.generate({ save: true, path: `${process.cwd()}/src/entities` });
-await orm.close(true);
+Effect.gen(function* () {
+  const cfg = yield* AppConfig;
+  const orm = yield* Effect.promise(() =>
+    MikroORM.init<PostgreSqlDriver>({
+      // we need to disable validation for no entities
+      discovery: { warnWhenNoEntities: false },
+      dbName: cfg.DB_NAME,
+      host: cfg.DB_HOST,
+      port: cfg.DB_PORT,
+      user: cfg.DB_USER,
+      password: Redacted.value(cfg.DB_PASS),
+    }),
+  );
+  yield* Effect.promise(() => orm.entityGenerator.generate({ save: true, path: `${process.cwd()}/src/entities` }));
+  yield* Effect.promise(() => orm.close(true));
+}).pipe(NodeRuntime.runMain);

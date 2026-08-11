@@ -1,10 +1,18 @@
-import { Bot } from "@/bot.js";
-import { MultiUserGifCommand } from "@/modules/command.js";
+import { runMultiUserGifCommand } from "@/modules/command.js";
+import { AppConfig } from "@/modules/settings";
+import { declareCommand } from "@/types";
+import type { Message } from "discord.js";
+import { Effect } from "effect";
 
-export default class Cuddle extends MultiUserGifCommand {
-  readonly name = "cuddle";
-  help = { show: true, usage: `${this.prefix}cuddle [user]` };
-  constructor(client: Bot) {
-    super(client, "Gifs");
-  }
-}
+export const CuddleCommand = declareCommand({
+  name: "cuddle",
+  usage: Effect.gen(function* () {
+    const cfg = yield* AppConfig;
+    return `${cfg.prefix}cuddle [user]`;
+  }),
+  category: "Gifs",
+  run: Effect.fn("CuddleCommand.run")(function* (message: Message, args: string[]) {
+    yield* runMultiUserGifCommand(message, args, "cuddle");
+  }),
+  summary: "command.cuddle.description",
+});

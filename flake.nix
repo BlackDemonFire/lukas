@@ -24,6 +24,7 @@
         {
           pkgs,
           self',
+          lib,
           system,
           ...
         }:
@@ -75,7 +76,7 @@
           };
           apps.default = {
             type = "app";
-            program = pkgs.writeShellScriptBin "lukasbot" "${pkgs.lib.getExe node_ver} --enable-source-maps ${self'.packages.default}/dist/index.js";
+            program = pkgs.writeShellScriptBin "lukasbot" "${pkgs.lib.getExe node_ver} --enable-source-maps ${self'.packages.default}/dist/index.mjs";
           };
           checks = {
             # write a derivation that runs the type checker that runs on `pnpm check`. make sure the pnpm deps are installed. use stdenv.mkDerivation
@@ -86,7 +87,7 @@
                   pname = "lukasbot";
                   version = "0.0.0";
                   fetcherVersion = 4;
-                  hash = "sha256-lI7srhZDXczq2zd3zlh72j8LbW+78CtLYq2fbPZlync=";
+                  hash = "sha256-h7yBdNfLDCq5MmeAMwzeLB9Jq9LXvEfNGJNaqif9fPE=";
                 };
               in
               pkgs.stdenv.mkDerivation (_finalAttrs: {

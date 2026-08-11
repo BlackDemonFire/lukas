@@ -1,24 +1,19 @@
-import { z } from "zod";
+import { Config } from "effect";
 
-const settingsSchema = z.object({
-  PREFIX: z.string(),
-  DEFAULTLANG: z.string().default("en_US"),
+export const AppConfig = Config.all({
+  prefix: Config.string("PREFIX"),
+  defaultLanguage: Config.string("DEFAULTLANG").pipe(Config.withDefault("en_US")),
 
-  LOG_LEVEL: z.string().default("info"),
+  logLevel: Config.string().pipe(Config.withDefault("info")),
 
-  TOKEN: z.string(),
-  RANDOMKEY: z.string().nullish(),
+  TOKEN: Config.redacted("TOKEN"),
+  RANDOMKEY: Config.redacted("RANDOMKEY").pipe(Config.option),
 
-  DB_NAME: z.string(),
-  DB_HOST: z.string(),
-  DB_USER: z.string(),
-  DB_PASS: z.string(),
-  DB_PORT: z.preprocess(
-    (p) => (typeof p === "string" ? Number.parseInt(p) : p),
-    z.number().int().min(1024).max(65535).default(5432),
-  ),
+  DB_NAME: Config.string("DB_NAME"),
+  DB_HOST: Config.string("DB_HOST"),
+  DB_USER: Config.string("DB_USER"),
+  DB_PASS: Config.redacted("DB_PASS"),
+  DB_PORT: Config.port("DB_PORT").pipe(Config.withDefault(5432)),
 });
 
-const settings = settingsSchema.parse(process.env);
-
-export default settings;
+export default AppConfig;

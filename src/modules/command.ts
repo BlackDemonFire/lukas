@@ -1,191 +1,182 @@
-import { ClientApplication, type ColorResolvable, Colors, EmbedBuilder, Message, Team, User } from "discord.js";
-import { Bot } from "@/bot.js";
-import type { ICommand, ILanguage } from "@/types.js";
-import logger from "./logger.js";
+import { sendMessage } from "@/discord/sendMessage.js";
+import { DiscordClient } from "@/DiscordGateway.js";
+import { ChannelNotSendableError } from "@/errors/ChannelNotSendable.js";
+import { I18nService } from "@/i18n/I18n.js";
+import type { MessageKey } from "@/i18n/types.js";
+import { GifRepository } from "@/repositories/GifRepository.js";
+import { UserRepository } from "@/repositories/UserRepository.js";
+import {
+  type ColorResolvable,
+  Colors,
+  DiscordAPIError,
+  EmbedBuilder,
+  Message,
+  Team,
+  User,
+} from "discord.js";
+import { DateTime, Effect, Option, pipe } from "effect";
+import { LukasRandom } from "./random.js";
 
-abstract class Command implements ICommand {
-  protected prefix: string;
-  abstract help: ICommand["help"];
-  private readonly client: Bot;
-  public readonly category: string;
-  static readonly name: string;
-  abstract name: string;
-  protected constructor(client: Bot, category: string) {
-    this.prefix = client.prefix;
-    this.client = client;
-    this.category = category;
-  }
-  abstract run(client: Bot, message: Message, args: string[], language: ILanguage): Promise<void>;
-  isAprilFools() {
-    const date = new Date();
-    const myDate = date.toLocaleDateString();
-    const datesplit: string[] = myDate.split("/");
-    const mon = datesplit.shift();
-    const dom = datesplit.shift();
-    return dom == "1" && mon == "4";
-  }
-  isOwner(message: Message): boolean {
-    const apk: ClientApplication = this.client.application!;
-    if (apk.owner instanceof Team) {
-      return apk.owner.members.has(message.author.id);
-    } else if (apk.owner instanceof User) {
-      return apk.owner.id == message.author.id;
-    }
-    return false;
-  }
-}
+type MiddlePart<
+  T extends string,
+  Prefix extends string,
+  Suffix extends string,
+> = T extends `${Prefix}${infer Middle}${Suffix}` ? Middle : never;
 
-const mentionRegex = new RegExp(/<@!?(\d+)>/);
-abstract class GifCommand extends Command {
-  protected constructor(client: Bot, category: string) {
-    super(client, category);
+export const isAprilFools = Effect.gen(function* () {
+  const date = yield* DateTime.nowInCurrentZone;
+  const mon = DateTime.getPart("month")(date);
+  const dom = DateTime.getPart("day")(date);
+  return dom === 1 && mon === 4;
+});
+
+export const isOwner = Effect.fnUntraced(function* (user: User) {
+  const client = yield* DiscordClient;
+  const apk = client.application!;
+  if (apk.owner instanceof Team) {
+    return apk.owner.members.has(user.id);
+  } else if (apk.owner instanceof User) {
+    return apk.owner.id == user.id;
   }
-  async parseUser(client: Bot, message: Message, args: string[], language: ILanguage) {
-    let userB: string = "";
-    const mentioned: string[] = [];
-    let self: boolean = false;
-    if (args && args.length > 0) {
-      for (const arg of args.filter((a) => a && a !== "")) {
-        const ping = mentionRegex.exec(arg);
-        if (ping) {
-          let name: string | undefined;
-          ({ name, self } = await this.resolveMentionedUser(client, ping, arg, message, self));
-          mentioned.push(name);
-        } else {
-          mentioned.push(arg);
+  return false;
+});
+
+const userMentionRegex = /<@!?(\d+)>/;
+export const parseUser = Effect.fn("parseUser")(function* (message: Message, args: string[]) {
+  let userB: string = "";
+  const mentioned: string[] = [];
+  let self: boolean = false;
+  if (args && args.length > 0) {
+    for (const arg of args) {
+      let name: string = "";
+      const ping = userMentionRegex.exec(arg);
+      if (ping) {
+        const client = yield* DiscordClient;
+        const maybeUser = yield* pipe(
+          Effect.tryPromise<User, DiscordAPIError>(() => client.users.fetch(ping[1]!)),
+          Effect.option,
+        );
+        const userRepo = yield* UserRepository;
+        name = yield* Option.match(maybeUser, {
+          onSome: (user) => userRepo.getName(user),
+          onNone: () => Effect.succeed(arg),
+        });
+        if (!name || name == "") {
+          const member = message.guild
+            ? message.guild.members.resolve(maybeUser.valueOrUndefined!)
+            : null;
+          name = member ? member.displayName : maybeUser.valueOrUndefined!.username;
         }
-      }
-      if (userB == "" && !self) {
-        switch (mentioned.length) {
-          case 1:
-            userB = mentioned[0]!;
-            break;
-          case 2:
-            userB = mentioned.join(` ${language.general.and} `);
-            break;
-          default:
-            {
-              const last = mentioned.pop();
-              userB = mentioned.join(", ");
-              userB += ` ${language.general.and} `;
-              userB += last;
-            }
-            break;
+        if (maybeUser.valueOrUndefined == message.author) {
+          self = true;
         }
+        mentioned.push(name);
+      } else if (arg && arg !== "") {
+        mentioned.push(arg);
       }
     }
-    return this.trimUser(userB);
+    const i18n = yield* I18nService;
+    const and = yield* i18n.t(message.guildId, "general.and");
+    if (userB == "" && !self) {
+      switch (mentioned.length) {
+        case 1:
+          userB = mentioned[0]!;
+          break;
+        case 2:
+          userB = mentioned.join(` ${and} `);
+          break;
+        default:
+          {
+            const last = mentioned.pop();
+            userB = mentioned.join(", ");
+            userB += ` ${and} `;
+            userB += last;
+          }
+          break;
+      }
+    }
   }
-  private async resolveMentionedUser(
-    client: Bot,
-    ping: RegExpExecArray,
-    arg: string,
-    message: Message<boolean>,
-    self: boolean,
-  ) {
-    let name: string = "";
-    const user = await client.users.fetch(ping[1]!).catch((e) => {
-      logger.error(e);
-      return null;
+  if (userB.length > 1792) userB = userB.substring(0, 1792) + "...";
+  return userB;
+});
+
+const getColor = Effect.fn("getColor")(function* (author: User) {
+  const userRepo = yield* UserRepository;
+  const rawColor = yield* userRepo.getColor(author);
+  const listFmt = new Intl.ListFormat();
+  yield* Effect.logDebug(`available colors: ${listFmt.format(rawColor.split(";"))}`);
+  const rand = yield* LukasRandom;
+  return yield* rand.choice(rawColor.split(";"));
+});
+const buildAndSendEmbed = Effect.fnUntraced(function* (
+  gif: string,
+  responseString: string,
+  color: ColorResolvable,
+  message: Message,
+  name: string,
+) {
+  const { channel } = message;
+  if (!channel.isSendable()) {
+    return yield* new ChannelNotSendableError({ channelId: message.channel.id });
+  }
+  const embed = new EmbedBuilder()
+    .setImage(gif)
+    .setAuthor({ name })
+    .setDescription(responseString)
+    .setColor(color);
+  yield* sendMessage(channel, { embeds: [embed] });
+});
+
+const runSingleUserGifCommand = Effect.fn("SingleUserGifCommand.run")(function* (
+  message: Message,
+  _args: string[],
+  name: MiddlePart<MessageKey, `command.`, ".singleUser">,
+) {
+  const userRepo = yield* UserRepository;
+  const gifType = yield* userRepo.getGifType(message.author);
+  const gifRepo = yield* GifRepository;
+  const gif = yield* gifRepo.getGif(name, gifType);
+  let userA = yield* userRepo.getName(message.author);
+  const rawColor = yield* getColor(message.author);
+  let color: ColorResolvable;
+  if (rawColor in Colors) color = rawColor as keyof typeof Colors;
+  else color = "Random";
+  if (userA == "") userA = message.guild ? message.member!.displayName : message.author.username;
+  const i18n = yield* I18nService;
+  const responseString: string = yield* i18n.t(message.guildId, `command.${name}.singleUser`, {
+    a: userA,
+  });
+  yield* buildAndSendEmbed(gif, responseString, color, message, name);
+});
+
+const runMultiUserGifCommand = Effect.fn("MultiUserGifCommand.run")(function* (
+  message: Message,
+  args: string[],
+  name: MiddlePart<MessageKey, `command.`, ".singleUser"> &
+    MiddlePart<MessageKey, `command.`, ".multiUser">,
+) {
+  const userRepo = yield* UserRepository;
+  const gifType = yield* userRepo.getGifType(message.author);
+  const gifRepo = yield* GifRepository;
+  const gif = yield* gifRepo.getGif(name, gifType);
+  let userA: string = yield* userRepo.getName(message.author);
+  const rawColor = yield* getColor(message.author);
+  const color: ColorResolvable = rawColor as ColorResolvable;
+
+  if (userA == "") userA = message.guild ? message.member!.displayName : message.author.username;
+  const userB: string = yield* parseUser(message, args);
+  let responseString: string;
+  const i18n = yield* I18nService;
+  if (userB == "") {
+    const huhu = yield* i18n.t(message.guildId, `command.${name}.singleUser`, { a: userA });
+    responseString = huhu;
+  } else {
+    responseString = yield* i18n.t(message.guildId, `command.${name}.multiUser`, {
+      a: userA,
+      b: userB,
     });
-    if (user) name = await client.db.getName(user);
-    if (!user) {
-      name = arg;
-    } else if (!name || name == "") {
-      const member = message.guild ? message.guild.members.resolve(user) : null;
-      name = member ? member.displayName : user.username;
-    }
-    if (user == message.author) {
-      self = true;
-    }
-    return { name, self };
   }
+  yield* buildAndSendEmbed(gif, responseString, color, message, name);
+});
 
-  protected trimUser(message: string): string {
-    const LIMIT = 1792;
-    if (message.length > LIMIT) {
-      return message.substring(0, LIMIT) + "...";
-    }
-    return message;
-  }
-
-  protected getGifLanguageObject(language: ILanguage, attr: string) {
-    type CommandKey = keyof typeof language.command;
-    const commandName = this.name as CommandKey;
-
-    const langCommand = language.command[commandName];
-
-    type AttrKey = keyof typeof langCommand;
-    const attrName = attr as AttrKey;
-    return langCommand[attrName];
-  }
-
-  protected async buildAndSendEmbed(gif: string, responseString: string, color: ColorResolvable, message: Message) {
-    if (!message.channel.isSendable()) {
-      throw new Error(`channel ${message.channel.id} is not sendable`);
-    }
-    const embed = new EmbedBuilder()
-      .setImage(gif)
-      .setAuthor({ name: this.name })
-      .setDescription(responseString)
-      .setColor(color);
-    await message.channel.send({ embeds: [embed] });
-  }
-
-  protected async getColor(client: Bot, author: User) {
-    const rawColor = await client.db.getColor(author);
-    const listFmt = new Intl.ListFormat();
-    logger.debug(`available colors: ${listFmt.format(rawColor.split(";"))}`);
-    return client.random.choice(rawColor.split(";"));
-  }
-}
-
-abstract class SingleUserGifCommand extends GifCommand {
-  protected constructor(client: Bot, category: string) {
-    super(client, category);
-  }
-
-  async run(client: Bot, message: Message, _args: string[], language: ILanguage) {
-    const gif: string = await client.db.getGif(this.name, await client.db.getGiftype(message.author));
-    let userA: string = await client.db.getName(message.author);
-    const rawColor = await this.getColor(client, message.author);
-    let color: ColorResolvable;
-    if (rawColor in Colors) color = rawColor as keyof typeof Colors;
-    else color = "Random";
-    if (userA == "") userA = message.guild ? message.member!.displayName : message.author.username;
-    const responseString: string = (
-      await client.random.choice(this.getGifLanguageObject(language, "singleUser"))
-    ).replaceAll("{a}", userA);
-    await this.buildAndSendEmbed(gif, responseString, color, message);
-  }
-}
-
-abstract class MultiUserGifCommand extends GifCommand {
-  protected constructor(client: Bot, category: string) {
-    super(client, category);
-  }
-
-  async run(client: Bot, message: Message, args: string[], language: ILanguage) {
-    const gif: string = await client.db.getGif(this.name, await client.db.getGiftype(message.author));
-    let userA: string = await client.db.getName(message.author);
-    const rawColor = await this.getColor(client, message.author);
-    const color: ColorResolvable = rawColor as ColorResolvable;
-
-    if (userA == "") userA = message.guild ? message.member!.displayName : message.author.username;
-    const userB: string = await super.parseUser(client, message, args, language);
-    let responseString: string;
-    if (userB == "") {
-      responseString = (await client.random.choice(this.getGifLanguageObject(language, "singleUser"))).replaceAll(
-        "{a}",
-        userA,
-      );
-    } else {
-      responseString = (await client.random.choice(this.getGifLanguageObject(language, "multiUser")))
-        .replaceAll("{a}", userA)
-        .replaceAll("{b}", userB);
-    }
-    await this.buildAndSendEmbed(gif, responseString, color, message);
-  }
-}
-
-export { Command, GifCommand, MultiUserGifCommand, SingleUserGifCommand };
+export { runMultiUserGifCommand, runSingleUserGifCommand };

@@ -1,21 +1,28 @@
-import { Bot } from "@/bot.js";
-import { Command } from "@/modules/command.js";
-import logger from "@/modules/logger.js";
-import type { ILanguage } from "@/types.js";
+import { sendMessage } from "@/discord/sendMessage";
+import { ChannelNotSendableError } from "@/errors/ChannelNotSendable";
+import { I18nService } from "@/i18n/I18n";
+import { LukasRandom } from "@/modules/random";
+import { AppConfig } from "@/modules/settings";
+import { declareCommand } from "@/types.js";
 import { EmbedBuilder, Message } from "discord.js";
+import { Effect } from "effect";
 
 const startsWithWDRegex = /^[wd]/;
 
-export default class Roll extends Command {
-  readonly name = "roll";
-  help = { show: true, usage: `${this.prefix}roll [args]` };
-  constructor(client: Bot) {
-    super(client, "DSA");
-  }
-  async run(client: Bot, message: Message, args: string[], language: ILanguage) {
-    if (!message.channel.isSendable()) {
-      logger.error(`channel ${message.channel.id} is not sendable`);
-      return;
+const WARN_EMOJI = "<:warn_3:498277726604754946>";
+export const RollCommand = declareCommand({
+  name: "roll",
+  usage: Effect.gen(function* () {
+    const settings = yield* AppConfig;
+    return `${settings.prefix}roll [args]`;
+  }),
+  category: "DSA",
+  summary: "command.roll.description",
+  run: Effect.fn("RollCommand.run")(function* (message: Message, args: string[]) {
+    const { channel } = message;
+    if (!channel.isSendable()) {
+      yield* Effect.logError(`channel ${message.channel.id} is not sendable`);
+      return yield* new ChannelNotSendableError({ channelId: message.channelId });
     }
     const msgauthor: string = message.author.username;
     // register args and variables
@@ -55,11 +62,10 @@ export default class Roll extends Command {
     let detectedOnlyOneArg = false;
 
     // validify arguments
-
+    const i18n = yield* I18nService;
     if (args[2]) {
-      await message.channel.send({
-        content: `<:warn_3:498277726604754946> ${language.command.roll.errors.tooManyArgs}${rollargerror}`,
-      });
+      const tooManyArgs = yield* i18n.t(message.guildId, "command.roll.errors.tooManyArgs");
+      yield* sendMessage(channel, { content: `${WARN_EMOJI} ${tooManyArgs}${rollargerror}` });
       return;
     }
 
@@ -68,15 +74,16 @@ export default class Roll extends Command {
 
     if (args[0] && args[1]) {
       if (checkregex.test(rollarga) && checkregex.test(rollargb)) {
-        await message.channel.send({
-          content: `<:warn_3:498277726604754946> ${language.command.roll.errors.doubleDiceType}`,
-        });
+        const doubleDiceType = yield* i18n.t(message.guildId, "command.roll.errors.doubleDiceType");
+        yield* sendMessage(channel, { content: `${WARN_EMOJI} ${doubleDiceType}` });
         return;
       }
       if (!checkregex.test(rollarga) && !checkregex.test(rollargb)) {
-        await message.channel.send({
-          content: `<:warn_3:498277726604754946> ${language.command.roll.errors.doubleRollCount}`,
-        });
+        const doubleRollCount = yield* i18n.t(
+          message.guildId,
+          "command.roll.errors.doubleRollCount",
+        );
+        yield* sendMessage(channel, { content: `${WARN_EMOJI} ${doubleRollCount}` });
         return;
       }
       // process two arguments
@@ -87,9 +94,11 @@ export default class Roll extends Command {
         dicetype = rollargb;
         rollcountmax = rollarga;
       } else {
-        await message.channel.send({
-          content: `<:warn_3:498277726604754946> ${language.command.roll.errors.schroedingersArgument}`,
-        });
+        const schroedingersArgument = yield* i18n.t(
+          message.guildId,
+          "command.roll.errors.schroedingersArgument",
+        );
+        yield* sendMessage(channel, { content: `${WARN_EMOJI} ${schroedingersArgument}` });
         return;
       }
     }
@@ -120,25 +129,31 @@ export default class Roll extends Command {
     // convert String dicetype to Const rolltype
 
     if (rolltype == 0 && dicetype == "wx") {
-      await message.channel.send({
-        content: `<:warn_3:498277726604754946> ${language.command.roll.errors.noDiceType}`,
-      });
+      const noDiceType = yield* i18n.t(message.guildId, "command.roll.errors.noDiceType");
+      yield* sendMessage(channel, { content: `${WARN_EMOJI} ${noDiceType}` });
       return;
     }
+    const noSides = yield* i18n.t(message.guildId, "command.roll.errors.noSides");
     if (rolltype == 0 && dicetype == "w0") {
-      await message.channel.send({ content: `<:warn_3:498277726604754946> ${language.command.roll.errors.noSides}` });
+      yield* sendMessage(channel, { content: `${WARN_EMOJI}} ${noSides}` });
       return;
     }
     if (rolltype == 0 && dicetype == "d0") {
-      await message.channel.send({ content: `<:warn_3:498277726604754946> ${language.command.roll.errors.noSides}` });
+      yield* sendMessage(channel, { content: `${WARN_EMOJI} ${noSides}` });
       return;
     }
     if (rolltype == 0) {
       dicetype = dicetype.substring(1);
-      if (typeof dicetype === "number" ? Number.isNaN(dicetype) : Number.isNaN(Number.parseInt(dicetype))) {
-        await message.channel.send({
-          content: `<:warn_3:498277726604754946> ${language.command.roll.errors.rolltypeNotNumeric}`,
-        });
+      if (
+        typeof dicetype === "number"
+          ? Number.isNaN(dicetype)
+          : Number.isNaN(Number.parseInt(dicetype))
+      ) {
+        const rolltypeNotNumeric = yield* i18n.t(
+          message.guildId,
+          "command.roll.errors.rolltypeNotNumeric",
+        );
+        yield* sendMessage(channel, { content: `${WARN_EMOJI} ${rolltypeNotNumeric}` });
         return;
       }
       rolltype = Number.parseInt(dicetype);
@@ -146,8 +161,12 @@ export default class Roll extends Command {
     }
 
     if (rolltype == 0) {
-      await message.channel.send({
-        content: `<:warn_3:498277726604754946> ${language.command.roll.errors.rolltypeUndefined} \
+      const rolltypeUndefined = yield* i18n.t(
+        message.guildId,
+        "command.roll.errors.rolltypeUndefined",
+      );
+      yield* sendMessage(channel, {
+        content: `${WARN_EMOJI} ${rolltypeUndefined} \
                 gotDefault = ${gotDefault}\
                 gotStringReadyToConvert = ${gotStringReadyToConvert}\
                 detectedOnlyOneArg = ${detectedOnlyOneArg}\
@@ -156,18 +175,27 @@ export default class Roll extends Command {
       return;
     }
     if (rollcountmax == "0") {
-      const plaintext = language.command.roll.results.noDice.plaintext.replace("{msgauthor}", msgauthor);
+      const plaintext = yield* i18n.t(message.guildId, "command.roll.results.noDice.plaintext", {
+        msgauthor,
+      });
+      const embedDescription = yield* i18n.t(message.guildId, "command.roll.results.noDice.embed");
       const embed = new EmbedBuilder()
         .setColor(0x36393e)
-        .setDescription(`<:info_1:498285998346731530> ${language.command.roll.results.noDice.embed}`)
+        .setDescription(`<:info_1:498285998346731530> ${embedDescription}`)
         .setFooter({ text: `@${msgauthor}` });
-      await message.channel.send({ content: `*${plaintext}*`, embeds: [embed] });
+      yield* sendMessage(channel, { content: `*${plaintext}*`, embeds: [embed] });
       return;
     }
-    if (typeof rollcountmax === "number" ? Number.isNaN(rollcountmax) : Number.isNaN(Number.parseInt(rollcountmax))) {
-      await message.channel.send({
-        content: `<:warn_3:498277726604754946> ${language.command.roll.errors.rollcountNotNumeric}`,
-      });
+    if (
+      typeof rollcountmax === "number"
+        ? Number.isNaN(rollcountmax)
+        : Number.isNaN(Number.parseInt(rollcountmax))
+    ) {
+      const rollcountNotNumeric = yield* i18n.t(
+        message.guildId,
+        "command.roll.errors.rollcountNotNumeric",
+      );
+      yield* sendMessage(channel, { content: `${WARN_EMOJI} ${rollcountNotNumeric}` });
       return;
     }
     // roll the dice and display the result
@@ -179,12 +207,12 @@ export default class Roll extends Command {
     // is the response too long?
 
     if (rollcount > 70) {
-      await message.channel.send({
-        content: `<:warn_3:498277726604754946> ${language.command.roll.errors.tooManyDice}`,
-      });
+      const tooManyDice = yield* i18n.t(message.guildId, "command.roll.errors.tooManyDice");
+      yield* sendMessage(channel, { content: `${WARN_EMOJI} ${tooManyDice}` });
       return;
     }
-    const result: number[] = await client.random.ints(1, rolltype, rollcount);
+    const random = yield* LukasRandom;
+    const result: number[] = yield* random.ints(1, rolltype, rollcount);
     result.forEach((num: number) => {
       if (rolltype < 10) {
         useEmotes = true;
@@ -233,7 +261,9 @@ export default class Roll extends Command {
     // response
 
     if (rollcountmax == "1") {
-      const plaintext = language.command.roll.results.singleDice.replace("{rolltype}", rolltype.toString());
+      const plaintext = yield* i18n.t(message.guildId, "command.roll.results.singleDice", {
+        rolltype,
+      });
       const embed = new EmbedBuilder().setColor(0x36393e).setFooter({ text: `@${msgauthor}` });
       if (useEmotes) {
         embed.setDescription(rollresult);
@@ -241,13 +271,14 @@ export default class Roll extends Command {
         embed.setAuthor({ name: rollresult });
       }
 
-      await message.channel.send({ content: plaintext, embeds: [embed] });
+      yield* sendMessage(channel, { content: plaintext, embeds: [embed] });
       return;
     }
 
-    const plaintext = language.command.roll.results.multiDice
-      .replace("{rolltype}", rolltype.toString())
-      .replace("{rollcountmax}", rollcountmax.toString());
+    const plaintext = yield* i18n.t(message.guildId, "command.roll.results.multiDice", {
+      rolltype,
+      rollcountmax: Number.parseInt(rollcountmax),
+    });
     const embed = new EmbedBuilder().setColor(0x36393e).setFooter({ text: `@${msgauthor}` });
     if (useEmotes) {
       embed.setDescription(rollresult);
@@ -255,6 +286,6 @@ export default class Roll extends Command {
       embed.setAuthor({ name: rollresult });
     }
 
-    await message.channel.send({ content: plaintext, embeds: [embed] });
-  }
-}
+    yield* sendMessage(channel, { content: plaintext, embeds: [embed] });
+  }),
+});

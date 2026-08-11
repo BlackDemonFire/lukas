@@ -1,22 +1,30 @@
-import { Bot } from "@/bot.js";
-import { Command } from "@/modules/command.js";
-import logger from "@/modules/logger.js";
-import type { ILanguage } from "@/types.js";
+import { sendMessage } from "@/discord/sendMessage";
+import { I18nService } from "@/i18n/I18n";
+import { AppConfig } from "@/modules/settings";
+import { UserRepository } from "@/repositories/UserRepository";
+import { declareCommand } from "@/types.js";
 import { Message } from "discord.js";
+import { Effect } from "effect";
 
-export default class Color extends Command {
-  readonly name = "color";
-  constructor(client: Bot) {
-    super(client, "Utility");
-  }
-  async run(client: Bot, message: Message, _args: string[], language: ILanguage) {
-    if (!message.channel.isSendable()) {
-      logger.error(`channel ${message.channel.id} is not sendable`);
+export const ColorCommand = declareCommand({
+  name: "color",
+  category: "Utility",
+  run: Effect.fn("ColorCommand.run")(function* (message: Message, _args: string[]) {
+    const { channel } = message;
+    if (!channel.isSendable()) {
+      yield* Effect.logError(`channel ${message.channel.id} is not sendable`);
       return;
     }
-    const current_colors = new Set((await client.db.getColor(message.author)).split(";"));
+    const userRepo = yield* UserRepository;
+    const current_colors = new Set((yield* userRepo.getColor(message.author)).split(";"));
     const colors = [...current_colors].join(", ");
-    await message.channel.send({ content: language.command.color.show_colors.replace("{c}", colors) });
-  }
-  help = { show: true, usage: `${this.prefix}color` };
-}
+    const i18n = yield* I18nService;
+    const msg = yield* i18n.t(message.guildId, "command.color.show_colors", { c: colors });
+    yield* sendMessage(channel, { content: msg });
+  }),
+  summary: "command.color.description",
+  usage: Effect.gen(function* () {
+    const cfg = yield* AppConfig;
+    return cfg.prefix + "color";
+  }),
+});

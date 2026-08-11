@@ -1,18 +1,21 @@
-import { Bot } from "@/bot.js";
-import { Command } from "@/modules/command.js";
-import logger from "@/modules/logger.js";
+import { sendMessage } from "@/discord/sendMessage";
+import { DiscordClient } from "@/DiscordGateway";
+import { ChannelNotSendableError } from "@/errors/ChannelNotSendable";
+import { AppConfig } from "@/modules/settings";
+import { declareCommand } from "@/types";
 import { EmbedBuilder, Message, OAuth2Scopes, PermissionsBitField } from "discord.js";
+import { Effect } from "effect";
 
-export default class Link extends Command {
-  readonly name = "link";
-  constructor(client: Bot) {
-    super(client, "Utility");
-  }
-  async run(client: Bot, message: Message) {
-    if (!message.channel.isSendable()) {
-      logger.error(`channel ${message.channel.id} is not sendable`);
-      return;
+export const LinkCommand = declareCommand({
+  name: "link",
+  category: "Utility",
+  run: Effect.fn("LinkCommand.run")(function* (message: Message) {
+    const { channel } = message;
+    if (!channel.isSendable()) {
+      yield* Effect.logError(`channel ${message.channel.id} is not sendable`);
+      return yield* new ChannelNotSendableError({ channelId: message.channelId });
     }
+    const client = yield* DiscordClient;
     const embed: EmbedBuilder = new EmbedBuilder()
       .setTitle("Links")
       .setDescription(
@@ -22,7 +25,11 @@ export default class Link extends Command {
         })})\n[GitHub](https://github.com/BlackDemonFire/lukas.git)`,
       )
       .setColor(0xaa7777);
-    await message.channel.send({ embeds: [embed] });
-  }
-  help = { show: true, usage: `${this.prefix}link` };
-}
+    yield* sendMessage(channel, { embeds: [embed] });
+  }),
+  summary: "command.link.description",
+  usage: Effect.gen(function* () {
+    const config = yield* AppConfig;
+    return config.prefix + "link";
+  }),
+});

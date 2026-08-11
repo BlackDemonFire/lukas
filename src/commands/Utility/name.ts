@@ -1,18 +1,20 @@
-import { Bot } from "@/bot.js";
-import { Command } from "@/modules/command.js";
-import logger from "@/modules/logger.js";
-import type { ILanguage } from "@/types.js";
+import { sendMessage } from "@/discord/sendMessage";
+import { ChannelNotSendableError } from "@/errors/ChannelNotSendable";
+import { I18nService } from "@/i18n/I18n";
+import { AppConfig } from "@/modules/settings";
+import { UserRepository } from "@/repositories/UserRepository";
+import { declareCommand } from "@/types.js";
 import { Message } from "discord.js";
+import { Effect } from "effect";
 
-export default class Name extends Command {
-  readonly name = "name";
-  constructor(client: Bot) {
-    super(client, "Utility");
-  }
-  async run(client: Bot, message: Message, args: string[], language: ILanguage) {
-    if (!message.channel.isSendable()) {
-      logger.error(`channel ${message.channel.id} is not sendable`);
-      return;
+export const NameCommand = declareCommand({
+  name: "name",
+  category: "Utility",
+  run: Effect.fn("NameCommand.run")(function* (message: Message, args: string[]) {
+    const { channel } = message;
+    if (!channel.isSendable()) {
+      yield* Effect.logError(`channel ${message.channel.id} is not sendable`);
+      return yield* new ChannelNotSendableError({ channelId: message.channelId });
     }
     let newname: string;
     if (!args || args.length === 0) {
@@ -20,8 +22,15 @@ export default class Name extends Command {
     } else {
       newname = args.join(" ");
     }
-    await client.db.setName(message.author, newname);
-    await message.channel.send({ content: language.command.name.success.replace("{newname}", newname) });
-  }
-  help = { show: true, usage: `${this.prefix}name [name]` };
-}
+    const userRepo = yield* UserRepository;
+    yield* userRepo.setName(message.author, newname);
+    const i18n = yield* I18nService;
+    const msg = yield* i18n.t(message.guildId, "command.name.success", { newname });
+    yield* sendMessage(channel, { content: msg });
+  }),
+  summary: "command.name.description",
+  usage: Effect.gen(function* () {
+    const config = yield* AppConfig;
+    return config.prefix + "name [name]";
+  }),
+});

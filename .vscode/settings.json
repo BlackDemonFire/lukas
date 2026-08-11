@@ -21,5 +21,9 @@
     "source.fixAll.oxc": "explicit"
   },
   "nixEnvSelector.useFlakes": true,
-  "nixEnvSelector.flakeShell": "default"
+  "nixEnvSelector.flakeShell": "default",
+  "js/ts.tsdk.promptToUseWorkspaceVersion": true,
+  "js/ts.experimental.useTsgo": true,
+  "typescript.native-preview.additionalTsdkLocations": ["node_modules/.bin"],
+  "js/ts.tsdk.additionalLocations": ["./node_modules/typescript/bin"]
 }
