@@ -1,30 +1,31 @@
-import { Client, GatewayIntentBits } from "discord.js";
-import { Context, Effect, Layer, Redacted } from "effect";
-import { EventBus } from "./EventBus.js";
-import AppConfig from "./modules/settings.js";
+import { Effect } from "effect";
+import type { Services } from "effect/Effect";
+import { DiscordClient } from "./Discord";
+import { InteractionHandler } from "./events/InteractionHandler";
+import { MessageHandler } from "./events/MessageHandler";
 
-export const DiscordClient = Context.Service<Client>("DiscordClient");
-
-export const DiscordLive = Layer.effect(
-  DiscordClient,
+export const DiscordGateway = Effect.scoped(
   Effect.gen(function* () {
-    const config = yield* AppConfig;
-    const bus = yield* EventBus;
-    const client = new Client({
-      intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
-    });
-
-    client.on("messageCreate", (msg) => {
-      bus.publish({ _tag: "MessageCreate", message: msg }).pipe(Effect.runFork);
-    });
-    client.on("interactionCreate", (interaction) => {
-      bus.publish({ _tag: "InteractionCreate", interaction }).pipe(Effect.runFork);
-    });
-
-    yield* Effect.promise(() => client.login(Redacted.value(config.TOKEN)));
-
-    yield* Effect.logInfo("Discord connected");
-
-    return client;
+    const client = yield* DiscordClient;
+    type Requirements =
+      | Services<ReturnType<typeof MessageHandler.handle>>
+      | Services<ReturnType<typeof InteractionHandler.handle>>;
+    const ctx = yield* Effect.context<Requirements>();
+    const runEvent = <A, E>(
+      name: string,
+      effect: Effect.Effect<A, E, Requirements>,
+      attributes?: Record<string, unknown>,
+    ) =>
+      Effect.runForkWith(ctx)(
+        effect.pipe(
+          Effect.withSpan(`discord.${name}`, { attributes }),
+          Effect.catchCause((cause) => Effect.logError(`Discord ${name} failed`, cause)),
+        ),
+      );
+    client.on("messageCreate", (message) =>
+      runEvent("message", MessageHandler.handle(message), { messageId: message.id, authorId: message.author.id }),
+    );
+    client.on("interactionCreate", (interaction) => runEvent("interaction", InteractionHandler.handle(interaction)));
+    yield* Effect.logInfo("Discord event listeners registered");
   }),
 );

@@ -25,13 +25,13 @@ export const KillCommand = declareCommand({
     }
     const i18n = yield* I18nService;
     if (!(yield* isOwner(message.author))) {
-      const perm = yield* i18n.t(message.guildId, "permissions.BOT_OWNER");
-      const msg = yield* i18n.t(message.guildId, "general.userPermissionError", { missingPermissions: perm });
+      const perm = yield* i18n.t("permissions.BOT_OWNER");
+      const msg = yield* i18n.t("general.userPermissionError", { missingPermissions: perm });
       yield* sendMessage(channel, { content: msg });
       return;
     }
     if (message !== null) {
-      const plaintext = yield* i18n.t(message.guildId, "command.kill.success");
+      const plaintext = yield* i18n.t("command.kill.success");
       const embed = new EmbedBuilder()
         .setImage("https://i.imgflip.com/19f1vf.jpg")
         .setColor(0x36393e)

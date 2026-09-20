@@ -5,7 +5,7 @@ import type { GifRepository } from "./repositories/GifRepository";
 export class InteractionMap extends Context.Service<
   InteractionMap,
   {
-    readonly map: ReadonlyMap<
+    readonly map: Map<
       string,
       (interaction: BaseInteraction<CacheType>, args: string[]) => Effect.Effect<void, DiscordAPIError, GifRepository>
     >;

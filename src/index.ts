@@ -6,9 +6,8 @@ import { ConfigProvider, DateTime, Effect, Layer, Logger, pipe } from "effect";
 import { CommandMapLive } from "./commands/index.js";
 import { CommandUsageLive } from "./CommandUsage.js";
 import { DatabaseLive } from "./Database.js";
-import { DiscordLive } from "./DiscordGateway.js";
-import { EventBusLive } from "./EventBus.js";
-import { handleEvents } from "./handleEvents.js";
+import { DiscordLive } from "./Discord.js";
+import { DiscordGateway } from "./DiscordGateway.js";
 import { I18nServiceLive } from "./i18n/I18n.js";
 import { InteractionMapLive } from "./interactions/index.js";
 import { LukasRandomLive } from "./modules/random.js";
@@ -22,28 +21,32 @@ const NodeSDKLive = NodeSdk.layer(() => ({
   resource: { serviceName: "lukas" },
   spanProcessor: new BatchSpanProcessor(new OTLPTraceExporter()),
 }));
+const SysLayer = Layer.mergeAll(
+  ConfigProvider.layer(ConfigProvider.fromEnv()),
+  Logger.layer([Logger.consolePretty(), Logger.tracerLogger], { mergeWithExisting: false }),
+  NodeSDKLive,
+);
+const Repositories = Layer.mergeAll(
+  DsaCharRepositoryLive,
+  SettingsRepositoryLive,
+  GifRepositoryLive,
+  UserRepositoryLive,
+).pipe(Layer.provide(DatabaseLive));
 
 const MainLive = pipe(
-  Layer.mergeAll(
-    ConfigProvider.layer(ConfigProvider.fromEnv()),
-    DiscordLive,
-    I18nServiceLive,
-    ShutdownLive,
-    CommandMapLive,
-    LukasRandomLive,
-    CommandUsageLive,
-    InteractionMapLive,
-    DateTime.layerCurrentZoneNamed("Europe/London"),
-    Logger.layer([Logger.consolePretty(), Logger.tracerLogger], { mergeWithExisting: false }),
-    NodeSDKLive,
-  ),
-  Layer.provideMerge(
-    Layer.mergeAll(DsaCharRepositoryLive, SettingsRepositoryLive, GifRepositoryLive, UserRepositoryLive),
-  ),
-  Layer.provideMerge(Layer.mergeAll(DatabaseLive, EventBusLive)),
+  SysLayer,
+  Layer.provideMerge(DiscordLive),
+  Layer.provideMerge(ShutdownLive),
+  Layer.provideMerge(Layer.merge(CommandMapLive, InteractionMapLive)),
+  Layer.provideMerge(DateTime.layerCurrentZoneNamed("Europe/London")),
+  Layer.provideMerge(LukasRandomLive),
+  Layer.provideMerge(I18nServiceLive),
+  Layer.provideMerge(CommandUsageLive),
+  Layer.provideMerge(Repositories),
 );
 const program = Effect.gen(function* () {
-  yield* handleEvents;
+  yield* DiscordGateway;
   return yield* Effect.never;
 });
+
 pipe(program, Effect.provide(MainLive), NodeRuntime.runMain);

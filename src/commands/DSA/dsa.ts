@@ -1,18 +1,14 @@
+import { deleteMessage } from "@/discord/deleteMessage";
+import { deleteWebhook } from "@/discord/deleteWebhook";
 import { sendMessage } from "@/discord/sendMessage";
+import { sendUserMessage } from "@/discord/sendUserMessage";
+import { sendWebhookMessage } from "@/discord/sendWebhookMessage";
 import { ChannelNotSendableError } from "@/errors/ChannelNotSendable";
 import { I18nService } from "@/i18n/I18n";
 import { AppConfig } from "@/modules/settings";
 import { DsaCharRepository } from "@/repositories/DsaCharRepository";
 import { declareCommand } from "@/types.js";
-import {
-  DiscordAPIError,
-  Message,
-  PermissionFlagsBits,
-  TextChannel,
-  Webhook,
-  WebhookType,
-  type OmitPartialGroupDMChannel,
-} from "discord.js";
+import { DiscordAPIError, Message, PermissionFlagsBits, TextChannel, Webhook, WebhookType } from "discord.js";
 import { Effect, Option } from "effect";
 
 export const DsaCommand = declareCommand({
@@ -33,7 +29,7 @@ export const DsaCommand = declareCommand({
     }
     const i18n = yield* I18nService;
     if (!message.inGuild()) {
-      const guildOnlyMessage = yield* i18n.t(null, "general.guildOnly");
+      const guildOnlyMessage = yield* i18n.t("general.guildOnly");
       yield* sendMessage(channel, { content: guildOnlyMessage });
       return;
     }
@@ -42,7 +38,7 @@ export const DsaCommand = declareCommand({
         ?.permissionsIn(message.channel)
         .has([PermissionFlagsBits.ManageMessages, PermissionFlagsBits.ManageWebhooks])
     ) {
-      const permMessage = yield* i18n.t(message.guildId, "command.dsa.permissions");
+      const permMessage = yield* i18n.t("command.dsa.permissions");
       yield* sendMessage(channel, { content: permMessage });
       return;
     }
@@ -52,11 +48,9 @@ export const DsaCommand = declareCommand({
     } else if (message.attachments.size > 1) {
       sl = true;
     } else {
-      yield* Effect.tryPromise<OmitPartialGroupDMChannel<Message<true>>, DiscordAPIError>(() => message.delete());
-      const contentRequired = yield* i18n.t(message.guildId, "command.dsa.contentRequired");
-      yield* Effect.tryPromise<Message<false>, DiscordAPIError>(() =>
-        message.author.send({ content: contentRequired }),
-      );
+      yield* deleteMessage(message);
+      const contentRequired = yield* i18n.t("command.dsa.contentRequired");
+      yield* sendUserMessage(message.author, { content: contentRequired });
       return;
     }
     const clean = args[0]!.slice().toLowerCase();
@@ -85,26 +79,22 @@ export const DsaCommand = declareCommand({
       },
     });
     if (sl) {
-      displayName = yield* i18n.t(message.guildId, "command.dsa.gameMaster");
+      displayName = yield* i18n.t("command.dsa.gameMaster");
       displayImg = "https://cdn.discordapp.com/icons/790938544293019649/d0843b10f5e7dabd10ebbea93acfca28.webp";
     }
     if (channel instanceof TextChannel) {
-      const webhook = yield* Effect.tryPromise<Webhook<WebhookType.Incoming>, DiscordAPIError>(() =>
-        channel.createWebhook({ name: displayName, avatar: displayImg }),
-      );
+      const webhook = yield* Effect.tryPromise<Webhook<WebhookType.Incoming>, DiscordAPIError>({
+        try: () => channel.createWebhook({ name: displayName, avatar: displayImg }),
+        catch: (e) => e as DiscordAPIError,
+      });
       if (message.attachments.size == 0) {
-        yield* Effect.tryPromise<Message<true>, DiscordAPIError>(() => webhook.send({ content: args.join(" ") }));
+        yield* sendWebhookMessage(webhook, { content: args.join(" ") });
       } else {
-        const attarr: string[] = [];
-        message.attachments.forEach((a) => {
-          attarr.push(a.url);
-        });
-        yield* Effect.tryPromise<Message<true>, DiscordAPIError>(() =>
-          webhook.send({ content: args.join(" "), files: attarr }),
-        );
+        const attarr: string[] = message.attachments.map((a) => a.url);
+        yield* sendWebhookMessage(webhook, { content: args.join(" "), files: attarr });
       }
-      yield* Effect.tryPromise<void, DiscordAPIError>(() => webhook.delete());
-      yield* Effect.tryPromise<OmitPartialGroupDMChannel<Message<true>>, DiscordAPIError>(() => message.delete());
+      yield* deleteWebhook(webhook);
+      yield* deleteMessage(message);
     }
   }),
 });

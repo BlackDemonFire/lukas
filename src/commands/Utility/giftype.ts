@@ -23,10 +23,10 @@ export const GiftypeCommand = declareCommand({
       return yield* new ChannelNotSendableError({ channelId: message.channelId });
     }
     const gifRepo = yield* GifRepository;
-    const types = yield* gifRepo.getGifTypes;
+    const types = yield* gifRepo.getGifTypes();
     let typesstring = "";
     const i18n = yield* I18nService;
-    const and = yield* i18n.t(message.guildId, "general.and");
+    const and = yield* i18n.t("general.and");
     switch (types.length) {
       case 1:
         typesstring = types[0]!;
@@ -40,7 +40,7 @@ export const GiftypeCommand = declareCommand({
 
     const giftype: string = args.length === 0 ? "" : args[0]!.toLowerCase();
     if (args.length == 0 || !types.includes(giftype)) {
-      const msg = yield* i18n.t(message.guildId, "command.giftype.availableTypes", { types: typesstring });
+      const msg = yield* i18n.t("command.giftype.availableTypes", { types: typesstring });
       yield* sendMessage(channel, { content: msg });
       return;
     }

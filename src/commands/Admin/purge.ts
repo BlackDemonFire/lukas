@@ -1,19 +1,11 @@
+import { bulkDelete } from "@/discord/bulkDelete";
 import { sendMessage } from "@/discord/sendMessage";
 import { ChannelNotSendableError } from "@/errors/ChannelNotSendable";
 import { I18nService } from "@/i18n/I18n";
 import { isOwner } from "@/modules/command.js";
 import { AppConfig } from "@/modules/settings";
 import { declareCommand } from "@/types.js";
-import {
-  Collection,
-  DiscordAPIError,
-  GuildChannel,
-  Message,
-  PermissionFlagsBits,
-  TextChannel,
-  type PartialMessage,
-  type Snowflake,
-} from "discord.js";
+import { GuildChannel, Message, PermissionFlagsBits, TextChannel } from "discord.js";
 import { Effect, Schema } from "effect";
 
 export const PurgeCommand = declareCommand({
@@ -33,19 +25,15 @@ export const PurgeCommand = declareCommand({
     }
     const i18n = yield* I18nService;
     if (!(yield* hasPermission(message))) {
-      const erroredPerm = yield* i18n.t(message.guildId, "permissions.MANAGE_MESSAGES");
-      const userPermissionError = yield* i18n.t(message.guildId, "general.userPermissionError", {
-        missingPermissions: erroredPerm,
-      });
+      const erroredPerm = yield* i18n.t("permissions.MANAGE_MESSAGES");
+      const userPermissionError = yield* i18n.t("general.userPermissionError", { missingPermissions: erroredPerm });
       yield* sendMessage(channel, { content: userPermissionError });
       return;
     }
     if (!message.inGuild()) return;
     if (!message.guild.members.me!.permissionsIn(message.channel).has(PermissionFlagsBits.ManageMessages)) {
-      const erroredPerm = yield* i18n.t(message.guildId, "permissions.MANAGE_MESSAGES");
-      const botPermissionError = yield* i18n.t(message.guildId, "general.botPermissionError", {
-        missingPermissions: erroredPerm,
-      });
+      const erroredPerm = yield* i18n.t("permissions.MANAGE_MESSAGES");
+      const botPermissionError = yield* i18n.t("general.botPermissionError", { missingPermissions: erroredPerm });
       yield* sendMessage(channel, { content: botPermissionError });
       return;
     }
@@ -53,15 +41,13 @@ export const PurgeCommand = declareCommand({
     const amount = yield* Schema.decodeEffect(Schema.FiniteFromString)(args[0] ?? "").pipe(
       Effect.tap((e) =>
         Effect.gen(function* () {
-          const notNumeric = yield* i18n.t(message.guildId, "command.purge.error.notNumeric");
+          const notNumeric = yield* i18n.t("command.purge.error.notNumeric");
           yield* sendMessage(channel, { content: notNumeric });
           yield* Effect.logError(e);
         }),
       ),
     );
-    yield* Effect.tryPromise<Collection<Snowflake, Message | PartialMessage | undefined>, DiscordAPIError>(() =>
-      message.channel.bulkDelete(amount),
-    );
+    yield* bulkDelete(message.channel, amount);
   }),
 });
 const hasPermission = Effect.fnUntraced(function* (message: Message) {

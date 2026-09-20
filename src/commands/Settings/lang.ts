@@ -25,13 +25,13 @@ export const LangCommand = declareCommand({
     let newLang: string;
     let languages: string = "";
     if (!message.inGuild()) {
-      const msg = yield* i18n.t(message.guildId, "general.guildOnly");
+      const msg = yield* i18n.t("general.guildOnly");
       yield* sendMessage(channel, { content: msg });
       return;
     }
     const messageAuthorIsOwner = yield* isOwner(message.author);
     if (!(message.member!.permissions.has(PermissionFlagsBits.Administrator) || messageAuthorIsOwner)) {
-      const msg = yield* i18n.t(message.guildId, "command.lang.permissionError");
+      const msg = yield* i18n.t("command.lang.permissionError");
       yield* sendMessage(channel, { content: msg });
       return;
     }
@@ -40,7 +40,7 @@ export const LangCommand = declareCommand({
     } else {
       newLang = args.join(" ");
     }
-    const and = yield* i18n.t(message.guildId, "general.and");
+    const and = yield* i18n.t("general.and");
     const supportedLanguages = i18n.supportedLanguages();
     if (!supportedLanguages.includes(newLang)) {
       switch (supportedLanguages.length) {
@@ -57,13 +57,13 @@ export const LangCommand = declareCommand({
             .join(", ")} ${and} \`${supportedLanguages.slice(-1).join(",")}\``;
           break;
       }
-      const msg = yield* i18n.t(message.guildId, "command.lang.noSuchLanguage", { languages });
+      const msg = yield* i18n.t("command.lang.noSuchLanguage", { languages });
       yield* sendMessage(channel, { content: msg });
       return;
     }
     const settingsRepo = yield* SettingsRepository;
     yield* settingsRepo.setLang(message.guild, newLang);
-    const successMsg = yield* i18n.t(message.guildId, "command.lang.success", { lang: newLang });
+    const successMsg = yield* i18n.t("command.lang.success", { lang: newLang });
     yield* sendMessage(channel, { content: successMsg });
   }),
 });

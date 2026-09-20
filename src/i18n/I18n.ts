@@ -1,9 +1,8 @@
 import { AppConfig } from "@/modules/settings.js";
-import { SettingsRepository } from "@/repositories/SettingsRepository.js";
-import type { Snowflake } from "discord.js";
 import { Context, Effect, Layer, Random } from "effect";
 import type { NoSuchElementError } from "effect/Cause";
 import type { ConfigError } from "effect/Config";
+import { CurrentLanguage } from "./CurrentLanguage.js";
 import { deBase } from "./messages/de_DE.js";
 import { deDsa } from "./messages/de_DSA.js";
 import { enTde } from "./messages/en_TDE.js";
@@ -39,13 +38,12 @@ export const parseLanguage = (lang: string): ParsedLanguage => {
 
 export interface I18n {
   readonly t: {
-    <K extends MessageKey>(guildId: Snowflake | null, key: K): Effect.Effect<string, ConfigError | NoSuchElementError>;
+    <K extends MessageKey>(key: K): Effect.Effect<string, ConfigError | NoSuchElementError, CurrentLanguage>;
 
     <K extends MessageKey>(
-      guildId: Snowflake | null,
       key: K,
       params: MessageParams[K],
-    ): Effect.Effect<string, ConfigError | NoSuchElementError>;
+    ): Effect.Effect<string, ConfigError | NoSuchElementError, CurrentLanguage>;
   };
   supportedLanguages(): string[];
 }
@@ -54,7 +52,6 @@ export const I18nService = Context.Service<I18n>("I18n");
 export const I18nServiceLive = Layer.effect(
   I18nService,
   Effect.gen(function* () {
-    const settingsRepo = yield* SettingsRepository;
     const appCfg = yield* AppConfig;
 
     const resolve = (locale: "en" | "de", variant: "default" | "dsa", key: string) => {
@@ -64,10 +61,9 @@ export const I18nServiceLive = Layer.effect(
     };
 
     return {
-      t: <K extends MessageKey>(guildId: Snowflake | null, key: K, params?: MessageParams[K]) =>
+      t: <K extends MessageKey>(key: K, params?: MessageParams[K]) =>
         Effect.gen(function* () {
-          const cfg = yield* AppConfig;
-          const lang = guildId === null ? cfg.defaultLanguage : yield* settingsRepo.getLang(guildId);
+          const lang = yield* CurrentLanguage;
 
           const { locale, variant } = parseLanguage(lang ?? appCfg.defaultLanguage);
 

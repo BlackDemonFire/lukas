@@ -1,5 +1,6 @@
+import { DiscordClient } from "@/Discord";
 import { sendMessage } from "@/discord/sendMessage";
-import { DiscordClient } from "@/DiscordGateway";
+import { sendUserMessage } from "@/discord/sendUserMessage";
 import { ChannelNotSendableError } from "@/errors/ChannelNotSendable";
 import { I18nService } from "@/i18n/I18n";
 import { isOwner } from "@/modules/command.js";
@@ -7,16 +8,7 @@ import { GifRequest, activeRequests } from "@/modules/dbo/gifRequest.js";
 import { AppConfig } from "@/modules/settings";
 import { GifRepository } from "@/repositories/GifRepository";
 import { declareCommand } from "@/types.js";
-import {
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-  DiscordAPIError,
-  GuildChannel,
-  Message,
-  Team,
-  User,
-} from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, GuildChannel, Message, Team, User } from "discord.js";
 import { Effect } from "effect";
 
 export const NewgifCommand = declareCommand({
@@ -35,7 +27,7 @@ export const NewgifCommand = declareCommand({
     }
     const i18n = yield* I18nService;
     if (args?.length !== 3) {
-      const wrongArgs = yield* i18n.t(message.guildId, "command.newgif.wrongArgs");
+      const wrongArgs = yield* i18n.t("command.newgif.wrongArgs");
       yield* sendMessage(channel, { content: wrongArgs });
       return;
     }
@@ -45,11 +37,11 @@ export const NewgifCommand = declareCommand({
     const gifRepo = yield* GifRepository;
     if (yield* isOwner(message.author)) {
       yield* gifRepo.createGif(url, action, type);
-      const msg = yield* i18n.t(message.guildId, "command.newgif.success");
+      const msg = yield* i18n.t("command.newgif.success");
       yield* sendMessage(channel, { content: msg });
       return;
     }
-    const response: string = yield* i18n.t(message.guildId, "command.newgif.checking");
+    const response: string = yield* i18n.t("command.newgif.checking");
     const client = yield* DiscordClient;
     const owner: Team | User = client.application!.owner!;
     let admins: User[];
@@ -63,26 +55,23 @@ export const NewgifCommand = declareCommand({
       requestMessage.id,
       new GifRequest(requestMessage, requestMessage.id, message.channel.id, url, action, type),
     );
+    const content = `Gif check request from ${message.author.tag} in <#${message.channel.id}> (${
+      message.channel instanceof GuildChannel ? message.channel.name : "DM"
+    })\ngif: ${url}\naction: ${action}\ntype: ${type}`;
+    const messageComponents = [
+      new ActionRowBuilder<ButtonBuilder>().addComponents([
+        new ButtonBuilder()
+          .setLabel("Accept")
+          .setCustomId(`newgif.accept.${requestMessage.id}`)
+          .setStyle(ButtonStyle.Success),
+        new ButtonBuilder()
+          .setLabel("Reject")
+          .setCustomId(`newgif.reject.${requestMessage.id}`)
+          .setStyle(ButtonStyle.Danger),
+      ]),
+    ];
     for (const admin of admins) {
-      yield* Effect.tryPromise<Message<false>, DiscordAPIError>(() =>
-        admin.send({
-          content: `Gif check request from ${message.author.tag} in <#${message.channel.id}> (${
-            message.channel instanceof GuildChannel ? message.channel.name : "DM"
-          })\ngif: ${url}\naction: ${action}\ntype: ${type}`,
-          components: [
-            new ActionRowBuilder<ButtonBuilder>().addComponents([
-              new ButtonBuilder()
-                .setLabel("Accept")
-                .setCustomId(`newgif.accept.${requestMessage.id}`)
-                .setStyle(ButtonStyle.Success),
-              new ButtonBuilder()
-                .setLabel("Reject")
-                .setCustomId(`newgif.reject.${requestMessage.id}`)
-                .setStyle(ButtonStyle.Danger),
-            ]),
-          ],
-        }),
-      );
+      yield* sendUserMessage(admin, { content: content, components: messageComponents });
     }
   }),
 });

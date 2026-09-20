@@ -6,6 +6,7 @@ import { AppConfig } from "@/modules/settings.js";
 import { SettingsRepository } from "@/repositories/SettingsRepository.js";
 import { UserRepository } from "@/repositories/UserRepository.js";
 import { executeRollIfEnabled } from "@/modules/rollHandler";
+import { CurrentLanguage } from "@/i18n/CurrentLanguage";
 
 const executeCommand = Effect.fn("executeCommand")(function* (message: Message) {
   const settings = yield* AppConfig;
@@ -36,12 +37,19 @@ export const MessageHandler = {
       if (message.guild) yield* settingsRepo.ensureGuildSettings(message.guild, cfg.defaultLanguage);
       const userRepo = yield* UserRepository;
       yield* userRepo.ensureUser(message.author);
-      if (message.content.startsWith(cfg.prefix)) return yield* executeCommand(message);
+      const lang = message.inGuild() ? yield* settingsRepo.getLang(message.guildId) : cfg.defaultLanguage;
+      return yield* Effect.provideService(
+        Effect.gen(function* () {
+          if (message.content.startsWith(cfg.prefix)) return yield* executeCommand(message);
 
-      if (!message.inGuild()) return;
-      if (yield* executeRollIfEnabled(message)) return;
+          if (!message.inGuild()) return;
+          if (yield* executeRollIfEnabled(message)) return;
 
-      yield* Effect.logWarning(`Unhandled message by ${message.author.displayName}: ${content}`);
+          yield* Effect.logWarning(`Unhandled message by ${message.author.displayName}: ${content}`);
+        }),
+        CurrentLanguage,
+        lang,
+      );
     }).pipe(
       Effect.withSpan("message", {
         root: true,

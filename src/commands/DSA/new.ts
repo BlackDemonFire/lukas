@@ -1,11 +1,12 @@
 import { sendMessage } from "@/discord/sendMessage";
 import { ChannelNotSendableError } from "@/errors/ChannelNotSendable";
+import type { CurrentLanguage } from "@/i18n/CurrentLanguage";
 import { I18nService } from "@/i18n/I18n";
 import { AppConfig } from "@/modules/settings";
 import { DsaCharRepository } from "@/repositories/DsaCharRepository";
 import { declareCommand } from "@/types.js";
 import { Message, MessageCollector } from "discord.js";
-import { Effect } from "effect";
+import { Effect, pipe } from "effect";
 
 export const NewCommand = declareCommand({
   name: "new",
@@ -25,21 +26,22 @@ export const NewCommand = declareCommand({
     let av: string;
     let pref: string;
     const i18n = yield* I18nService;
-    const getPrefix = yield* i18n.t(message.guildId, "command.new.getPrefix");
+    const getPrefix = yield* i18n.t("command.new.getPrefix");
     yield* sendMessage(channel, { content: getPrefix });
     const collector = new MessageCollector(channel, {
       filter: (m: Message) => m.author.id === message.author.id,
       time: 50000,
     });
-    const timeoutMsg = yield* i18n.t(message.guildId, "general.timeout");
-    const effectContext = yield* Effect.context<DsaCharRepository>();
+    const timeoutMsg = yield* i18n.t("general.timeout");
+    const effectContext = yield* Effect.context<DsaCharRepository | CurrentLanguage>();
     collector.on("end", (msgs) =>
-      Effect.runForkWith(effectContext)(
+      pipe(
         Effect.gen(function* () {
           if (msgs.size == 0) {
             yield* sendMessage(channel, { content: timeoutMsg });
           }
         }),
+        Effect.runForkWith(effectContext),
       ),
     );
 
@@ -54,7 +56,7 @@ export const NewCommand = declareCommand({
           switch (i) {
             case 1: {
               pref = msg.content.toLowerCase().split(" ")[0]!;
-              const getAvatarMessage = yield* i18n.t(msg.guildId, "command.new.getAvatar");
+              const getAvatarMessage = yield* i18n.t("command.new.getAvatar");
               yield* sendMessage(channel, { content: getAvatarMessage });
               if (!pref.startsWith("$")) pref = `$${pref}`;
               break;
@@ -62,7 +64,7 @@ export const NewCommand = declareCommand({
             case 2: {
               av = msg.content === "n" ? "" : msg.content;
 
-              const getNameMsg = yield* i18n.t(msg.guildId, "command.new.getName");
+              const getNameMsg = yield* i18n.t("command.new.getName");
               yield* sendMessage(channel, { content: getNameMsg });
               break;
             }
@@ -70,7 +72,7 @@ export const NewCommand = declareCommand({
               {
                 const name = msg.content;
                 collector.stop();
-                const successMsg = yield* i18n.t(message.guildId, "command.new.success", { name, pref });
+                const successMsg = yield* i18n.t("command.new.success", { name, pref });
                 yield* sendMessage(channel, { content: successMsg });
                 const dsaCharRepo = yield* DsaCharRepository;
                 yield* dsaCharRepo.createCharacter(pref, name, av);

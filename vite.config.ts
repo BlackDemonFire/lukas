@@ -95,5 +95,5 @@ export default defineConfig({
     sortPackageJson: false,
     ignorePatterns: [".github", "src/migrations/.snapshot*", ".vscode", "dist", "node_modules", "pnpm-lock.yaml"],
   },
-  pack: { unbundle: true, target: "node24.18" },
+  pack: { deps: { resolveDepSubpath: true }, unbundle: true, target: "node24.18" },
 });

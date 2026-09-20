@@ -1,12 +1,13 @@
+import { DiscordClient } from "@/Discord.js";
+import { fetchUser } from "@/discord/fetchUser.js";
 import { sendMessage } from "@/discord/sendMessage.js";
-import { DiscordClient } from "@/DiscordGateway.js";
 import { ChannelNotSendableError } from "@/errors/ChannelNotSendable.js";
 import { I18nService } from "@/i18n/I18n.js";
 import type { MessageKey } from "@/i18n/types.js";
 import { GifRepository } from "@/repositories/GifRepository.js";
 import { UserRepository } from "@/repositories/UserRepository.js";
-import { type ColorResolvable, Colors, DiscordAPIError, EmbedBuilder, Message, Team, User } from "discord.js";
-import { DateTime, Effect, Option, pipe } from "effect";
+import { type ColorResolvable, Colors, EmbedBuilder, Message, Team, User } from "discord.js";
+import { DateTime, Effect, Option } from "effect";
 import { LukasRandom } from "./random.js";
 
 type MiddlePart<
@@ -43,18 +44,17 @@ export const parseUser = Effect.fn("parseUser")(function* (message: Message, arg
       let name: string = "";
       const ping = userMentionRegex.exec(arg);
       if (ping) {
-        const client = yield* DiscordClient;
-        const maybeUser = yield* pipe(
-          Effect.tryPromise<User, DiscordAPIError>(() => client.users.fetch(ping[1]!)),
-          Effect.option,
-        );
+        const maybeUser = yield* fetchUser(ping[1]!);
         const userRepo = yield* UserRepository;
         name = yield* Option.match(maybeUser, {
           onSome: (user) => userRepo.getName(user),
           onNone: () => Effect.succeed(arg),
         });
         if (!name || name == "") {
-          const member = message.guild ? message.guild.members.resolve(maybeUser.valueOrUndefined!) : null;
+          const member =
+            message.guild && maybeUser.valueOrUndefined
+              ? message.guild.members.resolve(maybeUser.valueOrUndefined)
+              : null;
           name = member ? member.displayName : maybeUser.valueOrUndefined!.username;
         }
         if (maybeUser.valueOrUndefined == message.author) {
@@ -66,7 +66,7 @@ export const parseUser = Effect.fn("parseUser")(function* (message: Message, arg
       }
     }
     const i18n = yield* I18nService;
-    const and = yield* i18n.t(message.guildId, "general.and");
+    const and = yield* i18n.t("general.and");
     if (userB == "" && !self) {
       switch (mentioned.length) {
         case 1:
@@ -129,7 +129,7 @@ const runSingleUserGifCommand = Effect.fn("SingleUserGifCommand.run")(function* 
   else color = "Random";
   if (userA == "") userA = message.guild ? message.member!.displayName : message.author.username;
   const i18n = yield* I18nService;
-  const responseString: string = yield* i18n.t(message.guildId, `command.${name}.singleUser`, { a: userA });
+  const responseString: string = yield* i18n.t(`command.${name}.singleUser`, { a: userA });
   yield* buildAndSendEmbed(gif, responseString, color, message, name);
 });
 
@@ -151,10 +151,10 @@ const runMultiUserGifCommand = Effect.fn("MultiUserGifCommand.run")(function* (
   let responseString: string;
   const i18n = yield* I18nService;
   if (userB == "") {
-    const huhu = yield* i18n.t(message.guildId, `command.${name}.singleUser`, { a: userA });
+    const huhu = yield* i18n.t(`command.${name}.singleUser`, { a: userA });
     responseString = huhu;
   } else {
-    responseString = yield* i18n.t(message.guildId, `command.${name}.multiUser`, { a: userA, b: userB });
+    responseString = yield* i18n.t(`command.${name}.multiUser`, { a: userA, b: userB });
   }
   yield* buildAndSendEmbed(gif, responseString, color, message, name);
 });

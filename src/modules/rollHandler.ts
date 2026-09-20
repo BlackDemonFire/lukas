@@ -2,7 +2,7 @@ import { sendMessage } from "@/discord/sendMessage";
 import { I18nService } from "@/i18n/I18n";
 import { SettingsRepository } from "@/repositories/SettingsRepository";
 import { EmbedBuilder, type Message } from "discord.js";
-import { Effect } from "effect";
+import { Effect, Match } from "effect";
 import { LukasRandom } from "./random";
 
 const rollArgRegex = /^(\d)*(?:[dw])(\d+)$/;
@@ -50,15 +50,15 @@ export const executeRollIfEnabled = Effect.fn("ExecuteRollIfEnabled")(function* 
   }
   const i18n = yield* I18nService;
   if (dice.some((d) => d.max === 0)) {
-    const msg = yield* i18n.t(message.guildId, "command.roll.errors.noSides");
+    const msg = yield* i18n.t("command.roll.errors.noSides");
     yield* sendMessage(message.channel, { content: `<:warn_3:498277726604754946> ${msg}` });
     return true;
   }
   const diceCount = dice.reduce((a, b) => a + b.count, 0);
   const msgauthor: string = message.author.username;
   if (diceCount === 0) {
-    const plaintext = yield* i18n.t(message.guildId, "command.roll.results.noDice.plaintext", { msgauthor });
-    const embedText = yield* i18n.t(message.guildId, "command.roll.results.noDice.embed");
+    const plaintext = yield* i18n.t("command.roll.results.noDice.plaintext", { msgauthor });
+    const embedText = yield* i18n.t("command.roll.results.noDice.embed");
     const embed = new EmbedBuilder()
       .setColor(0x36393e)
       .setDescription(`<:info_1:498285998346731530> ${embedText}`)
@@ -67,7 +67,7 @@ export const executeRollIfEnabled = Effect.fn("ExecuteRollIfEnabled")(function* 
     return true;
   }
   if (diceCount > 70) {
-    const msg = yield* i18n.t(message.guildId, "command.roll.errors.tooManyDice");
+    const msg = yield* i18n.t("command.roll.errors.tooManyDice");
     yield* sendMessage(message.channel, { content: `<:warn_3:498277726604754946> ${msg}` });
     return true;
   }
@@ -86,8 +86,8 @@ export const executeRollIfEnabled = Effect.fn("ExecuteRollIfEnabled")(function* 
       embed.setDescription(results.map((d) => d.toString()).join(" "));
     }
     const title = yield* count === 1
-      ? i18n.t(message.guildId, "command.roll.results.singleDice", { rolltype: dice[0]!.max })
-      : i18n.t(message.guildId, "command.roll.results.multiDice", { rolltype: max, rollcountmax: count });
+      ? i18n.t("command.roll.results.singleDice", { rolltype: dice[0]!.max })
+      : i18n.t("command.roll.results.multiDice", { rolltype: max, rollcountmax: count });
     embed.setTitle(title);
     embeds.push(embed);
   }
@@ -105,30 +105,27 @@ const runDragonBaneRoll = Effect.fn("DragonBaneRoll.run")(function* (
 ) {
   const i18n = yield* I18nService;
   if (toNotExceed > 19) {
-    const msg = yield* i18n.t(message.guildId, "dragonborn.dragonbornRoll.invalidArg");
+    const msg = yield* i18n.t("dragonborn.dragonbornRoll.invalidArg");
     yield* sendMessage(message.channel, { content: msg });
     return;
   }
   const random = yield* LukasRandom;
   const rolls = yield* random.ints(1, 20, extraRolls + 1);
   const rollToEvaluate = sign === "-" ? rolls.toSorted((a, b) => b - a) : rolls.toSorted((a, b) => a - b);
-  if (rollToEvaluate[0] === 20) {
-    const msg = yield* i18n.t(message.guildId, "dragonborn.dragonbornRoll.critFailure");
-    yield* sendMessage(message.channel, { content: msg });
-    return;
-  }
-  if (rollToEvaluate[0]! > toNotExceed) {
-    const msg = yield* i18n.t(message.guildId, "dragonborn.dragonbornRoll.failed", { dice: rollToEvaluate });
-    yield* sendMessage(message.channel, { content: msg });
-    return;
-  }
-  if (rollToEvaluate[0] === 1) {
-    const msg = yield* i18n.t(message.guildId, "dragonborn.dragonbornRoll.critSuccess");
-    yield* sendMessage(message.channel, { content: msg });
-    return;
-  }
-  const msg = yield* i18n.t(message.guildId, "dragonborn.dragonbornRoll.success", { dice: rollToEvaluate });
-  yield* sendMessage(message.channel, { content: msg });
+  const msgauthor: string = message.author.username;
+  const embed = new EmbedBuilder().setColor(0x36393e).setFooter({ text: `@${msgauthor}` });
+
+  const msg = yield* Match.value(rollToEvaluate[0]!).pipe(
+    Match.when(Match.is(20), () => i18n.t("dragonborn.dragonbornRoll.critFailure")),
+    Match.when(
+      (res) => res > toNotExceed,
+      () => i18n.t("dragonborn.dragonbornRoll.failed", { dice: rollToEvaluate }),
+    ),
+    Match.when(Match.is(1), () => i18n.t("dragonborn.dragonbornRoll.critSuccess")),
+    Match.orElse(() => i18n.t("dragonborn.dragonbornRoll.success", { dice: rollToEvaluate })),
+  );
+  embed.setTitle(msg);
+  yield* sendMessage(message.channel, { embeds: [embed] });
 });
 
 /**

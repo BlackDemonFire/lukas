@@ -64,7 +64,7 @@ export const RollCommand = declareCommand({
     // validify arguments
     const i18n = yield* I18nService;
     if (args[2]) {
-      const tooManyArgs = yield* i18n.t(message.guildId, "command.roll.errors.tooManyArgs");
+      const tooManyArgs = yield* i18n.t("command.roll.errors.tooManyArgs");
       yield* sendMessage(channel, { content: `${WARN_EMOJI} ${tooManyArgs}${rollargerror}` });
       return;
     }
@@ -74,12 +74,12 @@ export const RollCommand = declareCommand({
 
     if (args[0] && args[1]) {
       if (checkregex.test(rollarga) && checkregex.test(rollargb)) {
-        const doubleDiceType = yield* i18n.t(message.guildId, "command.roll.errors.doubleDiceType");
+        const doubleDiceType = yield* i18n.t("command.roll.errors.doubleDiceType");
         yield* sendMessage(channel, { content: `${WARN_EMOJI} ${doubleDiceType}` });
         return;
       }
       if (!checkregex.test(rollarga) && !checkregex.test(rollargb)) {
-        const doubleRollCount = yield* i18n.t(message.guildId, "command.roll.errors.doubleRollCount");
+        const doubleRollCount = yield* i18n.t("command.roll.errors.doubleRollCount");
         yield* sendMessage(channel, { content: `${WARN_EMOJI} ${doubleRollCount}` });
         return;
       }
@@ -91,7 +91,7 @@ export const RollCommand = declareCommand({
         dicetype = rollargb;
         rollcountmax = rollarga;
       } else {
-        const schroedingersArgument = yield* i18n.t(message.guildId, "command.roll.errors.schroedingersArgument");
+        const schroedingersArgument = yield* i18n.t("command.roll.errors.schroedingersArgument");
         yield* sendMessage(channel, { content: `${WARN_EMOJI} ${schroedingersArgument}` });
         return;
       }
@@ -123,11 +123,11 @@ export const RollCommand = declareCommand({
     // convert String dicetype to Const rolltype
 
     if (rolltype == 0 && dicetype == "wx") {
-      const noDiceType = yield* i18n.t(message.guildId, "command.roll.errors.noDiceType");
+      const noDiceType = yield* i18n.t("command.roll.errors.noDiceType");
       yield* sendMessage(channel, { content: `${WARN_EMOJI} ${noDiceType}` });
       return;
     }
-    const noSides = yield* i18n.t(message.guildId, "command.roll.errors.noSides");
+    const noSides = yield* i18n.t("command.roll.errors.noSides");
     if (rolltype == 0 && dicetype == "w0") {
       yield* sendMessage(channel, { content: `${WARN_EMOJI}} ${noSides}` });
       return;
@@ -139,7 +139,7 @@ export const RollCommand = declareCommand({
     if (rolltype == 0) {
       dicetype = dicetype.substring(1);
       if (typeof dicetype === "number" ? Number.isNaN(dicetype) : Number.isNaN(Number.parseInt(dicetype))) {
-        const rolltypeNotNumeric = yield* i18n.t(message.guildId, "command.roll.errors.rolltypeNotNumeric");
+        const rolltypeNotNumeric = yield* i18n.t("command.roll.errors.rolltypeNotNumeric");
         yield* sendMessage(channel, { content: `${WARN_EMOJI} ${rolltypeNotNumeric}` });
         return;
       }
@@ -148,7 +148,7 @@ export const RollCommand = declareCommand({
     }
 
     if (rolltype == 0) {
-      const rolltypeUndefined = yield* i18n.t(message.guildId, "command.roll.errors.rolltypeUndefined");
+      const rolltypeUndefined = yield* i18n.t("command.roll.errors.rolltypeUndefined");
       yield* sendMessage(channel, {
         content: `${WARN_EMOJI} ${rolltypeUndefined} \
                 gotDefault = ${gotDefault}\
@@ -159,8 +159,8 @@ export const RollCommand = declareCommand({
       return;
     }
     if (rollcountmax == "0") {
-      const plaintext = yield* i18n.t(message.guildId, "command.roll.results.noDice.plaintext", { msgauthor });
-      const embedDescription = yield* i18n.t(message.guildId, "command.roll.results.noDice.embed");
+      const plaintext = yield* i18n.t("command.roll.results.noDice.plaintext", { msgauthor });
+      const embedDescription = yield* i18n.t("command.roll.results.noDice.embed");
       const embed = new EmbedBuilder()
         .setColor(0x36393e)
         .setDescription(`<:info_1:498285998346731530> ${embedDescription}`)
@@ -169,7 +169,7 @@ export const RollCommand = declareCommand({
       return;
     }
     if (typeof rollcountmax === "number" ? Number.isNaN(rollcountmax) : Number.isNaN(Number.parseInt(rollcountmax))) {
-      const rollcountNotNumeric = yield* i18n.t(message.guildId, "command.roll.errors.rollcountNotNumeric");
+      const rollcountNotNumeric = yield* i18n.t("command.roll.errors.rollcountNotNumeric");
       yield* sendMessage(channel, { content: `${WARN_EMOJI} ${rollcountNotNumeric}` });
       return;
     }
@@ -182,7 +182,7 @@ export const RollCommand = declareCommand({
     // is the response too long?
 
     if (rollcount > 70) {
-      const tooManyDice = yield* i18n.t(message.guildId, "command.roll.errors.tooManyDice");
+      const tooManyDice = yield* i18n.t("command.roll.errors.tooManyDice");
       yield* sendMessage(channel, { content: `${WARN_EMOJI} ${tooManyDice}` });
       return;
     }
@@ -236,7 +236,7 @@ export const RollCommand = declareCommand({
     // response
 
     if (rollcountmax == "1") {
-      const plaintext = yield* i18n.t(message.guildId, "command.roll.results.singleDice", { rolltype });
+      const plaintext = yield* i18n.t("command.roll.results.singleDice", { rolltype });
       const embed = new EmbedBuilder().setColor(0x36393e).setFooter({ text: `@${msgauthor}` });
       if (useEmotes) {
         embed.setDescription(rollresult);
@@ -248,7 +248,7 @@ export const RollCommand = declareCommand({
       return;
     }
 
-    const plaintext = yield* i18n.t(message.guildId, "command.roll.results.multiDice", {
+    const plaintext = yield* i18n.t("command.roll.results.multiDice", {
       rolltype,
       rollcountmax: Number.parseInt(rollcountmax),
     });

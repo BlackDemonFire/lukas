@@ -13,6 +13,7 @@ import type { GifRepository } from "./repositories/GifRepository";
 import type { SettingsRepository } from "./repositories/SettingsRepository";
 import type { UserRepository } from "./repositories/UserRepository";
 import type { ICommand } from "./types";
+import type { CurrentLanguage } from "./i18n/CurrentLanguage";
 
 export class CommandMap extends Context.Service<
   CommandMap,
@@ -40,6 +41,7 @@ export class CommandMap extends Context.Service<
         | SettingsRepository
         | CommandUsage
         | CurrentTimeZone
+        | CurrentLanguage
       >
     >;
   }

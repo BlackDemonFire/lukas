@@ -13,18 +13,16 @@ export const DsaCharRepositoryLive = Layer.effect(
   DsaCharRepository,
   Effect.gen(function* () {
     const db = yield* Database;
-    const getRepo = () => {
-      const em = db.orm.fork();
-      return { repo: em.getRepository(Dsachars), em };
-    };
 
     return {
       deleteCharacter: Effect.fn("DsaCharRepository.deleteCharacter")(function* (prefix: string) {
-        const { repo } = getRepo();
+        const em = yield* db.fork;
+        const repo = em.getRepository(Dsachars);
         return yield* Effect.promise(() => repo.nativeDelete({ prefix }));
       }),
       getCharacter: Effect.fn("DsaCharRepository.getCharacter")(function* (prefix: string) {
-        const { repo } = getRepo();
+        const em = yield* db.fork;
+        const repo = em.getRepository(Dsachars);
         return yield* pipe(
           Effect.promise(() => repo.findOne({ prefix })),
           Effect.map((maybeChar) => Option.fromNullOr(maybeChar)),
@@ -35,7 +33,8 @@ export const DsaCharRepositoryLive = Layer.effect(
         displayname: string,
         avatar: string,
       ) {
-        const { em, repo } = getRepo();
+        const em = yield* db.fork;
+        const repo = em.getRepository(Dsachars);
         const char = repo.create({ prefix, avatar, displayname });
         return yield* Effect.promise(() => em.persist(char).flush());
       }),

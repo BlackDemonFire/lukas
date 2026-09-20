@@ -1,5 +1,5 @@
 import { sendMessage } from "@/discord/sendMessage";
-import { DiscordClient } from "@/DiscordGateway";
+import { DiscordClient } from "@/Discord";
 import { ChannelNotSendableError } from "@/errors/ChannelNotSendable";
 import { AppConfig } from "@/modules/settings";
 import { declareCommand } from "@/types";

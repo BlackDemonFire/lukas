@@ -20,27 +20,26 @@ export const SettingsRepositoryLive = Layer.effect(
   SettingsRepository,
   Effect.gen(function* () {
     const db = yield* Database;
-    const getRepo = () => {
-      const orm = db.orm.fork();
-      return { repo: orm.getRepository(Settings), em: orm };
-    };
     return {
       getLang: Effect.fn("SettingsRepository.getLang")(function* (guild: Guild | Snowflake) {
-        const { repo } = getRepo();
+        const em = yield* db.fork;
+        const repo = em.getRepository(Settings);
         return yield* pipe(
           Effect.promise(() => repo.findOne({ id: typeof guild === "object" ? guild.id : guild })),
           Effect.map((e) => e?.language ?? ""),
         );
       }),
       getAutorollEnabled: Effect.fn("SettingsRepository.getAutorollEnabled")(function* (guild: Guild) {
-        const { repo } = getRepo();
+        const em = yield* db.fork;
+        const repo = em.getRepository(Settings);
         return yield* pipe(
           Effect.promise(() => repo.findOne({ id: guild.id })),
           Effect.map((e) => e?.autorollEnabled ?? false),
         );
       }),
       ensureGuildSettings: Effect.fn("SettingsRepository.ensureGuildSettings")(function* (guild: Guild, lang: string) {
-        const { repo, em } = getRepo();
+        const em = yield* db.fork;
+        const repo = em.getRepository(Settings);
         const existingSettings = yield* Effect.promise(() => repo.findOne({ id: guild.id }));
         if (existingSettings) return;
         const settings = repo.create({ id: guild.id, language: lang });
@@ -48,7 +47,8 @@ export const SettingsRepositoryLive = Layer.effect(
         yield* Effect.promise(() => em.flush());
       }),
       setLang: Effect.fn("SettingsRepository.setLang")(function* (guild: Guild, lang: string) {
-        const { repo, em } = getRepo();
+        const em = yield* db.fork;
+        const repo = em.getRepository(Settings);
         const settings = yield* Effect.promise(() => repo.findOneOrFail({ id: guild.id }));
         yield* Effect.logDebug(`Setting language for ${guild.name} to ${lang}`);
         wrap(settings).assign({ language: lang }, { mergeObjectProperties: true });
@@ -58,7 +58,8 @@ export const SettingsRepositoryLive = Layer.effect(
         guild: Guild,
         enabled: boolean,
       ) {
-        const { repo, em } = getRepo();
+        const em = yield* db.fork;
+        const repo = em.getRepository(Settings);
         const settings = yield* Effect.promise(() => repo.findOneOrFail({ id: guild.id }));
         yield* Effect.logDebug(`Setting Autoroll for ${guild.name} to ${enabled}`);
         wrap(settings).assign({ autorollEnabled: enabled }, { mergeObjectProperties: true });

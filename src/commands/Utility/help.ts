@@ -29,8 +29,8 @@ export const HelpCommand = declareCommand({
       const cmd = args[0].replace(cfg.prefix, "").toLowerCase();
       const command = commands.get(cmd);
       if (command) {
-        const desc: string = yield* i18n.t(message.guildId, command.summary);
-        const usage = yield* i18n.t(message.guildId, "command.help.usage.Usage");
+        const desc: string = yield* i18n.t(command.summary);
+        const usage = yield* i18n.t("command.help.usage.Usage");
         embed
           .setDescription(desc)
           .setFooter({ text: command.category })
@@ -38,10 +38,10 @@ export const HelpCommand = declareCommand({
           .setAuthor({ name: "Help" })
           .addFields(
             { name: usage, value: yield* command.usage },
-            { name: usage, value: yield* i18n.t(message.guildId, "command.help.usage.args") },
+            { name: usage, value: yield* i18n.t("command.help.usage.args") },
           );
       } else {
-        const cnf = yield* i18n.t(message.guildId, "command.help.commandNotFound", { cmd: args[0] });
+        const cnf = yield* i18n.t("command.help.commandNotFound", { cmd: args[0] });
         embed.setDescription(cnf);
       }
     } else {

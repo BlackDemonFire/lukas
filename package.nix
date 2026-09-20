@@ -17,6 +17,8 @@ stdenv.mkDerivation (finalAttrs: {
   inherit ((builtins.fromJSON (builtins.readFile ./package.json))) version;
   src = lib.cleanSource ./.;
   SSL_CERT_FILE = "${cacert}/etc/ssl/certs/ca-bundle.crt";
+  VP_NODE_MANAGER = "no";
+  VP_PM_MANAGER = "no";
 
   nativeBuildInputs = [
     node_ver
@@ -29,7 +31,7 @@ stdenv.mkDerivation (finalAttrs: {
     inherit (finalAttrs) pname version src;
     installFlags = "--production";
     fetcherVersion = 4;
-    hash = "sha256-h7yBdNfLDCq5MmeAMwzeLB9Jq9LXvEfNGJNaqif9fPE=";
+    hash = "sha256-yPOAbm5hviXdEkXJuF1hTSQIFBtXL6X6sLuA0WZXvyU=";
   };
   buildPhase = ''
     runHook preBuild

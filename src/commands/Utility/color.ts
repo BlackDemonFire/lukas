@@ -19,7 +19,7 @@ export const ColorCommand = declareCommand({
     const current_colors = new Set((yield* userRepo.getColor(message.author)).split(";"));
     const colors = [...current_colors].join(", ");
     const i18n = yield* I18nService;
-    const msg = yield* i18n.t(message.guildId, "command.color.show_colors", { c: colors });
+    const msg = yield* i18n.t("command.color.show_colors", { c: colors });
     yield* sendMessage(channel, { content: msg });
   }),
   summary: "command.color.description",

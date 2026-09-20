@@ -1,10 +1,11 @@
+import { resolveColor } from "@/discord/resolveColor";
 import { sendMessage } from "@/discord/sendMessage";
 import { ChannelNotSendableError } from "@/errors/ChannelNotSendable";
 import { I18nService } from "@/i18n/I18n";
 import { AppConfig } from "@/modules/settings";
 import { UserRepository } from "@/repositories/UserRepository";
 import { declareCommand } from "@/types.js";
-import { type ColorResolvable, DiscordjsRangeError, DiscordjsTypeError, Message, resolveColor } from "discord.js";
+import { type ColorResolvable, Message } from "discord.js";
 import { Effect } from "effect";
 
 export const AddcolorCommand = declareCommand({
@@ -22,10 +23,10 @@ export const AddcolorCommand = declareCommand({
     if (args && args.length > 0) {
       for (const color_string of args) {
         const color = color_string as Exclude<ColorResolvable, number | readonly [number, number, number]>;
-        yield* Effect.try<number, DiscordjsTypeError | DiscordjsRangeError>(() => resolveColor(color)).pipe(
+        yield* resolveColor(color).pipe(
           Effect.tapError(() =>
             Effect.gen(function* () {
-              const msg = yield* i18n.t(message.guildId, "command.color.invalid_color");
+              const msg = yield* i18n.t("command.color.invalid_color");
               yield* sendMessage(channel, { content: msg });
             }),
           ),
@@ -34,13 +35,13 @@ export const AddcolorCommand = declareCommand({
         current_colors.add(color);
       }
     } else {
-      const msg = yield* i18n.t(message.guildId, "command.color.invalid_color");
+      const msg = yield* i18n.t("command.color.invalid_color");
       yield* sendMessage(channel, { content: msg });
       return;
     }
     const colors = [...current_colors].join(";");
     yield* userRepo.setColor(message.author, colors);
-    const msg = yield* i18n.t(message.guildId, "command.color.success");
+    const msg = yield* i18n.t("command.color.success");
     yield* sendMessage(channel, { content: msg });
   }),
   usage: Effect.gen(function* () {

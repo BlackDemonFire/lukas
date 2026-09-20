@@ -1,6 +1,5 @@
 import { Context, Deferred, Effect, Layer } from "effect";
-import { DiscordClient } from "./DiscordGateway.js";
-import { EventBus } from "./EventBus.js";
+import { DiscordClient } from "./Discord.js";
 
 export const Shutdown = Context.Service<Deferred.Deferred<void>>("Shutdown");
 
@@ -10,7 +9,6 @@ export const registerShutdownSignals = Effect.gen(function* () {
   const effectContext = yield* Effect.context();
 
   const shutdown = yield* Shutdown;
-  const queue = yield* EventBus;
   const client = yield* DiscordClient;
 
   const triggerShutdown = () => {
@@ -20,8 +18,6 @@ export const registerShutdownSignals = Effect.gen(function* () {
         yield* Effect.logInfo("shutting down.");
         Deferred.doneUnsafe(shutdown, Effect.void);
 
-        // stop accepting new Discord events
-        yield* queue.shutdown;
         client.removeAllListeners();
 
         // stop gateway

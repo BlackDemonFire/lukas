@@ -25,7 +25,7 @@ export const NameCommand = declareCommand({
     const userRepo = yield* UserRepository;
     yield* userRepo.setName(message.author, newname);
     const i18n = yield* I18nService;
-    const msg = yield* i18n.t(message.guildId, "command.name.success", { newname });
+    const msg = yield* i18n.t("command.name.success", { newname });
     yield* sendMessage(channel, { content: msg });
   }),
   summary: "command.name.description",

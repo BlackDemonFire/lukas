@@ -1,19 +1,19 @@
 import { Config } from "effect";
 
 export const AppConfig = Config.all({
-  prefix: Config.string("PREFIX"),
-  defaultLanguage: Config.string("DEFAULTLANG").pipe(Config.withDefault("en_US")),
+  prefix: Config.String("PREFIX"),
+  defaultLanguage: Config.String("DEFAULTLANG").pipe(Config.withDefault("en_US")),
 
-  logLevel: Config.string().pipe(Config.withDefault("info")),
+  logLevel: Config.String().pipe(Config.withDefault("info")),
 
-  TOKEN: Config.redacted("TOKEN"),
-  RANDOMKEY: Config.redacted("RANDOMKEY").pipe(Config.option),
+  TOKEN: Config.Redacted("TOKEN"),
+  RANDOMKEY: Config.Redacted("RANDOMKEY").pipe(Config.option),
 
-  DB_NAME: Config.string("DB_NAME"),
-  DB_HOST: Config.string("DB_HOST"),
-  DB_USER: Config.string("DB_USER"),
-  DB_PASS: Config.redacted("DB_PASS"),
-  DB_PORT: Config.port("DB_PORT").pipe(Config.withDefault(5432)),
+  DB_NAME: Config.String("DB_NAME"),
+  DB_HOST: Config.String("DB_HOST"),
+  DB_USER: Config.String("DB_USER"),
+  DB_PASS: Config.Redacted("DB_PASS"),
+  DB_PORT: Config.Port("DB_PORT").pipe(Config.withDefault(5432)),
 });
 
 export default AppConfig;

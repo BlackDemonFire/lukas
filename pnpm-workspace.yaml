@@ -2,12 +2,12 @@ allowBuilds:
   esbuild: false
   msgpackr-extract: false
 catalog:
-  vite: npm:@voidzero-dev/vite-plus-core@0.2.8
-  vite-plus: 0.2.8
+  vite: npm:@voidzero-dev/vite-plus-core@0.3.3
+  vite-plus: 0.3.3
 overrides:
-  vite: "catalog:"
+  vite@*: 'catalog:'
 peerDependencyRules:
   allowAny:
     - vite
   allowedVersions:
-    vite: "*"
+    vite: '*'

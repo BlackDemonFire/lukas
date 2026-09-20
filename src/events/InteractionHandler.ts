@@ -2,7 +2,7 @@ import { InteractionMap } from "@/InteractionMap";
 import type { BaseInteraction } from "discord.js";
 import { Effect, Schema } from "effect";
 
-export const InteractionHandlerHandler = {
+export const InteractionHandler = {
   handle: (interaction: BaseInteraction) =>
     Effect.gen(function* () {
       if (interaction.isMessageComponent()) {

@@ -1,4 +1,4 @@
-import { DiscordClient } from "@/DiscordGateway";
+import { DiscordClient } from "@/Discord";
 import { Team, User } from "discord.js";
 import { Effect } from "effect";
 

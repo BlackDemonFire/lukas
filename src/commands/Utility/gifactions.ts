@@ -22,9 +22,9 @@ export const GifactionsCommand = declareCommand({
     }
     const i18n = yield* I18nService;
     const gifRepo = yield* GifRepository;
-    const actions = yield* gifRepo.getGifactions;
+    const actions = yield* gifRepo.getGifactions();
     let actionsstring: string = "";
-    const and = yield* i18n.t(message.guildId, "general.and");
+    const and = yield* i18n.t("general.and");
     switch (actions.length) {
       case 1:
         actionsstring = actions[0]!;
@@ -39,7 +39,7 @@ export const GifactionsCommand = declareCommand({
           .join(", ")} ${and} \`${actions.slice(-1).join(",")}\``;
         break;
     }
-    const msg = yield* i18n.t(message.guildId, "command.gifactions.response", { actions: actionsstring });
+    const msg = yield* i18n.t("command.gifactions.response", { actions: actionsstring });
     yield* sendMessage(channel, { content: msg });
   }),
 });

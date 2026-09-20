@@ -1,5 +1,5 @@
 import { sendMessage } from "@/discord/sendMessage";
-import { DiscordClient } from "@/DiscordGateway.js";
+import { DiscordClient } from "@/Discord.js";
 import { ChannelNotSendableError } from "@/errors/ChannelNotSendable";
 import { I18nService } from "@/i18n/I18n.js";
 import { isOwner } from "@/modules/command.js";
@@ -9,6 +9,7 @@ import { GifRepository } from "@/repositories/GifRepository.js";
 import { declareCommand } from "@/types.js";
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Message, Team, User } from "discord.js";
 import { Effect } from "effect";
+import { sendUserMessage } from "@/discord/sendUserMessage";
 
 export const RemovegifCommand = declareCommand({
   category: "Utility",
@@ -20,7 +21,7 @@ export const RemovegifCommand = declareCommand({
     }
     const i18n = yield* I18nService;
     if (args.length !== 1) {
-      const msg = yield* i18n.t(message.guildId, "command.removegif.wrongArgs");
+      const msg = yield* i18n.t("command.removegif.wrongArgs");
       yield* sendMessage(channel, { content: msg });
       return;
     }
@@ -28,11 +29,11 @@ export const RemovegifCommand = declareCommand({
     if (yield* isOwner(message.author)) {
       const gifRepo = yield* GifRepository;
       yield* gifRepo.removeGif(url);
-      const msg = yield* i18n.t(message.guildId, "command.removegif.success");
+      const msg = yield* i18n.t("command.removegif.success");
       yield* sendMessage(channel, { content: msg });
       return;
     }
-    const response: string = yield* i18n.t(message.guildId, "command.removegif.checking");
+    const response: string = yield* i18n.t("command.removegif.checking");
     const client = yield* DiscordClient;
     if (!client.isReady()) {
       yield* Effect.logError("Unable to determine bot administrators");
@@ -59,23 +60,21 @@ export const RemovegifCommand = declareCommand({
     })\ngif: ${url}`;
     yield* Effect.all(
       admins.map((admin) =>
-        Effect.promise(() =>
-          admin.send({
-            content,
-            components: [
-              new ActionRowBuilder<ButtonBuilder>().addComponents([
-                new ButtonBuilder()
-                  .setLabel("Accept")
-                  .setCustomId(`removegif.accept.${requestMessage.id}`)
-                  .setStyle(ButtonStyle.Success),
-                new ButtonBuilder()
-                  .setLabel("Reject")
-                  .setCustomId(`removegif.reject.${requestMessage.id}`)
-                  .setStyle(ButtonStyle.Danger),
-              ]),
-            ],
-          }),
-        ),
+        sendUserMessage(admin, {
+          content,
+          components: [
+            new ActionRowBuilder<ButtonBuilder>().addComponents([
+              new ButtonBuilder()
+                .setLabel("Accept")
+                .setCustomId(`removegif.accept.${requestMessage.id}`)
+                .setStyle(ButtonStyle.Success),
+              new ButtonBuilder()
+                .setLabel("Reject")
+                .setCustomId(`removegif.reject.${requestMessage.id}`)
+                .setStyle(ButtonStyle.Danger),
+            ]),
+          ],
+        }),
       ),
     );
   }),

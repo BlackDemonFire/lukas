@@ -23,7 +23,7 @@ export const DsaAddCommand = declareCommand({
     }
     const i18n = yield* I18nService;
     if (!args || args.length <= 3) {
-      const msg = yield* i18n.t(message.guildId, "command.dsaadd.args");
+      const msg = yield* i18n.t("command.dsaadd.args");
       yield* sendMessage(channel, { content: msg });
       return;
     }
@@ -32,7 +32,7 @@ export const DsaAddCommand = declareCommand({
     const name: string = args.join(" ");
     const dsaCharRepo = yield* DsaCharRepository;
     yield* dsaCharRepo.createCharacter(pref, name, img);
-    const msg = yield* i18n.t(message.guildId, "command.dsaadd.success", { pref });
+    const msg = yield* i18n.t("command.dsaadd.success", { pref });
     yield* sendMessage(channel, { content: msg });
   }),
 });
