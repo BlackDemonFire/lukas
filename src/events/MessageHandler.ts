@@ -2,11 +2,11 @@ import type { Message } from "discord.js";
 import { Clock, Duration, Effect } from "effect";
 
 import { CommandMap } from "@/CommandMap";
+import { CurrentLanguage } from "@/i18n/CurrentLanguage";
+import { executeRollIfEnabled } from "@/modules/rollHandler";
 import { AppConfig } from "@/modules/settings.js";
 import { SettingsRepository } from "@/repositories/SettingsRepository.js";
 import { UserRepository } from "@/repositories/UserRepository.js";
-import { executeRollIfEnabled } from "@/modules/rollHandler";
-import { CurrentLanguage } from "@/i18n/CurrentLanguage";
 
 const executeCommand = Effect.fn("executeCommand")(function* (message: Message) {
   const settings = yield* AppConfig;
@@ -32,7 +32,6 @@ export const MessageHandler = {
     Effect.gen(function* () {
       if (message.author.bot) return;
       const cfg = yield* AppConfig;
-      const content = message.content.trim();
       const settingsRepo = yield* SettingsRepository;
       if (message.guild) yield* settingsRepo.ensureGuildSettings(message.guild, cfg.defaultLanguage);
       const userRepo = yield* UserRepository;
@@ -45,7 +44,7 @@ export const MessageHandler = {
           if (!message.inGuild()) return;
           if (yield* executeRollIfEnabled(message)) return;
 
-          yield* Effect.logWarning(`Unhandled message by ${message.author.displayName}: ${content}`);
+          yield* Effect.logWarning(`Unhandled message by ${message.author.id}: ${message.id}`);
         }),
         CurrentLanguage,
         lang,
