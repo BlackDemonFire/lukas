@@ -100,6 +100,9 @@ export interface MessageParams {
   "dragonborn.dragonbornRoll.failed": { dice: number[] };
   "dragonborn.dragonbornRoll.invalidArg": never;
   "dragonborn.dragonbornRoll.success": { dice: number[] };
+  "dragonborn.skillImprove.invalidArg": never;
+  "dragonborn.skillImprove.success": { dice: number };
+  "dragonborn.skillImprove.failure": { dice: number };
   "general.and": never;
   "general.botPermissionError": { missingPermissions: string };
   "general.guildOnly": never;

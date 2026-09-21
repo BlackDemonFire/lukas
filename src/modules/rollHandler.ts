@@ -7,6 +7,7 @@ import { LukasRandom } from "./random";
 
 const rollArgRegex = /^(\d)*(?:[dw])(\d+)$/;
 const dragonBaneArgRegex = /^db(\d+)(?:([-+])(\d+))?$/;
+const dragonBaneSkillImproveArgRegex = /^dbs(\d+)$/;
 
 /**
  *
@@ -32,6 +33,11 @@ export const executeRollIfEnabled = Effect.fn("ExecuteRollIfEnabled")(function* 
         Number.parseInt(dragonBaneMatch[3] || "0"),
         dragonBaneMatch[2] as "-" | "+",
       );
+      return true;
+    }
+    const dragonBaneSkillMatch = dragonBaneSkillImproveArgRegex.exec(args[0]!);
+    if (dragonBaneSkillMatch) {
+      yield* runDragonBaneSkillImproveRoll(message, Number.parseInt(dragonBaneSkillMatch[1]!));
       return true;
     }
   }
@@ -123,6 +129,32 @@ const runDragonBaneRoll = Effect.fn("DragonBaneRoll.run")(function* (
     ),
     Match.when(Match.is(1), () => i18n.t("dragonborn.dragonbornRoll.critSuccess")),
     Match.orElse(() => i18n.t("dragonborn.dragonbornRoll.success", { dice: rollToEvaluate })),
+  );
+  embed.setTitle(msg);
+  yield* sendMessage(message.channel, { embeds: [embed] });
+});
+
+const runDragonBaneSkillImproveRoll = Effect.fn("DragonBaneSkillImproveRoll.run")(function* (
+  message: Message<true>,
+  skillLevel: number,
+) {
+  const i18n = yield* I18nService;
+  if (skillLevel >= 18) {
+    const msg = yield* i18n.t("dragonborn.skillImprove.invalidArg");
+    yield* sendMessage(message.channel, { content: msg });
+    return;
+  }
+  const random = yield* LukasRandom;
+  const roll = yield* random.int(1, 20);
+  const msgauthor: string = message.author.username;
+  const embed = new EmbedBuilder().setColor(0x36393e).setFooter({ text: `@${msgauthor}` });
+
+  const msg = yield* Match.value(roll).pipe(
+    Match.when(
+      (res) => res > skillLevel,
+      () => i18n.t("dragonborn.skillImprove.success", { dice: roll }),
+    ),
+    Match.orElse(() => i18n.t("dragonborn.skillImprove.failure", { dice: roll })),
   );
   embed.setTitle(msg);
   yield* sendMessage(message.channel, { embeds: [embed] });

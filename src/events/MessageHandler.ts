@@ -30,7 +30,10 @@ const executeCommand = Effect.fn("executeCommand")(function* (message: Message) 
 export const MessageHandler = {
   handle: (message: Message) =>
     Effect.gen(function* () {
-      if (message.author.bot) return;
+      if (message.author.bot) {
+        if (message.author.id === message.client.user.id) yield* Effect.annotateCurrentSpan("self", true);
+        return;
+      }
       const cfg = yield* AppConfig;
       const settingsRepo = yield* SettingsRepository;
       if (message.guild) yield* settingsRepo.ensureGuildSettings(message.guild, cfg.defaultLanguage);
@@ -49,10 +52,5 @@ export const MessageHandler = {
         CurrentLanguage,
         lang,
       );
-    }).pipe(
-      Effect.withSpan("message", {
-        root: true,
-        attributes: { messageId: message.id, guildId: message.guildId, channelId: message.channelId },
-      }),
-    ),
+    }),
 };

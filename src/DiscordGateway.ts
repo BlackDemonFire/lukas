@@ -18,14 +18,27 @@ export const DiscordGateway = Effect.scoped(
     ) =>
       Effect.runForkWith(ctx)(
         effect.pipe(
-          Effect.withSpan(`discord.${name}`, { attributes }),
+          Effect.withSpan(`discord.${name}`, { attributes, root: true }),
           Effect.catchCause((cause) => Effect.logError(`Discord ${name} failed`, cause)),
         ),
       );
     client.on("messageCreate", (message) =>
-      runEvent("message", MessageHandler.handle(message), { messageId: message.id, authorId: message.author.id }),
+      runEvent("message", MessageHandler.handle(message), {
+        messageId: message.id,
+        authorId: message.author.id,
+        guildId: message.guildId,
+        channelId: message.channelId,
+      }),
     );
-    client.on("interactionCreate", (interaction) => runEvent("interaction", InteractionHandler.handle(interaction)));
+    client.on("interactionCreate", (interaction) =>
+      runEvent("interaction", InteractionHandler.handle(interaction), {
+        interactionId: interaction.id,
+        channelId: interaction.channelId,
+        guildId: interaction.guildId,
+        userId: interaction.user.id,
+        interactionType: interaction.type,
+      }),
+    );
     yield* Effect.logInfo("Discord event listeners registered");
   }),
 );
