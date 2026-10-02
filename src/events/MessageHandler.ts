@@ -3,7 +3,7 @@ import { Clock, Duration, Effect } from "effect";
 
 import { CommandMap } from "@/CommandMap";
 import { CurrentLanguage } from "@/i18n/CurrentLanguage";
-import { executeRollIfEnabled } from "@/modules/rollHandler";
+import { prefixlessCommand } from "@/modules/prefixlessCommand";
 import { AppConfig } from "@/modules/settings.js";
 import { SettingsRepository } from "@/repositories/SettingsRepository.js";
 import { UserRepository } from "@/repositories/UserRepository.js";
@@ -45,7 +45,7 @@ export const MessageHandler = {
           if (message.content.startsWith(cfg.prefix)) return yield* executeCommand(message);
 
           if (!message.inGuild()) return;
-          if (yield* executeRollIfEnabled(message)) return;
+          if (yield* prefixlessCommand(message)) return;
 
           yield* Effect.logWarning(`Unhandled message by ${message.author.id}: ${message.id}`);
         }),

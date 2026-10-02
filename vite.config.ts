@@ -1,9 +1,11 @@
 import { defineConfig } from "vite-plus";
+import { recommended } from "@effect/tsgo/oxlint-presets";
 
 export default defineConfig({
   lint: {
     plugins: ["oxc", "typescript", "unicorn", "import"],
     jsPlugins: [{ name: "vite-plus", specifier: "vite-plus/oxlint-plugin" }],
+    extends: [recommended],
     categories: { correctness: "warn" },
     options: { typeAware: true, typeCheck: true },
     env: { builtin: true },

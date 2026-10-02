@@ -87,7 +87,7 @@
                   pname = "lukasbot";
                   version = "0.0.0";
                   fetcherVersion = 4;
-                  hash = "sha256-yPOAbm5hviXdEkXJuF1hTSQIFBtXL6X6sLuA0WZXvyU=";
+                  hash = "sha256-UUAg+10ATmW5BuKBfHq1nJn6NXbe59DeirwNJlbJoXg=";
                 };
               in
               pkgs.stdenv.mkDerivation (_finalAttrs: {

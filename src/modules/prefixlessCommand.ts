@@ -5,16 +5,17 @@ import { EmbedBuilder, type Message } from "discord.js";
 import { Effect, Match } from "effect";
 import { LukasRandom } from "./random";
 
-const rollArgRegex = /^(\d)*(?:[dw])(\d+)$/;
+const rollArgRegex = /^(?<rollCount>\d*)(?:[dw])(?<rollMax>\d+)$/;
 const dragonBaneArgRegex = /^db(\d+)(?:([-+])(\d+))?$/;
 const dragonBaneSkillImproveArgRegex = /^dbs(\d+)$/;
+const iniRegex = /^ini ?(\d{1,2})$/;
 
 /**
  *
  * @param message The message to check/roll for
- * @returns true if a dice-roll was executed.
+ * @returns true if a command was executed.
  */
-export const executeRollIfEnabled = Effect.fn("ExecuteRollIfEnabled")(function* (message: Message<true>) {
+export const prefixlessCommand = Effect.fn("checkAndExecutePrefixlessCommand")(function* (message: Message<true>) {
   const settingsRepo = yield* SettingsRepository;
   const autoRollEnabled = yield* settingsRepo.getAutorollEnabled(message.guild);
   yield* Effect.annotateCurrentSpan("enabled", autoRollEnabled);
@@ -22,6 +23,12 @@ export const executeRollIfEnabled = Effect.fn("ExecuteRollIfEnabled")(function* 
     yield* Effect.logDebug("[autoroll]: autoroll disabled");
     return false;
   }
+  const trimmedContent = message.content.trim();
+  const isIni = iniRegex.exec(trimmedContent);
+  if (isIni) {
+    return true;
+  }
+
   const args = message.content.toLowerCase().split(" ");
   if (!args.length) return false;
   if (args.length === 1) {
@@ -41,13 +48,13 @@ export const executeRollIfEnabled = Effect.fn("ExecuteRollIfEnabled")(function* 
       return true;
     }
   }
-  if (!args.every((a) => rollArgRegex.test(a))) {
+  const parsedArgs = args.map((a) => rollArgRegex.exec(a));
+  if (!parsedArgs.every((a): a is Exclude<typeof a, null> => a !== null)) {
     yield* Effect.logDebug("[autoroll]: not all args are roll-args", args);
     return false;
   }
-  const dice: { count: number; max: number }[] = args.map((arg) => {
-    const [count, max] = arg.split(/(?:[wd])/);
-    return { count: Number.parseInt(count || "1", 10), max: Number.parseInt(max!, 10) };
+  const dice: { count: number; max: number }[] = parsedArgs.map((arg) => {
+    return { count: Number.parseInt(arg.groups?.rollCount || "1", 10), max: Number.parseInt(arg.groups!.rollMax!, 10) };
   });
   if (dice.length > 10) {
     // TODO: i18n message

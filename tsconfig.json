@@ -1,5 +1,4 @@
 {
-  "$schema": "./node_modules/@effect/tsgo/schema.json",
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
     /* Basic Options */
@@ -30,35 +29,7 @@
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
-    "plugins": [
-      {
-        "name": "@effect/language-service",
-        "diagnosticSeverity": {
-          "abortControllerInEffect": "warning",
-          "asyncFunction": "off",
-          "cryptoRandomUUID": "warning",
-          "cryptoRandomUUIDInEffect": "warning",
-          "extendsNativeError": "warning",
-          "globalConsole": "warning",
-          "globalConsoleInEffect": "warning",
-          "globalDate": "warning",
-          "globalDateInEffect": "warning",
-          "globalFetch": "warning",
-          "globalFetchInEffect": "warning",
-          "globalRandom": "warning",
-          "globalRandomInEffect": "warning",
-          "globalTimers": "warning",
-          "globalTimersInEffect": "warning",
-          "instanceOfSchema": "warning",
-          "newPromise": "warning",
-          "nodeBuiltinImport": "warning",
-          "preferSchemaOverJson": "warning",
-          "processEnv": "warning",
-          "processEnvInEffect": "warning",
-          "unsafeEffectTypeAssertion": "warning"
-        }
-      }
-    ]
+    "plugins": []
   },
   "exclude": ["dist", "node_modules"],
   "include": ["src/"]

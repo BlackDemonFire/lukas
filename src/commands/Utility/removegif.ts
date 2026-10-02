@@ -58,24 +58,22 @@ export const RemovegifCommand = declareCommand({
     const content = `Gif check request from ${message.author.tag} in <#${message.channel.id}> (${
       message.inGuild() ? message.channel.name : "DM"
     })\ngif: ${url}`;
-    yield* Effect.all(
-      admins.map((admin) =>
-        sendUserMessage(admin, {
-          content,
-          components: [
-            new ActionRowBuilder<ButtonBuilder>().addComponents([
-              new ButtonBuilder()
-                .setLabel("Accept")
-                .setCustomId(`removegif.accept.${requestMessage.id}`)
-                .setStyle(ButtonStyle.Success),
-              new ButtonBuilder()
-                .setLabel("Reject")
-                .setCustomId(`removegif.reject.${requestMessage.id}`)
-                .setStyle(ButtonStyle.Danger),
-            ]),
-          ],
-        }),
-      ),
+    yield* Effect.forEach(admins, (admin) =>
+      sendUserMessage(admin, {
+        content,
+        components: [
+          new ActionRowBuilder<ButtonBuilder>().addComponents([
+            new ButtonBuilder()
+              .setLabel("Accept")
+              .setCustomId(`removegif.accept.${requestMessage.id}`)
+              .setStyle(ButtonStyle.Success),
+            new ButtonBuilder()
+              .setLabel("Reject")
+              .setCustomId(`removegif.reject.${requestMessage.id}`)
+              .setStyle(ButtonStyle.Danger),
+          ]),
+        ],
+      }),
     );
   }),
   name: "removegif",

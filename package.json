@@ -2,12 +2,12 @@
   "name": "lukasbot",
   "version": "1.0.0",
   "dependencies": {
-    "@effect/opentelemetry": "4.0.0-rc.116",
-    "@effect/platform-node": "4.0.0-rc.116",
-    "@mikro-orm/core": "^7.2.0",
-    "@mikro-orm/entity-generator": "^7.2.0",
-    "@mikro-orm/migrations": "^7.2.0",
-    "@mikro-orm/postgresql": "^7.2.0",
+    "@effect/opentelemetry": "4.0.0",
+    "@effect/platform-node": "4.0.0",
+    "@mikro-orm/core": "^7.2.3",
+    "@mikro-orm/entity-generator": "^7.2.3",
+    "@mikro-orm/migrations": "^7.2.3",
+    "@mikro-orm/postgresql": "^7.2.3",
     "@opentelemetry/api-logs": "^0.222.0",
     "@opentelemetry/exporter-trace-otlp-http": "^0.222.0",
     "@opentelemetry/sdk-logs": "^0.222.0",
@@ -15,16 +15,15 @@
     "@opentelemetry/sdk-trace-base": "^2.11.0",
     "@opentelemetry/sdk-trace-node": "^2.11.0",
     "@opentelemetry/sdk-trace-web": "^2.11.0",
-    "discord-api-types": "^0.38.55",
     "discord.js": "^14.27.0",
-    "dotenv": "^18.0.1",
-    "effect": "4.0.0-rc.116",
+    "dotenv": "^18.0.5",
+    "effect": "4.0.0",
     "random-org": "^2.2.0",
-    "systeminformation": "^5.33.12"
+    "systeminformation": "^5.33.15"
   },
   "devDependencies": {
-    "@effect/tsgo": "0.45.0",
-    "@mikro-orm/cli": "^7.2.0",
+    "@effect/tsgo": "0.47.2",
+    "@mikro-orm/cli": "^7.2.3",
     "@total-typescript/ts-reset": "^0.6.1",
     "@types/node": "^24.13.6",
     "@types/recursive-readdir": "^2.2.4",
@@ -36,7 +35,7 @@
     "watch:ts": "tsc --watch",
     "type-check": "tsc --noEmit",
     "lint": "vp lint src",
-    "_prepare": "effect-tsgo patch --no-typescript --oxlint"
+    "prepare": "effect-tsgo patch --no-typescript --oxlint"
   },
   "type": "module",
   "engines": {
